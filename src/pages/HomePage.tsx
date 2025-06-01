@@ -48,7 +48,7 @@ const HomePage: React.FC = () => {
       
       const defaultTitle = document.querySelector('[data-default]');
       if (defaultTitle) {
-        document.title = 'Цифровой симбиоз';
+        document.title = 'WL Blend';
       }
     }
   }, [tg]);
@@ -125,7 +125,7 @@ const HomePage: React.FC = () => {
       <div className="px-2 sm:px-4 mb-4 sm:mb-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 sm:mb-4 gap-2 sm:gap-0">
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold">Цифровой симбиоз</h1>
+            <h1 className="text-xl sm:text-2xl font-bold">WL Blend</h1>
             <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">Обмен услугами в один клик</p>
           </div>
           <div className="flex items-center gap-2">
