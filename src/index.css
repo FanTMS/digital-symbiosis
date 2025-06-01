@@ -1,0 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body.hide-tabbar .fixed.bottom-0 {
+  display: none !important;
+}
