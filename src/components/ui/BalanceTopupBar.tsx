@@ -4,6 +4,8 @@ import Modal from './Modal';
 import { useUser } from '../../contexts/UserContext';
 import { Coins } from 'lucide-react';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 // Временные шаблоны, позже будут подгружаться из БД
 const defaultTemplates = [
   { credits: 20, price: 49 },
@@ -29,7 +31,7 @@ const BalanceTopupBar: React.FC = () => {
     try {
       // В реальном проекте: id шаблона должен быть из БД, а не индекс
       const template_id = selected + 1;
-      const res = await fetch('http://localhost:4000/api/yookassa/create-payment', {
+      const res = await fetch(`${API_URL}/api/yookassa/create-payment`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ user_id: user.id, template_id }),

@@ -124,6 +124,24 @@ export function useTelegram() {
         throw new Error(data?.message || 'Authentication failed');
       }
 
+      // После успешной авторизации — создаём/обновляем профиль пользователя с валидными полями
+      if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
+        const tgUser = tg.initDataUnsafe.user;
+        const { error: upsertError } = await supabase.from('users').upsert({
+          id: tgUser.id,
+          name: [tgUser.first_name, tgUser.last_name].filter(Boolean).join(' '),
+          username: tgUser.username || `user_${tgUser.id}`,
+          avatar_url: tgUser.photo_url || null,
+          joined_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          level: 'ПОЛЬЗОВАТЕЛЬ',
+          rating: 0,
+          credits: 0,
+          completed_tasks: 0
+        }, { onConflict: 'id' });
+        if (upsertError) throw upsertError;
+      }
+
       const { data: session, error: sessionError } = await supabase.auth.setSession({
         access_token: data.session_id,
         refresh_token: data.session_id
