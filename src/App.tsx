@@ -39,9 +39,13 @@ function App() {
   }, [tg]);
 
   useEffect(() => {
-    // Принудительно светлая тема
     document.documentElement.classList.remove('dark');
     document.body.classList.remove('dark');
+    // Отключаем prefers-color-scheme: dark
+    const style = document.createElement('style');
+    style.innerHTML = `@media (prefers-color-scheme: dark) { html, body { background: #fff !important; color: #111 !important; } }`;
+    document.head.appendChild(style);
+    return () => { document.head.removeChild(style); };
   }, []);
 
   // Показываем загрузку, пока не получим данные пользователя
