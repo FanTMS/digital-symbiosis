@@ -196,6 +196,27 @@ app.post('/api/auth/telegram', async (req, res) => {
       password
     });
     if (signInError) return res.status(500).json({ error: signInError.message });
+
+    // --- ДОБАВЛЕНО: создаём пользователя в таблице users, если его нет ---
+    // Парсим initData, чтобы получить имя, username и avatar_url
+    let tgUser = null;
+    try {
+      const params = new URLSearchParams(initData);
+      const userJson = params.get('user');
+      if (userJson) tgUser = JSON.parse(userJson);
+    } catch (e) { /* ignore */ }
+    if (tgUser) {
+      await supabase.from('users').upsert({
+        id: telegramId,
+        name: [tgUser.first_name, tgUser.last_name].filter(Boolean).join(' '),
+        username: tgUser.username || `user_${telegramId}`,
+        joined_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        avatar_url: tgUser.photo_url || null
+      });
+    }
+    // --- КОНЕЦ ДОБАВЛЕНИЯ ---
+
     // Возвращаем JWT на фронт
     return res.json({ access_token: sessionData.session.access_token, refresh_token: sessionData.session.refresh_token });
   } catch (e) {
