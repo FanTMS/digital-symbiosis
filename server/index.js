@@ -175,7 +175,8 @@ app.post('/api/auth/telegram', async (req, res) => {
     const email = `${telegramId}@telegram.user`;
     const password = 'telegram_secret_' + telegramId;
     // Проверяем, есть ли пользователь
-    let { data: user, error } = await supabase.auth.admin.getUserByEmail(email);
+    let { data: users, error } = await supabase.auth.admin.listUsers({ email });
+    let user = users?.users?.[0];
     if (!user) {
       // Если нет — создаём пользователя
       const { data: newUser, error: createError } = await supabase.auth.admin.createUser({
@@ -184,7 +185,7 @@ app.post('/api/auth/telegram', async (req, res) => {
         email_confirm: true,
         user_metadata: { telegram_id: telegramId }
       });
-      if (createError) return res.status(500).json({ error: createError.message });
+      if (createError && !createError.message.includes('already registered')) return res.status(500).json({ error: createError.message });
     }
     // Логиним пользователя и получаем JWT
     const { data: sessionData, error: signInError } = await supabase.auth.signInWithPassword({
