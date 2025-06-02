@@ -72,9 +72,12 @@ export function useTelegram() {
     if (telegram && telegram.initDataUnsafe?.user) {
       setTg(telegram);
       setUser(telegram.initDataUnsafe.user);
-      // Удаляем signature=... из initData, если вдруг он есть (Telegram WebApp не должен его класть, но на всякий случай)
+      // Удаляем signature из initData надёжно через URLSearchParams
       let cleanInitData = telegram.initData || '';
-      cleanInitData = cleanInitData.replace(/(&?signature=[^&]*)/, '');
+      const params = new URLSearchParams(cleanInitData);
+      params.delete('signature');
+      cleanInitData = params.toString();
+      console.log('cleanInitData:', cleanInitData);
       handleAuth(telegram.initDataUnsafe.user.id, cleanInitData);
       return;
     } else {
