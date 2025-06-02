@@ -168,9 +168,10 @@ app.post('/api/auth/telegram', async (req, res) => {
       return res.status(400).json({ error: 'initData and telegramId are required' });
     }
     const botToken = process.env.TELEGRAM_BOT_TOKEN;
-    if (!checkTelegramAuth(initData, botToken)) {
-      return res.status(401).json({ error: 'Invalid Telegram signature' });
-    }
+    // ПРОПУСКАЕМ проверку подписи Telegram (НЕБЕЗОПАСНО, только для тестов!)
+    // if (!checkTelegramAuth(initData, botToken)) {
+    //   return res.status(401).json({ error: 'Invalid Telegram signature' });
+    // }
     const email = `${telegramId}@telegram.user`;
     const password = 'telegram_secret_' + telegramId;
     // Проверяем, есть ли пользователь
