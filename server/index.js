@@ -128,12 +128,23 @@ app.post('/api/yookassa/webhook', async (req, res) => {
   }
 });
 
-// Проверка подписи Telegram WebApp
+// ================== Telegram WebApp Auth =====================
+//
+// В .env должны быть:
+// SUPABASE_URL=...
+// SUPABASE_SERVICE_ROLE_KEY=...
+// TELEGRAM_BOT_TOKEN=...
+// FRONTEND_URL=...
+// PORT=4000
+// ============================================================
+
 function checkTelegramAuth(initData, botToken) {
-  const params = new URLSearchParams(initData);
+  // initData — это строка, которую вы получили с фронта
+  const params = new URLSearchParams(initData); // не декодировать!
   const hash = params.get('hash');
   params.delete('hash');
 
+  // Собираем data_check_string
   const dataCheckString = Array.from(params)
     .map(([key, value]) => `${key}=${value}`)
     .sort()
@@ -150,19 +161,14 @@ function checkTelegramAuth(initData, botToken) {
   return hmac === hash;
 }
 
-// Эндпоинт для авторизации через Telegram WebApp
 app.post('/api/auth/telegram', async (req, res) => {
   try {
     const { initData, telegramId } = req.body;
-    console.log('--- /api/auth/telegram called ---');
-    console.log('initData (from client):', initData);
-    console.log('telegramId:', telegramId);
     if (!initData || !telegramId) {
       return res.status(400).json({ error: 'initData and telegramId are required' });
     }
     const botToken = process.env.TELEGRAM_BOT_TOKEN;
     if (!checkTelegramAuth(initData, botToken)) {
-      console.log('Invalid Telegram signature!');
       return res.status(401).json({ error: 'Invalid Telegram signature' });
     }
     const email = `${telegramId}@telegram.user`;
