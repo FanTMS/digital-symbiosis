@@ -245,12 +245,12 @@ export default function ChatPage() {
 
   return (
     <div
-      className="flex flex-col min-h-screen max-h-screen w-full bg-gray-50 dark:bg-gray-900 md:max-w-3xl md:mx-auto md:rounded-2xl md:shadow-2xl md:my-6 md:border md:border-gray-200 md:dark:border-gray-800"
+      className="flex flex-col min-h-screen max-h-screen w-full bg-gray-50 md:max-w-3xl md:mx-auto md:rounded-2xl md:shadow-2xl md:my-6 md:border md:border-gray-200"
       style={{ position: 'relative' }}
     >
       {/* Верхний заголовок */}
-      <div className="flex items-center px-4 py-3 border-b bg-white dark:bg-gray-800 sticky top-0 z-10">
-        <button onClick={() => navigate(-1)} className="mr-3 p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700">
+      <div className="flex items-center px-4 py-3 border-b bg-white sticky top-0 z-10">
+        <button onClick={() => navigate(-1)} className="mr-3 p-1 rounded hover:bg-gray-100">
           <ArrowLeft size={22} />
         </button>
         <div className="flex items-center space-x-3 w-full justify-between">
@@ -258,11 +258,11 @@ export default function ChatPage() {
             <img
               src={otherUser?.avatar_url || 'https://images.pexels.com/photos/4926674/pexels-photo-4926674.jpeg?auto=compress&cs=tinysrgb&w=150'}
               alt={otherUser?.name}
-              className="w-10 h-10 rounded-full object-cover border border-gray-200 dark:border-gray-700"
+              className="w-10 h-10 rounded-full object-cover border border-gray-200"
             />
             <div>
-              <div className="font-semibold text-lg text-gray-900 dark:text-white cursor-pointer hover:underline" onClick={() => otherUser?.id && navigate(`/profile/${otherUser.id}`)}>{otherUser?.name}</div>
-              <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center">
+              <div className="font-semibold text-lg text-gray-900 cursor-pointer hover:underline" onClick={() => otherUser?.id && navigate(`/profile/${otherUser.id}`)}>{otherUser?.name}</div>
+              <div className="text-xs text-gray-500 flex items-center">
                 {isOnline ? (
                   <span className="relative flex h-3 w-3 mr-1">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
@@ -287,7 +287,7 @@ export default function ChatPage() {
 
       {/* Сообщения */}
       <div
-        className="flex-1 min-h-0 overflow-y-auto p-4 pb-20 max-w-full"
+        className="flex-1 min-h-0 overflow-y-auto p-4 pb-32 max-w-full chat-messages-container"
         style={{ minHeight: 0 }}
         onScroll={handleScroll}
       >
@@ -302,7 +302,7 @@ export default function ChatPage() {
             if (!(status === 'pending' || status === 'accepted' || status === 'in_progress')) return null;
             return (
               <div key={m.id} className="mb-4 text-center">
-                <div className="inline-block px-4 py-3 rounded-lg bg-yellow-50 dark:bg-yellow-900/30 text-yellow-900 dark:text-yellow-100 font-medium max-w-[90%]">
+                <div className="inline-block px-4 py-3 rounded-lg bg-yellow-50 text-yellow-900 font-medium max-w-[90%]">
                   {m.content.split('\n').map((line: string, i: number) => <div key={i}>{line}</div>)}
                   <button
                     className={`px-4 py-1.5 rounded-lg font-semibold text-white bg-green-600 hover:bg-green-700 disabled:opacity-60`}
@@ -337,7 +337,7 @@ export default function ChatPage() {
           if (m.meta?.type === 'system') {
             return (
               <div key={m.id} className="mb-4 text-center">
-                <div className="inline-block px-4 py-3 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 font-medium max-w-[90%]">
+                <div className="inline-block px-4 py-3 rounded-lg bg-gray-200 text-gray-900 font-medium max-w-[90%]">
                   {m.content}
                 </div>
                 <div className="text-xs text-gray-400 mt-1">{new Date(m.created_at).toLocaleTimeString()}</div>
@@ -351,7 +351,7 @@ export default function ChatPage() {
             if (status !== 'completed_by_provider') return null;
             return (
               <div key={m.id} className="mb-4 text-center">
-                <div className="inline-block px-4 py-3 rounded-lg bg-yellow-50 dark:bg-yellow-900/30 text-yellow-900 dark:text-yellow-100 font-medium max-w-[90%]">
+                <div className="inline-block px-4 py-3 rounded-lg bg-yellow-50 text-yellow-900 font-medium max-w-[90%]">
                   {m.content.split('\n').map((line: string, i: number) => <div key={i}>{line}</div>)}
                   <button
                     className={`px-4 py-1.5 rounded-lg font-semibold text-white bg-green-600 hover:bg-green-700 disabled:opacity-60`}
@@ -461,7 +461,7 @@ export default function ChatPage() {
 
       {/* Поле ввода */}
       <form
-        className="bg-white border-t border-gray-200 p-3 flex items-center gap-2 sticky bottom-0 w-full md:max-w-3xl md:mx-auto md:rounded-b-2xl z-20"
+        className="bg-white border-t border-gray-200 p-3 flex items-center gap-2 w-full md:max-w-3xl md:mx-auto md:rounded-b-2xl z-20 chat-input-bar"
         style={{ paddingBottom: 'env(safe-area-inset-bottom, 0)' }}
         onSubmit={e => { e.preventDefault(); send(); }}
       >
