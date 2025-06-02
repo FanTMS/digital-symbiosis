@@ -186,7 +186,7 @@ app.post('/api/auth/telegram', async (req, res) => {
         user_metadata: { telegram_id: telegramId }
       });
       if (createError) {
-        console.error('Supabase createUser error:', createError);
+        console.error('Supabase createUser error (full):', JSON.stringify(createError, null, 2));
         return res.status(500).json({ error: createError.message || 'Database error creating new user' });
       }
     }
