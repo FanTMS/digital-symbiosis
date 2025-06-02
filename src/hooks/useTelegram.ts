@@ -118,7 +118,14 @@ export function useTelegram() {
         user_id: telegramId
       });
       console.log('[AUTH][PROD] authenticate_telegram result:', { data, error });
-      if (error) throw error;
+      if (error) {
+        console.error('[AUTH][PROD] authenticate_telegram error details:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code
+        });
+      }
       if (!data?.success) {
         throw new Error(data?.message || 'Authentication failed');
       }
