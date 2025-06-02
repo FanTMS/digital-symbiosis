@@ -139,12 +139,12 @@ app.post('/api/yookassa/webhook', async (req, res) => {
 // ============================================================
 
 function checkTelegramAuth(initData, botToken) {
-  // initData — это строка, которую вы получили с фронта
-  const params = new URLSearchParams(initData); // не декодировать!
+  const params = new URLSearchParams(initData);
   const hash = params.get('hash');
   params.delete('hash');
+  // Удаляем signature, если вдруг он есть (на всякий случай)
+  params.delete('signature');
 
-  // Собираем data_check_string
   const dataCheckString = Array.from(params)
     .map(([key, value]) => `${key}=${value}`)
     .sort()
