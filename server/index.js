@@ -142,6 +142,11 @@ function checkTelegramAuth(initData, botToken) {
   const secret = crypto.createHash('sha256').update(botToken).digest();
   const hmac = crypto.createHmac('sha256', secret).update(dataCheckString).digest('hex');
 
+  console.log('initData:', initData);
+  console.log('botToken:', botToken);
+  console.log('dataCheckString:', dataCheckString);
+  console.log('hmac:', hmac, 'hash:', hash);
+
   return hmac === hash;
 }
 
@@ -149,11 +154,15 @@ function checkTelegramAuth(initData, botToken) {
 app.post('/api/auth/telegram', async (req, res) => {
   try {
     const { initData, telegramId } = req.body;
+    console.log('--- /api/auth/telegram called ---');
+    console.log('initData (from client):', initData);
+    console.log('telegramId:', telegramId);
     if (!initData || !telegramId) {
       return res.status(400).json({ error: 'initData and telegramId are required' });
     }
     const botToken = process.env.TELEGRAM_BOT_TOKEN;
     if (!checkTelegramAuth(initData, botToken)) {
+      console.log('Invalid Telegram signature!');
       return res.status(401).json({ error: 'Invalid Telegram signature' });
     }
     const email = `${telegramId}@telegram.user`;
