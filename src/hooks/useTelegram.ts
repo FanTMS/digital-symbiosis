@@ -72,7 +72,11 @@ export function useTelegram() {
     if (telegram && telegram.initDataUnsafe?.user) {
       setTg(telegram);
       setUser(telegram.initDataUnsafe.user);
-      handleAuth(telegram.initDataUnsafe.user.id, telegram.initData || '');
+      // Удаляем signature=... из initData, если вдруг он есть (Telegram WebApp не должен его класть, но на всякий случай)
+      let cleanInitData = telegram.initData || '';
+      cleanInitData = cleanInitData.replace(/(&?signature=[^&]*)/, '');
+      handleAuth(telegram.initDataUnsafe.user.id, cleanInitData);
+      return;
     } else {
       setError(new Error('No user data available'));
     }
