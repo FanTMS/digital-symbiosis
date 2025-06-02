@@ -287,7 +287,7 @@ export default function ChatPage() {
 
       {/* Сообщения */}
       <div
-        className="flex-1 min-h-0 overflow-y-auto p-4 pb-20"
+        className="flex-1 min-h-0 overflow-y-auto p-4 pb-20 max-w-full"
         style={{ minHeight: 0 }}
         onScroll={handleScroll}
       >
@@ -403,8 +403,10 @@ export default function ChatPage() {
           }
           // Обычные сообщения
           return (
-            <div key={m.id} className={`mb-2 ${m.sender_id === user?.id ? 'text-right' : 'text-left'}`}>
-              <div className={`inline-block px-3 py-2 rounded-lg max-w-[80%] break-words ${m.sender_id === user?.id ? 'bg-blue-500 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100'}`}>
+            <div key={m.id} className={`mb-2 ${m.sender_id === user?.id ? 'text-right' : 'text-left'}`}
+              style={{ maxWidth: '100%' }}>
+              <div className={`inline-block px-3 py-2 rounded-lg max-w-[80vw] break-words bg-blue-500 text-white`}
+                style={{ boxSizing: 'border-box', wordBreak: 'break-word' }}>
                 {m.attachments && m.attachments.length > 0 && m.attachments.map((a: any) => {
                   if (a.type === 'image') {
                     return <img key={a.id} src={a.url} alt="attachment" className="max-w-[200px] max-h-[200px] mb-2 rounded" />;
@@ -459,12 +461,13 @@ export default function ChatPage() {
 
       {/* Поле ввода */}
       <form
-        className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 p-3 flex items-center gap-2 sticky bottom-0 w-full md:max-w-3xl md:mx-auto md:rounded-b-2xl z-20"
+        className="bg-white border-t border-gray-200 p-3 flex items-center gap-2 sticky bottom-0 w-full md:max-w-3xl md:mx-auto md:rounded-b-2xl z-20"
+        style={{ paddingBottom: 'env(safe-area-inset-bottom, 0)' }}
         onSubmit={e => { e.preventDefault(); send(); }}
       >
         <button
           type="button"
-          className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
+          className="p-2 rounded-full hover:bg-gray-100"
           onClick={() => fileInputRef.current?.click()}
           disabled={uploading}
           title="Прикрепить файл"
@@ -479,9 +482,10 @@ export default function ChatPage() {
           disabled={uploading}
         />
         <input
-          className="flex-1 border rounded-full px-4 py-2 bg-gray-100 dark:bg-gray-700 focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 outline-none text-base"
+          className="flex-1 border rounded-full px-4 py-2 bg-gray-100 focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 outline-none text-base"
           value={input}
           onChange={e => setInput(e.target.value)}
+          onFocus={() => setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 300)}
           onKeyDown={e => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), send())}
           placeholder="Введите сообщение..."
           autoComplete="off"

@@ -37,7 +37,8 @@ const NavigationBar: React.FC = () => {
       initial={{ y: 100 }}
       animate={{ y: 0 }}
       transition={{ type: "spring", stiffness: 260, damping: 20 }}
-      className="fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg shadow-lg z-10 px-2 py-1 border-t border-gray-200 dark:border-gray-700"
+      className="fixed bottom-0 left-0 right-0 w-full z-50 bg-white backdrop-blur-lg shadow-lg px-2 py-1 border-t border-gray-200"
+      style={{ paddingBottom: 'env(safe-area-inset-bottom, 0)' }}
     >
       <div className="flex justify-around items-center max-w-lg mx-auto">
         {navItems.map((item) => {
@@ -48,7 +49,7 @@ const NavigationBar: React.FC = () => {
               key={item.path}
               onClick={() => navigate(item.path)}
               className={`flex flex-col items-center justify-center py-2 px-3 relative ${
-                isActive ? 'text-primary-500' : 'text-gray-500 dark:text-gray-400'
+                isActive ? 'text-primary-500' : 'text-gray-500'
               }`}
             >
               <motion.div

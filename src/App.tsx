@@ -38,6 +38,12 @@ function App() {
     }
   }, [tg]);
 
+  useEffect(() => {
+    // Принудительно светлая тема
+    document.documentElement.classList.remove('dark');
+    document.body.classList.remove('dark');
+  }, []);
+
   // Показываем загрузку, пока не получим данные пользователя
   if (userLoading) {
     return <LoadingScreen />;
@@ -53,7 +59,7 @@ function App() {
       {/* Фоновый градиент с прозрачностью */}
       <div className="absolute inset-0 bg-gradient-to-br from-cyan-100 via-teal-100 to-blue-100 opacity-15 pointer-events-none z-0"></div>
       {/* Контент приложения */}
-      <div className="relative z-10 flex flex-col min-h-screen text-gray-900 dark:text-gray-100">
+      <div className="relative z-10 flex flex-col min-h-screen text-gray-900">
         <AnimatePresence mode="wait">
           <Routes>
             <Route path="/auth" element={<AuthPage />} />
