@@ -113,7 +113,7 @@ export function useTelegram() {
       }
       // Новый способ: авторизация через backend
       console.log('[AUTH][PROD] Calling backend /api/auth/telegram ...');
-      const response = await fetch('/api/auth/telegram', {
+      const response = await fetch('https://digital-symbiosis.onrender.com/api/auth/telegram', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
