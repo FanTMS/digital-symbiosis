@@ -81,6 +81,7 @@ export function useTelegram() {
   // Функция для авторизации пользователя в Supabase
   const handleAuth = async (telegramId: number, initData: string) => {
     try {
+      console.log('[AUTH] handleAuth called with:', { telegramId, initData });
       // В режиме разработки пропускаем проверку подписи
       if (process.env.NODE_ENV === 'development') {
         const { data: existingUser, error: userError } = await supabase
@@ -88,11 +89,10 @@ export function useTelegram() {
           .select('*')
           .eq('id', telegramId)
           .single();
-
+        console.log('[AUTH][DEV] existingUser:', existingUser, 'userError:', userError);
         if (userError && userError.code !== 'PGRST116') {
           throw userError;
         }
-
         if (!existingUser) {
           const { error: createError } = await supabase
             .from('users')
@@ -104,29 +104,28 @@ export function useTelegram() {
               updated_at: new Date().toISOString(),
               avatar_url: DEV_USER.photo_url
             });
-
+          console.log('[AUTH][DEV] createError:', createError);
           if (createError) {
             throw createError;
           }
         }
         return;
       }
-
       // Для production используем стандартную авторизацию
+      console.log('[AUTH][PROD] Calling authenticate_telegram RPC...');
       const { data, error } = await supabase.rpc('authenticate_telegram', {
         init_data: initData,
         user_id: telegramId
       });
-
+      console.log('[AUTH][PROD] authenticate_telegram result:', { data, error });
       if (error) throw error;
-
       if (!data?.success) {
         throw new Error(data?.message || 'Authentication failed');
       }
-
       // После успешной авторизации — создаём/обновляем профиль пользователя с валидными полями
       if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
         const tgUser = tg.initDataUnsafe.user;
+        console.log('[AUTH][PROD] Upserting user profile:', tgUser);
         const { error: upsertError } = await supabase.from('users').upsert({
           id: tgUser.id,
           name: [tgUser.first_name, tgUser.last_name].filter(Boolean).join(' '),
@@ -139,17 +138,17 @@ export function useTelegram() {
           credits: 0,
           completed_tasks: 0
         }, { onConflict: 'id' });
+        console.log('[AUTH][PROD] upsertError:', upsertError);
         if (upsertError) throw upsertError;
       }
-
+      console.log('[AUTH][PROD] Setting session with session_id:', data.session_id);
       const { data: session, error: sessionError } = await supabase.auth.setSession({
         access_token: data.session_id,
         refresh_token: data.session_id
       });
-
+      console.log('[AUTH][PROD] setSession result:', { session, sessionError });
       if (sessionError) throw sessionError;
       if (!session) throw new Error('Failed to set session');
-
     } catch (err) {
       const error = err instanceof Error ? err : new Error('Authentication failed');
       console.error('Auth error:', error);
