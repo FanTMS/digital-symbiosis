@@ -4,6 +4,7 @@ import bodyParser from 'body-parser';
 import axios from 'axios';
 import dotenv from 'dotenv';
 import { createClient } from '@supabase/supabase-js';
+import crypto from 'crypto';
 
 dotenv.config();
 
@@ -124,6 +125,62 @@ app.post('/api/yookassa/webhook', async (req, res) => {
   } catch (e) {
     console.error(e);
     res.status(500).send('error');
+  }
+});
+
+// Проверка подписи Telegram WebApp
+function checkTelegramAuth(initData, botToken) {
+  const params = new URLSearchParams(initData);
+  const hash = params.get('hash');
+  params.delete('hash');
+
+  const dataCheckString = Array.from(params)
+    .map(([key, value]) => `${key}=${value}`)
+    .sort()
+    .join('\n');
+
+  const secret = crypto.createHash('sha256').update(botToken).digest();
+  const hmac = crypto.createHmac('sha256', secret).update(dataCheckString).digest('hex');
+
+  return hmac === hash;
+}
+
+// Эндпоинт для авторизации через Telegram WebApp
+app.post('/api/auth/telegram', async (req, res) => {
+  try {
+    const { initData, telegramId } = req.body;
+    if (!initData || !telegramId) {
+      return res.status(400).json({ error: 'initData and telegramId are required' });
+    }
+    const botToken = process.env.TELEGRAM_BOT_TOKEN;
+    if (!checkTelegramAuth(initData, botToken)) {
+      return res.status(401).json({ error: 'Invalid Telegram signature' });
+    }
+    const email = `${telegramId}@telegram.user`;
+    const password = 'telegram_secret_' + telegramId;
+    // Проверяем, есть ли пользователь
+    let { data: user, error } = await supabase.auth.admin.getUserByEmail(email);
+    if (!user) {
+      // Если нет — создаём пользователя
+      const { data: newUser, error: createError } = await supabase.auth.admin.createUser({
+        email,
+        password,
+        email_confirm: true,
+        user_metadata: { telegram_id: telegramId }
+      });
+      if (createError) return res.status(500).json({ error: createError.message });
+    }
+    // Логиним пользователя и получаем JWT
+    const { data: sessionData, error: signInError } = await supabase.auth.signInWithPassword({
+      email,
+      password
+    });
+    if (signInError) return res.status(500).json({ error: signInError.message });
+    // Возвращаем JWT на фронт
+    return res.json({ access_token: sessionData.session.access_token, refresh_token: sessionData.session.refresh_token });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: 'Ошибка авторизации через Telegram' });
   }
 });
 

@@ -111,47 +111,27 @@ export function useTelegram() {
         }
         return;
       }
-      // Для production используем стандартную авторизацию
-      console.log('[AUTH][PROD] Calling authenticate_telegram RPC...');
-      const { data, error } = await supabase.rpc('authenticate_telegram', {
-        init_data: initData,
-        user_id: telegramId
+      // Новый способ: авторизация через backend
+      console.log('[AUTH][PROD] Calling backend /api/auth/telegram ...');
+      const response = await fetch('/api/auth/telegram', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          initData,
+          telegramId
+        })
       });
-      console.log('[AUTH][PROD] authenticate_telegram result:', { data, error });
-      if (error) {
-        console.error('[AUTH][PROD] authenticate_telegram error details:', {
-          message: error.message,
-          details: error.details,
-          hint: error.hint,
-          code: error.code
-        });
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.error || 'Auth backend error');
       }
-      if (!data?.success) {
-        throw new Error(data?.message || 'Authentication failed');
+      const { access_token, refresh_token } = result;
+      if (!access_token || !refresh_token) {
+        throw new Error('No tokens from backend');
       }
-      // После успешной авторизации — создаём/обновляем профиль пользователя с валидными полями
-      if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
-        const tgUser = tg.initDataUnsafe.user;
-        console.log('[AUTH][PROD] Upserting user profile:', tgUser);
-        const { error: upsertError } = await supabase.from('users').upsert({
-          id: tgUser.id,
-          name: [tgUser.first_name, tgUser.last_name].filter(Boolean).join(' '),
-          username: tgUser.username || `user_${tgUser.id}`,
-          avatar_url: tgUser.photo_url || null,
-          joined_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-          level: 'ПОЛЬЗОВАТЕЛЬ',
-          rating: 0,
-          credits: 0,
-          completed_tasks: 0
-        }, { onConflict: 'id' });
-        console.log('[AUTH][PROD] upsertError:', upsertError);
-        if (upsertError) throw upsertError;
-      }
-      console.log('[AUTH][PROD] Setting session with session_id:', data.session_id);
       const { data: session, error: sessionError } = await supabase.auth.setSession({
-        access_token: data.session_id,
-        refresh_token: data.session_id
+        access_token,
+        refresh_token
       });
       console.log('[AUTH][PROD] setSession result:', { session, sessionError });
       if (sessionError) throw sessionError;
