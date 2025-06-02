@@ -201,14 +201,14 @@ const AchievementsPage: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
-              className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-card"
+              className="bg-white rounded-lg p-4 shadow-card"
             >
               <div className="flex items-center">
                 <div className={`p-3 rounded-lg ${category.bgColor} ${category.color}`}>
                   <category.icon size={24} />
                 </div>
                 <div className="ml-4">
-                  <h3 className="text-sm text-gray-500 dark:text-gray-400">{category.title}</h3>
+                  <h3 className="text-sm text-gray-500">{category.title}</h3>
                   <p className="text-xl font-bold">{category.value}</p>
                 </div>
               </div>
@@ -219,12 +219,12 @@ const AchievementsPage: React.FC = () => {
         {/* Progress to Next Level */}
         <div className="mb-6">
           <h2 className="text-lg font-semibold mb-3">Прогресс уровня</h2>
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-card">
+          <div className="bg-white rounded-lg p-4 shadow-card">
             <div className="flex justify-between items-center mb-2">
-              <span className="text-sm text-gray-500 dark:text-gray-400">До следующего уровня</span>
+              <span className="text-sm text-gray-500">До следующего уровня</span>
               <span className="text-sm font-medium">{Math.round(progress.nextLevelProgress * 100)}%</span>
             </div>
-            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+            <div className="w-full bg-gray-200 rounded-full h-2">
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${progress.nextLevelProgress * 100}%` }}
@@ -240,7 +240,7 @@ const AchievementsPage: React.FC = () => {
         {loading ? (
           <div className="space-y-3">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="bg-gray-100 dark:bg-gray-800 animate-pulse h-20 rounded-lg" />
+              <div key={i} className="bg-gray-100 animate-pulse h-20 rounded-lg" />
             ))}
           </div>
         ) : badges.length > 0 ? (
@@ -276,21 +276,21 @@ const AchievementsPage: React.FC = () => {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-card flex items-center"
+                  className="bg-white rounded-lg p-4 shadow-card flex items-center"
                 >
-                  <div className={`p-2 rounded-lg bg-${badge.color}-100 dark:bg-${badge.color}-900/30`}>
+                  <div className={`p-2 rounded-lg bg-${badge.color}-100`}>
                     {BADGE_ICONS[badge.name] || <Award size={32} />}
                   </div>
                   <div className="ml-4 flex-1">
                     <h3 className="font-medium">{badge.name}</h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">{badge.description}</p>
+                    <p className="text-sm text-gray-500">{badge.description}</p>
                     {!received && criteria && (
                       <div className="mt-2">
                         <div className="flex justify-between items-center mb-1">
                           <span className="text-xs text-gray-400">Прогресс: {progressLabel}</span>
                           <span className="text-xs text-gray-400">{Math.round(progressValue * 100)}%</span>
                         </div>
-                        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                        <div className="w-full bg-gray-200 rounded-full h-2">
                           <motion.div
                             initial={{ width: 0 }}
                             animate={{ width: `${progressValue * 100}%` }}
@@ -320,7 +320,7 @@ const AchievementsPage: React.FC = () => {
           <div className="flex flex-col items-center justify-center py-8 text-center text-gray-400">
             <div className="text-4xl mb-2">🏆</div>
             <h3 className="text-lg font-medium mb-1">Нет достижений</h3>
-            <p className="text-gray-500 dark:text-gray-400 mb-4 max-w-xs">
+            <p className="text-gray-500 mb-4 max-w-xs">
               Вы ещё не получили ни одного достижения. Выполняйте задания, получайте отзывы и приглашайте друзей, чтобы зарабатывать бейджи!
             </p>
           </div>

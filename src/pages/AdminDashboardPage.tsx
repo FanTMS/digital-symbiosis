@@ -172,7 +172,7 @@ const AdminDashboardPage: React.FC = () => {
         {TABS.map(tab => (
           <button
             key={tab.key}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition font-medium whitespace-nowrap ${activeTab === tab.key ? 'bg-primary-500 text-white shadow' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-primary-100 dark:hover:bg-primary-900/30'}`}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition font-medium whitespace-nowrap ${activeTab === tab.key ? 'bg-primary-500 text-white shadow' : 'bg-gray-100 text-gray-700 hover:bg-primary-100'}`}
             onClick={() => setActiveTab(tab.key)}
           >
             <tab.icon size={20} /> {tab.label}
@@ -195,22 +195,22 @@ const AdminDashboardPage: React.FC = () => {
                 <div>Загрузка...</div>
               ) : (
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-                  <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-6 text-center flex flex-col items-center">
+                  <div className="bg-white rounded-xl shadow p-6 text-center flex flex-col items-center">
                     <Users className="text-primary-500 mb-2" size={32} />
                     <div className="text-2xl font-bold">{stats.usersCount}</div>
                     <div className="text-gray-500">Пользователей</div>
                   </div>
-                  <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-6 text-center flex flex-col items-center">
+                  <div className="bg-white rounded-xl shadow p-6 text-center flex flex-col items-center">
                     <Briefcase className="text-accent-500 mb-2" size={32} />
                     <div className="text-2xl font-bold">{stats.servicesCount}</div>
                     <div className="text-gray-500">Услуг</div>
                   </div>
-                  <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-6 text-center flex flex-col items-center">
+                  <div className="bg-white rounded-xl shadow p-6 text-center flex flex-col items-center">
                     <BarChart2 className="text-green-500 mb-2" size={32} />
                     <div className="text-2xl font-bold">{stats.ordersCount}</div>
                     <div className="text-gray-500">Заказов</div>
                   </div>
-                  <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-6 text-center flex flex-col items-center">
+                  <div className="bg-white rounded-xl shadow p-6 text-center flex flex-col items-center">
                     <AlertTriangle className="text-red-500 mb-2" size={32} />
                     <div className="text-2xl font-bold">{stats.complaintsCount}</div>
                     <div className="text-gray-500">Жалоб</div>
@@ -218,7 +218,7 @@ const AdminDashboardPage: React.FC = () => {
                 </div>
               )}
               {/* Заготовка для графика */}
-              <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-6 mt-4 min-h-[220px] flex items-center justify-center text-gray-400">
+              <div className="bg-white rounded-xl shadow p-6 mt-4 min-h-[220px] flex items-center justify-center text-gray-400">
                 {/* Здесь будет график (например, Chart.js/ApexCharts) */}
                 <span>График активности пользователей (скоро)</span>
               </div>
@@ -231,7 +231,7 @@ const AdminDashboardPage: React.FC = () => {
                 <div className="relative w-full md:w-72">
                   <input
                     type="text"
-                    className="w-full pl-10 pr-10 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="w-full pl-10 pr-10 py-2 rounded-lg border border-gray-300 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500"
                     placeholder="Поиск по имени, username или ID..."
                     value={search}
                     onChange={e => setSearch(e.target.value)}
@@ -246,7 +246,7 @@ const AdminDashboardPage: React.FC = () => {
                 <div>Загрузка...</div>
               ) : (
                 <div className="overflow-x-auto rounded-xl shadow">
-                  <table className="min-w-full bg-white dark:bg-gray-800">
+                  <table className="min-w-full bg-white">
                     <thead>
                       <tr>
                         <th className="p-2 text-left">ID</th>
@@ -260,7 +260,7 @@ const AdminDashboardPage: React.FC = () => {
                     </thead>
                     <tbody>
                       {filteredUsers.map(u => (
-                        <tr key={u.id} className="border-b hover:bg-primary-50/30 dark:hover:bg-primary-900/10 transition">
+                        <tr key={u.id} className="border-b hover:bg-primary-50/30 transition">
                           <td className="p-2">{u.id}</td>
                           <td className="p-2">{u.name}</td>
                           <td className="p-2">{u.username}</td>
@@ -281,8 +281,8 @@ const AdminDashboardPage: React.FC = () => {
               {/* Модалка пользователя */}
               {showUserModal && selectedUser && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-                  <div className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl max-w-md w-full mx-4 p-6 relative">
-                    <button className="absolute top-3 right-3 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 text-xl font-bold" onClick={() => setShowUserModal(false)} aria-label="Закрыть">×</button>
+                  <div className="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4 p-6 relative">
+                    <button className="absolute top-3 right-3 text-gray-400 hover:text-gray-700 text-xl font-bold" onClick={() => setShowUserModal(false)} aria-label="Закрыть">×</button>
                     <h3 className="text-xl font-bold mb-2 flex items-center gap-2"><User size={20} />Профиль пользователя</h3>
                     <div className="mb-2"><b>ID:</b> {selectedUser.id}</div>
                     <div className="mb-2"><b>Имя:</b> {selectedUser.name}</div>
@@ -310,15 +310,15 @@ const AdminDashboardPage: React.FC = () => {
                     }}>
                       <div>
                         <label className="block text-sm font-medium mb-1">Кредиты</label>
-                        <input name="credits" type="number" defaultValue={selectedUser.credits ?? 0} className="w-full rounded border border-gray-300 dark:border-gray-700 px-3 py-2 bg-gray-50 dark:bg-gray-800" />
+                        <input name="credits" type="number" defaultValue={selectedUser.credits ?? 0} className="w-full rounded border border-gray-300 px-3 py-2 bg-gray-50" />
                       </div>
                       <div>
                         <label className="block text-sm font-medium mb-1">Уровень</label>
-                        <input name="level" type="text" defaultValue={selectedUser.level ?? ''} className="w-full rounded border border-gray-300 dark:border-gray-700 px-3 py-2 bg-gray-50 dark:bg-gray-800" />
+                        <input name="level" type="text" defaultValue={selectedUser.level ?? ''} className="w-full rounded border border-gray-300 px-3 py-2 bg-gray-50" />
                       </div>
                       <div>
                         <label className="block text-sm font-medium mb-1">Выполнено заданий</label>
-                        <input name="completed_tasks" type="number" defaultValue={selectedUser.completed_tasks ?? 0} className="w-full rounded border border-gray-300 dark:border-gray-700 px-3 py-2 bg-gray-50 dark:bg-gray-800" />
+                        <input name="completed_tasks" type="number" defaultValue={selectedUser.completed_tasks ?? 0} className="w-full rounded border border-gray-300 px-3 py-2 bg-gray-50" />
                       </div>
                       <div className="flex gap-2 mt-4">
                         <Button size="sm" variant="outline" type="button" onClick={() => setShowUserModal(false)}>Закрыть</Button>
@@ -340,12 +340,12 @@ const AdminDashboardPage: React.FC = () => {
               ) : (
                 <div className="space-y-4">
                   {complaints.map((c) => (
-                    <div key={c.id} className="border rounded-lg p-4 bg-white dark:bg-gray-800 shadow">
+                    <div key={c.id} className="border rounded-lg p-4 bg-white shadow">
                       <div className="mb-2 text-sm text-gray-500">{new Date(c.created_at).toLocaleString()}</div>
                       <div className="mb-2"><span className="font-semibold">От:</span> {c.from_user_id} <span className="ml-2 font-semibold">На:</span> {c.to_user_id}</div>
                       <div className="mb-2"><span className="font-semibold">Чат:</span> {c.chat_id}</div>
                       <div className="mb-2"><span className="font-semibold">Текст жалобы:</span></div>
-                      <div className="bg-gray-100 dark:bg-gray-700 rounded p-2 text-sm">{c.message}</div>
+                      <div className="bg-gray-100 rounded p-2 text-sm">{c.message}</div>
                     </div>
                   ))}
                 </div>
@@ -360,7 +360,7 @@ const AdminDashboardPage: React.FC = () => {
                   <div className="relative w-full md:w-72">
                     <input
                       type="text"
-                      className="w-full pl-10 pr-10 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full pl-10 pr-10 py-2 rounded-lg border border-gray-300 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="Поиск по названию, описанию, навыкам..."
                       value={serviceSearch}
                       onChange={e => setServiceSearch(e.target.value)}
@@ -371,7 +371,7 @@ const AdminDashboardPage: React.FC = () => {
                     )}
                   </div>
                   <select
-                    className="rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500"
                     value={selectedCategory}
                     onChange={e => setSelectedCategory(e.target.value)}
                   >
@@ -387,7 +387,7 @@ const AdminDashboardPage: React.FC = () => {
                 <div className="text-gray-400 text-center py-12">Нет услуг</div>
               ) : (
                 <div className="overflow-x-auto rounded-xl shadow">
-                  <table className="min-w-full bg-white dark:bg-gray-800">
+                  <table className="min-w-full bg-white">
                     <thead>
                       <tr>
                         <th className="p-2 text-left">ID</th>
@@ -401,7 +401,7 @@ const AdminDashboardPage: React.FC = () => {
                     </thead>
                     <tbody>
                       {filteredServices.map(s => (
-                        <tr key={s.id} className="border-b hover:bg-primary-50/30 dark:hover:bg-primary-900/10 transition">
+                        <tr key={s.id} className="border-b hover:bg-primary-50/30 transition">
                           <td className="p-2">{s.id}</td>
                           <td className="p-2">{s.title}</td>
                           <td className="p-2">{serviceCategories.find(c => c.id === s.category)?.label || s.category}</td>
@@ -421,8 +421,8 @@ const AdminDashboardPage: React.FC = () => {
               {/* Модалка услуги */}
               {showServiceModal && selectedService && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-                  <div className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl max-w-md w-full mx-4 p-6 relative">
-                    <button className="absolute top-3 right-3 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 text-xl font-bold" onClick={() => setShowServiceModal(false)} aria-label="Закрыть">×</button>
+                  <div className="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4 p-6 relative">
+                    <button className="absolute top-3 right-3 text-gray-400 hover:text-gray-700 text-xl font-bold" onClick={() => setShowServiceModal(false)} aria-label="Закрыть">×</button>
                     <h3 className="text-xl font-bold mb-2 flex items-center gap-2"><Briefcase size={20} />Услуга</h3>
                     <div className="mb-2"><b>ID:</b> {selectedService.id}</div>
                     <div className="mb-2"><b>Название:</b> {selectedService.title}</div>
@@ -452,7 +452,7 @@ const AdminDashboardPage: React.FC = () => {
                 <div className="text-gray-400 text-center py-12">Архив пуст</div>
               ) : (
                 <div className="overflow-x-auto rounded-xl shadow">
-                  <table className="min-w-full bg-white dark:bg-gray-800">
+                  <table className="min-w-full bg-white">
                     <thead>
                       <tr>
                         <th className="p-2 text-left">ID</th>
@@ -466,7 +466,7 @@ const AdminDashboardPage: React.FC = () => {
                     </thead>
                     <tbody>
                       {archivedServices.map(s => (
-                        <tr key={s.id} className="border-b hover:bg-primary-50/30 dark:hover:bg-primary-900/10 transition">
+                        <tr key={s.id} className="border-b hover:bg-primary-50/30 transition">
                           <td className="p-2">{s.id}</td>
                           <td className="p-2">{s.title}</td>
                           <td className="p-2">{serviceCategories.find(c => c.id === s.category)?.label || s.category}</td>

@@ -22,13 +22,13 @@ const Button: React.FC<ButtonProps> = ({
   disabled,
   ...props
 }) => {
-  const baseStyles = 'inline-flex items-center justify-center rounded-lg font-medium transition-all focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-gray-900';
+  const baseStyles = 'inline-flex items-center justify-center rounded-lg font-medium transition-all focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2';
   
   const variantStyles = {
     primary: 'bg-gradient-to-r from-primary-500 to-primary-600 text-white hover:shadow-lg hover:shadow-primary-500/25 active:shadow-none disabled:from-primary-300 disabled:to-primary-400',
     secondary: 'bg-gradient-to-r from-secondary-500 to-secondary-600 text-white hover:shadow-lg hover:shadow-secondary-500/25 active:shadow-none disabled:from-secondary-300 disabled:to-secondary-400',
-    outline: 'border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 active:bg-gray-100 dark:active:bg-gray-600',
-    ghost: 'bg-transparent text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 active:bg-gray-200 dark:active:bg-gray-600',
+    outline: 'border border-gray-300 bg-white text-gray-800 hover:bg-gray-50 active:bg-gray-100',
+    ghost: 'bg-transparent text-gray-800 hover:bg-gray-100 active:bg-gray-200',
     danger: 'bg-gradient-to-r from-error-500 to-error-600 text-white hover:shadow-lg hover:shadow-error-500/25 active:shadow-none disabled:from-error-300 disabled:to-error-400',
     success: 'bg-gradient-to-r from-success-500 to-success-600 text-white hover:shadow-lg hover:shadow-success-500/25 active:shadow-none disabled:from-success-300 disabled:to-success-400',
   };

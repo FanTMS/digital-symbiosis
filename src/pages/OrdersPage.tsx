@@ -40,17 +40,17 @@ const OrdersPage: React.FC = () => {
   const getOrderStatusInfo = (status: string) => {
     switch (status) {
       case 'pending':
-        return { icon: Clock, color: 'text-yellow-500', bgColor: 'bg-yellow-100 dark:bg-yellow-900/30', label: 'Ожидает' };
+        return { icon: Clock, color: 'text-yellow-500', bgColor: 'bg-yellow-100', label: 'Ожидает' };
       case 'accepted':
-        return { icon: AlertCircle, color: 'text-blue-500', bgColor: 'bg-blue-100 dark:bg-blue-900/30', label: 'Выполняется' };
+        return { icon: AlertCircle, color: 'text-blue-500', bgColor: 'bg-blue-100', label: 'Выполняется' };
       case 'in_progress':
-        return { icon: AlertCircle, color: 'text-blue-500', bgColor: 'bg-blue-100 dark:bg-blue-900/30', label: 'В процессе' };
+        return { icon: AlertCircle, color: 'text-blue-500', bgColor: 'bg-blue-100', label: 'В процессе' };
       case 'completed':
-        return { icon: CheckCircle, color: 'text-green-500', bgColor: 'bg-green-100 dark:bg-green-900/30', label: 'Завершен' };
+        return { icon: CheckCircle, color: 'text-green-500', bgColor: 'bg-green-100', label: 'Завершен' };
       case 'cancelled':
-        return { icon: XCircle, color: 'text-red-500', bgColor: 'bg-red-100 dark:bg-red-900/30', label: 'Отклонено' };
+        return { icon: XCircle, color: 'text-red-500', bgColor: 'bg-red-100', label: 'Отклонено' };
       default:
-        return { icon: Clock, color: 'text-gray-500', bgColor: 'bg-gray-100 dark:bg-gray-900/30', label: 'Неизвестно' };
+        return { icon: Clock, color: 'text-gray-500', bgColor: 'bg-gray-100', label: 'Неизвестно' };
     }
   };
   
@@ -97,12 +97,12 @@ const OrdersPage: React.FC = () => {
         <h1 className="text-2xl font-bold mb-4">Мои заказы</h1>
         
         {/* Tabs */}
-        <div className="flex mb-4 bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
+        <div className="flex mb-4 bg-gray-100 rounded-lg p-1">
           <button
             className={`flex-1 py-2 rounded-md text-center ${
               activeTab === 'client'
-                ? 'bg-white dark:bg-gray-700 text-primary-500 shadow-sm'
-                : 'text-gray-600 dark:text-gray-400'
+                ? 'bg-white text-primary-500 shadow-sm'
+                : 'text-gray-600'
             }`}
             onClick={() => setActiveTab('client')}
           >
@@ -111,8 +111,8 @@ const OrdersPage: React.FC = () => {
           <button
             className={`flex-1 py-2 rounded-md text-center ${
               activeTab === 'provider'
-                ? 'bg-white dark:bg-gray-700 text-primary-500 shadow-sm'
-                : 'text-gray-600 dark:text-gray-400'
+                ? 'bg-white text-primary-500 shadow-sm'
+                : 'text-gray-600'
             }`}
             onClick={() => setActiveTab('provider')}
           >
@@ -132,7 +132,7 @@ const OrdersPage: React.FC = () => {
             {isLoading ? (
               <div className="space-y-3">
                 {[1, 2, 3].map((i) => (
-                  <div key={i} className="bg-gray-100 dark:bg-gray-800 animate-pulse h-32 rounded-lg"></div>
+                  <div key={i} className="bg-gray-100 animate-pulse h-32 rounded-lg"></div>
                 ))}
               </div>
             ) : userOrders.length > 0 ? (
@@ -157,29 +157,29 @@ const OrdersPage: React.FC = () => {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 10 }}
-                        className="bg-white dark:bg-gray-800 rounded-lg shadow-card overflow-hidden"
+                        className="bg-white rounded-lg shadow-card overflow-hidden"
                       >
                         <div className="p-4">
                           <div className="flex justify-between items-start mb-2">
-                            <h3 className="font-medium text-gray-900 dark:text-white">{service?.title}</h3>
+                            <h3 className="font-medium text-gray-900">{service?.title}</h3>
                             <div className={`flex items-center px-2 py-1 rounded-full text-xs ${statusInfo.bgColor} ${statusInfo.color}`}>
                               <StatusIcon size={12} className="mr-1" />
                               {statusInfo.label}
                             </div>
                           </div>
-                          <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-3">
+                          <div className="flex items-center text-sm text-gray-500 mb-3">
                             <Clock size={14} className="mr-1" />
                             <span>{formatDate(new Date(order.created_at))}</span>
                           </div>
                           <div className="flex justify-between items-center mb-3">
                             <div>
-                              <div className="text-xs text-gray-500 dark:text-gray-400">
+                              <div className="text-xs text-gray-500">
                                 {activeTab === 'client' ? 'Исполнитель' : 'Заказчик'}
                               </div>
                               <div className="font-medium cursor-pointer text-primary-600 hover:underline" onClick={() => otherUser?.id && navigate(`/profile/${otherUser.id}`)}>{otherUser?.name}</div>
                             </div>
                             <div className="text-right">
-                              <div className="text-xs text-gray-500 dark:text-gray-400">Стоимость</div>
+                              <div className="text-xs text-gray-500">Стоимость</div>
                               <div className="font-medium text-accent-500">{order.price} кр.</div>
                             </div>
                           </div>
@@ -223,7 +223,7 @@ const OrdersPage: React.FC = () => {
               <div className="flex flex-col items-center justify-center py-8 text-center text-gray-400">
                 <div className="text-4xl mb-2">{activeTab === 'client' ? '' : '🧑‍💼'}</div>
                 <h3 className="text-lg font-medium mb-1">{activeTab === 'client' ? 'Нет заказов как клиент' : 'Нет заказов как исполнитель'}</h3>
-                <p className="text-gray-500 dark:text-gray-400 mb-4 max-w-xs">
+                <p className="text-gray-500 mb-4 max-w-xs">
                   {activeTab === 'client'
                     ? 'Вы ещё не сделали ни одного заказа. Найдите услугу и оформите первый заказ!'
                     : 'У вас пока нет заказов как исполнитель. Ожидайте новых заявок!'}

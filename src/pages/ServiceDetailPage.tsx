@@ -206,11 +206,11 @@ const ServiceDetailPage: React.FC = () => {
       <div className="px-4 py-6 min-h-screen">
         <div className="flex items-center mb-4">
           <ChevronLeft size={20} onClick={() => navigate('/services')} className="mr-2" />
-          <div className="bg-gray-200 dark:bg-gray-700 h-6 w-48 rounded animate-pulse"></div>
+          <div className="bg-gray-200 h-6 w-48 rounded animate-pulse"></div>
         </div>
-        <div className="bg-gray-200 dark:bg-gray-700 h-40 w-full rounded animate-pulse mb-4"></div>
-        <div className="bg-gray-200 dark:bg-gray-700 h-20 w-full rounded animate-pulse mb-4"></div>
-        <div className="bg-gray-200 dark:bg-gray-700 h-40 w-full rounded animate-pulse"></div>
+        <div className="bg-gray-200 h-40 w-full rounded animate-pulse mb-4"></div>
+        <div className="bg-gray-200 h-20 w-full rounded animate-pulse mb-4"></div>
+        <div className="bg-gray-200 h-40 w-full rounded animate-pulse"></div>
       </div>
     );
   }
@@ -219,7 +219,7 @@ const ServiceDetailPage: React.FC = () => {
     return (
       <div className="px-4 py-6 flex flex-col items-center justify-center min-h-screen">
         <h2 className="text-xl font-semibold mb-2">Услуга не найдена</h2>
-        <p className="text-gray-600 dark:text-gray-400 mb-4 text-center">
+        <p className="text-gray-600 mb-4 text-center">
           Запрашиваемая услуга не существует или была удалена
         </p>
         <Button onClick={() => navigate('/services')}>Вернуться к списку услуг</Button>
@@ -237,7 +237,7 @@ const ServiceDetailPage: React.FC = () => {
           className="mb-4"
         >
           <div className="flex items-center mb-1">
-            <span className="inline-flex items-center text-xs font-semibold bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 py-1 px-3 rounded-full shadow-sm">
+            <span className="inline-flex items-center text-xs font-semibold bg-blue-100 text-blue-800 py-1 px-3 rounded-full shadow-sm">
               <Award size={14} className="mr-1" />
               {getCategoryName(service.category)}
             </span>
@@ -255,14 +255,14 @@ const ServiceDetailPage: React.FC = () => {
               <button
                 onClick={handleToggleFavorite}
                 disabled={favoriteLoading}
-                className={`ml-2 p-1 rounded-full hover:bg-yellow-100 dark:hover:bg-yellow-900 transition ${isFavorite ? 'text-yellow-400' : 'text-gray-300'}`}
+                className={`ml-2 p-1 rounded-full hover:bg-yellow-100 transition ${isFavorite ? 'text-yellow-400' : 'text-gray-300'}`}
                 aria-label={isFavorite ? 'Удалить из избранного' : 'Добавить в избранное'}
               >
                 <StarIcon fill={isFavorite ? '#facc15' : 'none'} />
               </button>
             )}
           </h1>
-          <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
+          <div className="flex items-center text-sm text-gray-500">
             <Clock size={14} className="mr-1" />
             <span>Опубликовано {formatDate(new Date(service.created_at))}</span>
           </div>
@@ -273,7 +273,7 @@ const ServiceDetailPage: React.FC = () => {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-xl mb-6 flex items-center gap-4"
+          className="bg-white p-5 rounded-2xl shadow-xl mb-6 flex items-center gap-4"
         >
           <div className="relative">
             <img
@@ -283,15 +283,15 @@ const ServiceDetailPage: React.FC = () => {
             />
           </div>
           <div className="flex-1">
-            <h3 className="font-bold text-lg text-gray-900 dark:text-white flex items-center gap-2">
+            <h3 className="font-bold text-lg text-gray-900 flex items-center gap-2">
               {provider.name}
-              {provider.role === 'admin' && <span className="ml-1 text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded-full">админ</span>}
+              {provider.role === 'admin' && <span className="ml-1 text-xs bg-yellow-100 px-2 py-0.5 rounded-full">админ</span>}
             </h3>
             <div className="flex items-center text-sm mt-1">
               <Star size={14} className="text-yellow-500 fill-yellow-500 mr-1" />
               <span>{provider.rating !== null ? provider.rating.toFixed(1) : '—'}</span>
               <span className="mx-1 text-gray-400">•</span>
-              <span className="text-gray-500 dark:text-gray-400">{provider.completed_tasks ?? 0} заданий</span>
+              <span className="text-gray-500">{provider.completed_tasks ?? 0} заданий</span>
             </div>
           </div>
           <Button
@@ -309,10 +309,10 @@ const ServiceDetailPage: React.FC = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="mb-6 bg-white dark:bg-gray-800 p-5 rounded-2xl shadow"
+          className="mb-6 bg-white p-5 rounded-2xl shadow"
         >
           <h2 className="text-lg font-semibold mb-2">Описание услуги</h2>
-          <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-4 text-base">
+          <p className="text-gray-700 leading-relaxed mb-4 text-base">
             {service.description}
           </p>
           <div className="mb-2">
@@ -321,7 +321,7 @@ const ServiceDetailPage: React.FC = () => {
               {(service.skills ?? []).map((skill: string, index: number) => (
                 <span 
                   key={index}
-                  className="inline-flex items-center bg-blue-50 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-3 py-1 rounded-full text-xs font-semibold shadow-sm gap-1"
+                  className="inline-flex items-center bg-blue-50 text-blue-800 px-3 py-1 rounded-full text-xs font-semibold shadow-sm gap-1"
                 >
                   <Award size={12} /> {skill}
                 </span>
@@ -335,11 +335,11 @@ const ServiceDetailPage: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="fixed bottom-16 left-0 right-0 bg-white dark:bg-gray-800 p-5 shadow-2xl border-t border-gray-200 dark:border-gray-700 z-10 rounded-t-2xl"
+          className="fixed bottom-16 left-0 right-0 bg-white p-5 shadow-2xl border-t border-gray-200 z-10 rounded-t-2xl"
         >
           <div className="flex items-center justify-between mb-3">
             <div>
-              <span className="text-sm text-gray-500 dark:text-gray-400">Стоимость</span>
+              <span className="text-sm text-gray-500">Стоимость</span>
               <div className="flex items-center gap-2 text-2xl font-extrabold text-orange-500">
                 <span>{service.price}</span>
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#FDBA74" /><text x="12" y="16" textAnchor="middle" fontSize="12" fill="#fff" fontWeight="bold">₽</text></svg>
@@ -347,7 +347,7 @@ const ServiceDetailPage: React.FC = () => {
               </div>
             </div>
             <div className="text-right">
-              <span className="text-sm text-gray-500 dark:text-gray-400">Выполнено заказов</span>
+              <span className="text-sm text-gray-500">Выполнено заказов</span>
               <div className="text-xl font-bold">{provider.completed_tasks ?? 0}</div>
             </div>
           </div>
@@ -410,7 +410,7 @@ const ServiceDetailPage: React.FC = () => {
         
         {/* Перед списком отзывов */}
         {user && user.id !== provider.id && canReview && !hasLeftReview && (
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-card p-4 mb-6">
+          <div className="bg-white rounded-lg shadow-card p-4 mb-6">
             <h3 className="font-semibold mb-2">Оставить отзыв</h3>
             <div className="flex items-center gap-2 mb-2">
               {[1,2,3,4,5].map(i => (
@@ -426,7 +426,7 @@ const ServiceDetailPage: React.FC = () => {
               ))}
             </div>
             <textarea
-              className="w-full rounded border border-gray-300 dark:border-gray-700 px-3 py-2 bg-gray-50 dark:bg-gray-800 mb-2"
+              className="w-full rounded border border-gray-300 px-3 py-2 bg-gray-50 mb-2"
               rows={3}
               placeholder="Ваш отзыв..."
               value={reviewText}

@@ -126,11 +126,11 @@ const HomePage: React.FC = () => {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 sm:mb-4 gap-2 sm:gap-0">
           <div>
             <h1 className="text-xl sm:text-2xl font-bold">WL Blend</h1>
-            <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">Обмен услугами в один клик</p>
+            <p className="text-gray-600 text-sm sm:text-base">Обмен услугами в один клик</p>
           </div>
           <div className="flex items-center gap-2">
             <button 
-              className="relative p-2 bg-gray-100 dark:bg-gray-700 rounded-full"
+              className="relative p-2 bg-gray-100 rounded-full"
               onClick={() => navigate('/notifications')}
             >
               <Bell size={20} />
@@ -144,11 +144,11 @@ const HomePage: React.FC = () => {
         
         {/* Search bar */}
         <div 
-          className="relative bg-gray-100 dark:bg-gray-700 rounded-lg p-2 sm:p-3 flex items-center cursor-pointer"
+          className="relative bg-gray-100 rounded-lg p-2 sm:p-3 flex items-center cursor-pointer"
           onClick={() => navigate('/services')}
         >
-          <Search size={18} className="text-gray-500 dark:text-gray-400 mr-2" />
-          <span className="text-gray-500 dark:text-gray-400 text-sm sm:text-base">Поиск услуг и специалистов...</span>
+          <Search size={18} className="text-gray-500 mr-2" />
+          <span className="text-gray-500 text-sm sm:text-base">Поиск услуг и специалистов...</span>
         </div>
       </div>
       
@@ -164,45 +164,45 @@ const HomePage: React.FC = () => {
           <motion.div 
             variants={item}
             whileTap={{ scale: 0.95 }}
-            className="bg-primary-50 dark:bg-primary-900/30 p-4 rounded-lg border border-primary-100 dark:border-primary-800"
+            className="bg-primary-50 p-4 rounded-lg border border-primary-100"
             onClick={() => navigate('/services')}
           >
             <Search size={24} className="text-primary-500 mb-2" />
             <h3 className="font-medium">Найти услугу</h3>
-            <p className="text-xs text-gray-500 dark:text-gray-400">Выберите из каталога</p>
+            <p className="text-xs text-gray-500">Выберите из каталога</p>
           </motion.div>
           
           <motion.div 
             variants={item}
             whileTap={{ scale: 0.95 }}
-            className="bg-accent-50 dark:bg-accent-900/30 p-4 rounded-lg border border-accent-100 dark:border-accent-800"
+            className="bg-accent-50 p-4 rounded-lg border border-accent-100"
             onClick={handleCreateService}
           >
             <Plus size={24} className="text-accent-500 mb-2" />
             <h3 className="font-medium">Предложить услугу</h3>
-            <p className="text-xs text-gray-500 dark:text-gray-400">Поделитесь навыками</p>
+            <p className="text-xs text-gray-500">Поделитесь навыками</p>
           </motion.div>
           
           <motion.div 
             variants={item}
             whileTap={{ scale: 0.95 }}
-            className="bg-green-50 dark:bg-green-900/30 p-4 rounded-lg border border-green-100 dark:border-green-800"
+            className="bg-green-50 p-4 rounded-lg border border-green-100"
             onClick={() => navigate('/referrals')}
           >
             <Gift size={24} className="text-green-500 mb-2" />
             <h3 className="font-medium">Пригласить друга</h3>
-            <p className="text-xs text-gray-500 dark:text-gray-400">+5 кредитов за каждого</p>
+            <p className="text-xs text-gray-500">+5 кредитов за каждого</p>
           </motion.div>
           
           <motion.div 
             variants={item}
             whileTap={{ scale: 0.95 }}
-            className="bg-amber-50 dark:bg-amber-900/30 p-4 rounded-lg border border-amber-100 dark:border-amber-800"
+            className="bg-amber-50 p-4 rounded-lg border border-amber-100"
             onClick={() => navigate('/profile')}
           >
             <Award size={24} className="text-amber-500 mb-2" />
             <h3 className="font-medium">Мои достижения</h3>
-            <p className="text-xs text-gray-500 dark:text-gray-400">Проверьте уровень</p>
+            <p className="text-xs text-gray-500">Проверьте уровень</p>
           </motion.div>
         </div>
       </motion.div>
@@ -217,14 +217,14 @@ const HomePage: React.FC = () => {
         {loading ? (
           <div className="space-y-3">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="bg-gray-100 dark:bg-gray-800 animate-pulse h-32 rounded-lg"></div>
+              <div key={i} className="bg-gray-100 animate-pulse h-32 rounded-lg"></div>
             ))}
           </div>
         ) : recommendedServices.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-8 text-center">
             <div className="text-4xl mb-2">🔍</div>
             <h3 className="text-lg font-medium mb-1">Нет рекомендаций</h3>
-            <p className="text-gray-500 dark:text-gray-400 mb-4 max-w-xs">
+            <p className="text-gray-500 mb-4 max-w-xs">
               Пока для вас нет персональных рекомендаций. Попробуйте воспользоваться поиском или создайте свою первую услугу!
             </p>
             <button
@@ -250,7 +250,7 @@ const HomePage: React.FC = () => {
               variants={item}
               whileHover={{ y: -2 }}
               onClick={() => navigate('/services')}
-              className="flex justify-center items-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg text-primary-500 font-medium"
+              className="flex justify-center items-center p-3 bg-gray-50 rounded-lg text-primary-500 font-medium"
             >
               Показать все услуги
             </motion.div>
@@ -261,15 +261,15 @@ const HomePage: React.FC = () => {
       {/* Stats */}
       <div className="px-4">
         <h2 className="text-lg font-semibold mb-3">Статистика платформы</h2>
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-card p-4">
+        <div className="bg-white rounded-lg shadow-card p-4">
           <div className="grid grid-cols-2 gap-4">
             {stats.users === 0 && stats.completedOrders === 0 && stats.categories === 0 && stats.avgRating === 0 ? (
               // Skeleton
               <>
                 {[1,2,3,4].map(i => (
                   <div className="text-center" key={i}>
-                    <div className="h-8 w-16 mx-auto bg-gray-200 dark:bg-gray-700 rounded mb-2 animate-pulse" />
-                    <div className="h-4 w-24 mx-auto bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+                    <div className="h-8 w-16 mx-auto bg-gray-200 rounded mb-2 animate-pulse" />
+                    <div className="h-4 w-24 mx-auto bg-gray-200 rounded animate-pulse" />
                   </div>
                 ))}
               </>
@@ -282,19 +282,19 @@ const HomePage: React.FC = () => {
               >
                 <div className="text-center">
                   <div className="text-2xl font-bold text-primary-500">{stats.users}</div>
-                  <div className="text-sm text-gray-500 dark:text-gray-400">Активных пользователей</div>
+                  <div className="text-sm text-gray-500">Активных пользователей</div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-accent-500">{stats.completedOrders}</div>
-                  <div className="text-sm text-gray-500 dark:text-gray-400">Завершённых заданий</div>
+                  <div className="text-sm text-gray-500">Завершённых заданий</div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-green-500">{stats.categories}</div>
-                  <div className="text-sm text-gray-500 dark:text-gray-400">Категорий услуг</div>
+                  <div className="text-sm text-gray-500">Категорий услуг</div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-amber-500">{stats.avgRating > 0 ? stats.avgRating.toFixed(1) : '—'}</div>
-                  <div className="text-sm text-gray-500 dark:text-gray-400">Средний рейтинг</div>
+                  <div className="text-sm text-gray-500">Средний рейтинг</div>
                 </div>
               </motion.div>
             )}

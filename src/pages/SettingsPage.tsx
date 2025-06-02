@@ -107,13 +107,6 @@ const SettingsPage: React.FC = () => {
           value: settings.notifications_enabled,
           onChange: () => updateSetting('notifications_enabled', !settings.notifications_enabled),
           type: 'toggle'
-        },
-        {
-          icon: settings.dark_mode ? Moon : Sun,
-          label: 'Темная тема',
-          value: settings.dark_mode,
-          onChange: () => updateSetting('dark_mode', !settings.dark_mode),
-          type: 'toggle'
         }
       ]
     },
@@ -151,13 +144,13 @@ const SettingsPage: React.FC = () => {
   if (loading) {
     return (
       <div className="px-4 py-6">
-        <div className="h-6 w-48 bg-gray-200 dark:bg-gray-700 rounded animate-pulse mb-6" />
+        <div className="h-6 w-48 bg-gray-200 rounded animate-pulse mb-6" />
         {[1, 2, 3].map((i) => (
           <div key={i} className="mb-6">
-            <div className="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded animate-pulse mb-3" />
+            <div className="h-4 w-24 bg-gray-200 rounded animate-pulse mb-3" />
             <div className="space-y-3">
               {[1, 2].map((j) => (
-                <div key={j} className="h-12 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+                <div key={j} className="h-12 bg-gray-200 rounded animate-pulse" />
               ))}
             </div>
           </div>
@@ -184,10 +177,10 @@ const SettingsPage: React.FC = () => {
             transition={{ delay: groupIndex * 0.1 }}
             className="mb-6"
           >
-            <h2 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">
+            <h2 className="text-sm font-medium text-gray-500 mb-3">
               {group.title}
             </h2>
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-card overflow-hidden">
+            <div className="bg-white rounded-lg shadow-card overflow-hidden">
               {group.settings.map((setting, settingIndex) => (
                 <motion.div
                   key={setting.label}
@@ -196,19 +189,19 @@ const SettingsPage: React.FC = () => {
                   transition={{ delay: (groupIndex * 0.1) + (settingIndex * 0.05) }}
                   className={`flex items-center justify-between p-4 ${
                     settingIndex !== group.settings.length - 1
-                      ? 'border-b border-gray-100 dark:border-gray-700'
+                      ? 'border-b border-gray-100'
                       : ''
                   }`}
                 >
                   <div className="flex items-center">
-                    <setting.icon size={20} className="text-gray-500 dark:text-gray-400" />
+                    <setting.icon size={20} className="text-gray-500" />
                     <span className="ml-3 font-medium">{setting.label}</span>
                   </div>
                   {setting.type === 'toggle' ? (
                     <button
                       onClick={setting.onChange}
                       className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                        setting.value ? 'bg-primary-500' : 'bg-gray-200 dark:bg-gray-700'
+                        setting.value ? 'bg-primary-500' : 'bg-gray-200'
                       }`}
                     >
                       <motion.span

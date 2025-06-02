@@ -85,41 +85,41 @@ const ProfilePage: React.FC = () => {
       <div className="px-4 mb-6">
         <div className="flex items-center gap-4 mb-6">
           <div className="relative">
-            <div className="w-20 h-20 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse" />
+            <div className="w-20 h-20 rounded-full bg-gray-200 animate-pulse" />
           </div>
           <div className="flex-1">
-            <div className="h-6 w-40 bg-gray-200 dark:bg-gray-700 rounded mb-2 animate-pulse" />
-            <div className="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded mb-2 animate-pulse" />
-            <div className="h-4 w-32 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+            <div className="h-6 w-40 bg-gray-200 rounded mb-2 animate-pulse" />
+            <div className="h-4 w-24 bg-gray-200 rounded mb-2 animate-pulse" />
+            <div className="h-4 w-32 bg-gray-200 rounded animate-pulse" />
           </div>
         </div>
         <div className="mb-6">
-          <div className="h-4 w-32 bg-gray-200 dark:bg-gray-700 rounded mb-2 animate-pulse" />
-          <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 animate-pulse" />
+          <div className="h-4 w-32 bg-gray-200 rounded mb-2 animate-pulse" />
+          <div className="w-full bg-gray-200 rounded-full h-2.5 animate-pulse" />
         </div>
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-card overflow-hidden mb-6">
+        <div className="bg-white rounded-lg shadow-card overflow-hidden mb-6">
           {[1,2,3,4,5].map(i => (
-            <div key={i} className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-700 last:border-b-0">
+            <div key={i} className="flex items-center justify-between p-4 border-b border-gray-100 last:border-b-0">
               <div className="flex items-center">
-                <div className="w-5 h-5 bg-gray-200 dark:bg-gray-700 rounded mr-3 animate-pulse" />
-                <div className="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+                <div className="w-5 h-5 bg-gray-200 rounded mr-3 animate-pulse" />
+                <div className="h-4 w-24 bg-gray-200 rounded animate-pulse" />
               </div>
-              <div className="h-4 w-8 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+              <div className="h-4 w-8 bg-gray-200 rounded animate-pulse" />
             </div>
           ))}
         </div>
       </div>
       <div className="px-4 grid md:grid-cols-2 gap-6">
         <div>
-          <div className="h-5 w-32 bg-gray-200 dark:bg-gray-700 rounded mb-3 animate-pulse" />
+          <div className="h-5 w-32 bg-gray-200 rounded mb-3 animate-pulse" />
           {[1,2].map(i => (
-            <div key={i} className="h-16 bg-gray-200 dark:bg-gray-800 rounded-lg mb-2 animate-pulse" />
+            <div key={i} className="h-16 bg-gray-200 rounded-lg mb-2 animate-pulse" />
           ))}
         </div>
         <div>
-          <div className="h-5 w-32 bg-gray-200 dark:bg-gray-700 rounded mb-3 animate-pulse" />
+          <div className="h-5 w-32 bg-gray-200 rounded mb-3 animate-pulse" />
           {[1,2].map(i => (
-            <div key={i} className="h-16 bg-gray-200 dark:bg-gray-800 rounded-lg mb-2 animate-pulse" />
+            <div key={i} className="h-16 bg-gray-200 rounded-lg mb-2 animate-pulse" />
           ))}
         </div>
       </div>
@@ -145,7 +145,7 @@ const ProfilePage: React.FC = () => {
             <div className="flex items-center gap-2">
               <span className="text-2xl font-bold">{user.name} <span className="text-gray-400 text-base">@{user.username}</span></span>
               {isOwn && (
-                <button className="ml-2 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700" onClick={() => setShowEditModal(true)} title="Редактировать профиль">
+                <button className="ml-2 p-1 rounded-full hover:bg-gray-100" onClick={() => setShowEditModal(true)} title="Редактировать профиль">
                   <Pencil size={18} />
                 </button>
               )}
@@ -178,12 +178,12 @@ const ProfilePage: React.FC = () => {
             {/* Level progress */}
             <div className="mb-6">
               <div className="flex justify-between items-center mb-2">
-                <h2 className="text-sm font-medium text-gray-700 dark:text-gray-300">Прогресс уровня</h2>
-                <span className="text-xs text-gray-500 dark:text-gray-400">
+                <h2 className="text-sm font-medium text-gray-700">Прогресс уровня</h2>
+                <span className="text-xs text-gray-500">
                   {completedTasks}/{TASKS_FOR_NEXT_LEVEL} заданий до "{user!.level === 'Новичок' ? 'Специалист' : user!.level === 'Специалист' ? 'Эксперт' : 'Мастер'}"
                 </span>
               </div>
-              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+              <div className="w-full bg-gray-200 rounded-full h-2.5">
                 <motion.div 
                   initial={{ width: 0 }}
                   animate={{ width: `${progressToNextLevel * 100}%` }}
@@ -194,20 +194,20 @@ const ProfilePage: React.FC = () => {
             </div>
             
             {/* Menu */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-card overflow-hidden mb-6">
+            <div className="bg-white rounded-lg shadow-card overflow-hidden mb-6">
               {menuItems.map((item, index) => (
                 <motion.div
                   key={index}
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.05 }}
-                  className={`flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 ${
-                    index !== menuItems.length - 1 ? 'border-b border-gray-100 dark:border-gray-700' : ''
+                  className={`flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50 ${
+                    index !== menuItems.length - 1 ? 'border-b border-gray-100' : ''
                   }`}
                   onClick={item.onClick}
                 >
                   <div className="flex items-center">
-                    <item.icon size={18} className="text-gray-500 dark:text-gray-400" />
+                    <item.icon size={18} className="text-gray-500" />
                     <span className="ml-3 font-medium">{item.label}</span>
                   </div>
                   <div className="flex items-center">
@@ -215,7 +215,7 @@ const ProfilePage: React.FC = () => {
                       <span className="mr-2 text-accent-500 font-medium">{item.value}</span>
                     )}
                     {item.badge && (
-                      <span className="mr-2 bg-primary-100 dark:bg-primary-900 text-primary-800 dark:text-primary-200 text-xs py-0.5 px-2 rounded-full">
+                      <span className="mr-2 bg-primary-100 text-primary-800 text-xs py-0.5 px-2 rounded-full">
                         {item.badge}
                       </span>
                     )}
@@ -239,7 +239,7 @@ const ProfilePage: React.FC = () => {
                 ) : (
                   <div className="space-y-2">
                     {reviews.map(r => (
-                      <div key={r.id} className="bg-gray-100 dark:bg-gray-800 rounded-lg p-3">
+                      <div key={r.id} className="bg-gray-100 rounded-lg p-3">
                         <div className="flex items-center gap-2 mb-1">
                           {[1,2,3,4,5].map(i => <Star key={i} size={14} className={i <= r.rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'} />)}
                           <span className="text-xs text-gray-500 ml-2">{new Date(r.created_at).toLocaleDateString()}</span>
@@ -262,7 +262,7 @@ const ProfilePage: React.FC = () => {
                 ) : (
                   <div className="space-y-2">
                     {orders.map(o => (
-                      <div key={o.id} className="bg-gray-100 dark:bg-gray-800 rounded-lg p-3">
+                      <div key={o.id} className="bg-gray-100 rounded-lg p-3">
                         <div className="font-medium">{o.service?.title || 'Без названия'}</div>
                         <div className="text-xs text-gray-500">{new Date(o.created_at).toLocaleDateString()}</div>
                       </div>
@@ -285,7 +285,7 @@ const ProfilePage: React.FC = () => {
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {services.map(s => (
-                      <div key={s.id} className="bg-white dark:bg-gray-800 rounded-lg shadow p-3 flex flex-col">
+                      <div key={s.id} className="bg-white rounded-lg shadow p-3 flex flex-col">
                         <div className="font-medium mb-1">{s.title}</div>
                         <div className="text-xs text-gray-500 mb-1">{s.category}</div>
                         <div className="text-xs text-gray-500 mb-1">{s.price} кр.</div>
@@ -328,22 +328,22 @@ const ProfilePage: React.FC = () => {
                     reader.readAsDataURL(file);
                   }
                 }} />
-                <span className="absolute bottom-2 right-2 bg-white dark:bg-gray-800 p-1 rounded-full shadow group-hover:bg-primary-100"><Pencil size={16} /></span>
+                <span className="absolute bottom-2 right-2 bg-white p-1 rounded-full shadow group-hover:bg-primary-100"><Pencil size={16} /></span>
               </label>
             </div>
             <div className="mb-4">
               <label className="block text-sm font-medium mb-1">Имя</label>
-              <input type="text" className="w-full rounded border border-gray-300 dark:border-gray-700 px-3 py-2 bg-gray-50 dark:bg-gray-800" value={editName} onChange={e => setEditName(e.target.value)} />
+              <input type="text" className="w-full rounded border border-gray-300 px-3 py-2 bg-gray-50" value={editName} onChange={e => setEditName(e.target.value)} />
             </div>
             <div className="mb-4">
               <label className="block text-sm font-medium mb-1">Описание</label>
-              <textarea className="w-full rounded border border-gray-300 dark:border-gray-700 px-3 py-2 bg-gray-50 dark:bg-gray-800 resize-none" rows={3} value={editDescription} onChange={e => setEditDescription(e.target.value)} />
+              <textarea className="w-full rounded border border-gray-300 px-3 py-2 bg-gray-50 resize-none" rows={3} value={editDescription} onChange={e => setEditDescription(e.target.value)} />
             </div>
             <div className="mb-4">
               <label className="block text-sm font-medium mb-1">Навыки</label>
               <div className="flex flex-wrap gap-2 mb-2">
                 {editSkills.length > 0 ? editSkills.map((skill, idx) => (
-                  <span key={idx} className="flex items-center bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-2 py-1 rounded-full text-xs">
+                  <span key={idx} className="flex items-center bg-gray-100 text-gray-800 px-2 py-1 rounded-full text-xs">
                     {skill}
                     <button
                       type="button"
@@ -358,7 +358,7 @@ const ProfilePage: React.FC = () => {
               </div>
               <input
                 type="text"
-                className="w-full rounded border border-gray-300 dark:border-gray-700 px-3 py-2 bg-gray-50 dark:bg-gray-800"
+                className="w-full rounded border border-gray-300 px-3 py-2 bg-gray-50"
                 value={skillInput}
                 onChange={e => setSkillInput(e.target.value)}
                 onKeyDown={e => {

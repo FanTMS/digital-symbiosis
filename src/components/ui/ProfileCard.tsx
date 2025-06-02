@@ -12,15 +12,15 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ user, detailed = false }) => 
   const getLevelColor = (level: string) => {
     switch (level) {
       case 'Новичок':
-        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
+        return 'bg-green-100 text-green-800';
       case 'Специалист':
-        return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
+        return 'bg-blue-100 text-blue-800';
       case 'Эксперт':
-        return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200';
+        return 'bg-purple-100 text-purple-800';
       case 'Мастер':
-        return 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200';
+        return 'bg-amber-100 text-amber-800';
       default:
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200';
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
@@ -29,7 +29,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ user, detailed = false }) => 
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="bg-white dark:bg-gray-800 rounded-lg shadow-card overflow-hidden"
+      className="bg-white rounded-lg shadow-card overflow-hidden"
     >
       <div className="bg-gradient-to-r from-primary-500 to-primary-600 p-4">
         <div className="flex items-center">
@@ -60,7 +60,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ user, detailed = false }) => 
       <div className="p-4">
         <div className="flex justify-between items-center mb-4">
           <div>
-            <span className="text-sm text-gray-500 dark:text-gray-400">Баланс</span>
+            <span className="text-sm text-gray-500">Баланс</span>
             <h4 className="font-semibold text-lg text-accent-500">{user.credits} кредитов</h4>
           </div>
           <div className="flex items-center">
@@ -73,12 +73,12 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ user, detailed = false }) => 
         {detailed && (
           <>
             <div className="mb-4">
-              <h4 className="font-medium text-gray-900 dark:text-white mb-2">Навыки</h4>
+              <h4 className="font-medium text-gray-900 mb-2">Навыки</h4>
               <div className="flex flex-wrap gap-2">
                 {user.skills.map((skill, index) => (
                   <span 
                     key={index}
-                    className="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-2 py-1 rounded-full text-xs"
+                    className="bg-gray-100 text-gray-800 px-2 py-1 rounded-full text-xs"
                   >
                     {skill}
                   </span>
@@ -87,14 +87,14 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ user, detailed = false }) => 
             </div>
             
             <div>
-              <h4 className="font-medium text-gray-900 dark:text-white mb-2 flex items-center">
+              <h4 className="font-medium text-gray-900 mb-2 flex items-center">
                 <Award size={16} className="mr-1" /> Достижения
               </h4>
               <div className="flex flex-wrap gap-2">
                 {user.badges.map((badge) => (
                   <div 
                     key={badge.id}
-                    className="flex items-center bg-amber-50 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200 px-3 py-1 rounded-full text-xs"
+                    className="flex items-center bg-amber-50 text-amber-800 px-3 py-1 rounded-full text-xs"
                   >
                     <Check size={12} className="mr-1" />
                     {badge.name}
