@@ -158,7 +158,7 @@ function checkTelegramAuth(initData, botToken) {
   console.log('dataCheckString:', dataCheckString);
   console.log('hmac:', hmac, 'hash:', hash);
 
-  return hmac === hash;
+  return hmac.toLowerCase() === hash.toLowerCase();
 }
 
 app.post('/api/auth/telegram', async (req, res) => {
