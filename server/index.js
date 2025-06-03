@@ -173,7 +173,7 @@ app.post('/api/auth/telegram', async (req, res) => {
     //   return res.status(401).json({ error: 'Invalid Telegram signature' });
     // }
     const email = `telegram-${telegramId}@tg-auth.ru`;
-    const password = 'tg_' + telegramId + '_secret'; // Фиксированный пароль для каждого telegramId
+    const password = 'SuperSecretPassword123'; // Один и тот же пароль для всех пользователей
     // Проверяем, есть ли пользователь
     let { data: users, error } = await supabase.auth.admin.listUsers({ email });
     let user = users?.users?.[0];
