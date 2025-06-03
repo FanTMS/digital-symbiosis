@@ -188,10 +188,15 @@ app.post('/api/auth/telegram', async (req, res) => {
         user_metadata: { telegram_id: telegramId }
       });
       if (createError) {
-        console.error('[AUTH] Ошибка создания пользователя:', createError);
-        return res.status(500).json({ error: createError.message || 'Database error creating new user' });
+        if (createError.code === 'email_exists') {
+          console.warn('[AUTH] Пользователь уже существует, продолжаем...');
+        } else {
+          console.error('[AUTH] Ошибка создания пользователя:', createError);
+          return res.status(500).json({ error: createError.message || 'Database error creating new user' });
+        }
+      } else {
+        console.log('[AUTH] Пользователь успешно создан:', newUser?.id);
       }
-      console.log('[AUTH] Пользователь успешно создан:', newUser?.id);
     } else {
       // Если пользователь уже есть — сбрасываем пароль на общий
       const { error: updateError } = await supabase.auth.admin.updateUserById(user.id, {
