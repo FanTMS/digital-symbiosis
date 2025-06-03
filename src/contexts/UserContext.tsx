@@ -49,6 +49,31 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
             .eq('id', telegramUser.id)
             .single();
 
+          // Если пользователь не найден, создаём его
+          if (userError && userError.code === 'PGRST116') {
+            const { error: createError } = await supabase
+              .from('users')
+              .insert({
+                id: telegramUser.id,
+                name: [telegramUser.first_name, telegramUser.last_name].filter(Boolean).join(' '),
+                username: telegramUser.username || `user_${telegramUser.id}`,
+                joined_at: new Date().toISOString(),
+                updated_at: new Date().toISOString(),
+                avatar_url: telegramUser.photo_url
+              });
+            if (createError) throw createError;
+            // После создания повторяем запрос
+            const { data: createdUser, error: fetchCreatedError } = await supabase
+              .from('users')
+              .select('*')
+              .eq('id', telegramUser.id)
+              .single();
+            if (fetchCreatedError) throw fetchCreatedError;
+            setUser(createdUser);
+            setError(null);
+            return;
+          }
+
           if (userError) throw userError;
           if (!data) throw new Error('User not found');
           
