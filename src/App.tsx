@@ -60,6 +60,19 @@ function App() {
 
   return (
     <div className="min-h-screen relative flex flex-col">
+      {/* Страховочный белый overlay */}
+      <div
+        style={{
+          position: 'fixed',
+          left: 0,
+          right: 0,
+          top: 0,
+          bottom: 0,
+          background: '#fff',
+          zIndex: 0,
+          pointerEvents: 'none'
+        }}
+      />
       {/* Фоновый градиент с прозрачностью */}
       <div className="absolute inset-0 bg-gradient-to-br from-cyan-100 via-teal-100 to-blue-100 opacity-15 pointer-events-none z-0"></div>
       {/* Контент приложения */}
