@@ -174,9 +174,11 @@ app.post('/api/auth/telegram', async (req, res) => {
     // }
     const email = `telegram-${telegramId}@tg-auth.ru`;
     const password = 'SuperSecretPassword123'; // Один и тот же пароль для всех пользователей
+    console.log('[AUTH] Попытка входа/регистрации:', { email, telegramId });
     // Проверяем, есть ли пользователь
     let { data: users, error } = await supabase.auth.admin.listUsers({ email });
     let user = users?.users?.[0];
+    console.log('[AUTH] Найден пользователь:', user ? user.id : null);
     if (!user) {
       // Если нет — создаём пользователя
       const { data: newUser, error: createError } = await supabase.auth.admin.createUser({
@@ -186,21 +188,31 @@ app.post('/api/auth/telegram', async (req, res) => {
         user_metadata: { telegram_id: telegramId }
       });
       if (createError) {
-        console.error('Supabase createUser error (full):', JSON.stringify(createError, null, 2));
+        console.error('[AUTH] Ошибка создания пользователя:', createError);
         return res.status(500).json({ error: createError.message || 'Database error creating new user' });
       }
+      console.log('[AUTH] Пользователь успешно создан:', newUser?.id);
     } else {
       // Если пользователь уже есть — сбрасываем пароль на общий
-      await supabase.auth.admin.updateUserById(user.id, {
+      const { error: updateError } = await supabase.auth.admin.updateUserById(user.id, {
         password
       });
+      if (updateError) {
+        console.error('[AUTH] Ошибка при сбросе пароля:', updateError);
+      } else {
+        console.log('[AUTH] Пароль пользователя успешно сброшен:', user.id);
+      }
     }
     // Логиним пользователя и получаем JWT
     const { data: sessionData, error: signInError } = await supabase.auth.signInWithPassword({
       email,
       password
     });
-    if (signInError) return res.status(500).json({ error: signInError.message });
+    if (signInError) {
+      console.error('[AUTH] Ошибка входа:', signInError);
+      return res.status(500).json({ error: signInError.message });
+    }
+    console.log('[AUTH] Успешный вход, sessionData:', sessionData?.session?.user?.id);
 
     // --- ДОБАВЛЕНО: создаём пользователя в таблице users, если его нет ---
     // Парсим initData, чтобы получить имя, username и avatar_url

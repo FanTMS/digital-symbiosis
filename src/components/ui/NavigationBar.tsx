@@ -36,10 +36,10 @@ const NavigationBar: React.FC = () => {
       initial={{ y: 100 }}
       animate={{ y: 0 }}
       transition={{ type: "spring", stiffness: 260, damping: 20 }}
-      className="fixed bottom-0 left-0 right-0 w-full z-50 bg-white backdrop-blur-lg shadow-lg px-0 py-0 border-t border-gray-200"
-      style={{ paddingBottom: 'env(safe-area-inset-bottom, 0)' }}
+      className="fixed bottom-0 left-0 right-0 w-full z-50 bg-white backdrop-blur-lg shadow-lg px-0 border-t border-gray-200"
+      style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 20px) + 8px)' }}
     >
-      <div className="flex justify-around items-center max-w-lg mx-auto overflow-x-auto scrollbar-none">
+      <div className="flex justify-around items-center max-w-lg mx-auto overflow-x-auto scrollbar-none min-h-[72px] py-2">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
           
@@ -47,18 +47,18 @@ const NavigationBar: React.FC = () => {
             <button
               key={item.path}
               onClick={() => navigate(item.path)}
-              className={`flex flex-col items-center justify-center py-1 px-2 relative min-w-[56px] ${
+              className={`flex flex-col items-center justify-center py-2 px-3 relative min-w-[64px] ${
                 isActive ? 'text-primary-500' : 'text-gray-500'
-              }`}
+              } text-base`}
               style={{ flex: '1 0 0', minWidth: 0 }}
             >
               <motion.div
                 whileTap={{ scale: 0.9 }}
                 transition={{ type: "spring", stiffness: 400, damping: 17 }}
               >
-                <item.icon size={18} />
+                <item.icon size={26} />
               </motion.div>
-              <span className="text-[11px] mt-0.5 leading-tight">{item.label}</span>
+              <span className="text-[13px] mt-1 leading-tight font-medium">{item.label}</span>
               <AnimatePresence>
                 {isActive && (
                   <motion.div
