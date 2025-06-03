@@ -178,7 +178,7 @@ app.post('/api/auth/telegram', async (req, res) => {
     // Проверяем, есть ли пользователь
     let { data: users, error } = await supabase.auth.admin.listUsers({ email });
     let user = users?.users?.[0];
-    console.log('[AUTH] Найден пользователь:', user ? user.id : null);
+    console.log('[AUTH] Найден пользователь:', user ? user.id : null, user ? user.email : null);
     if (!user) {
       // Если нет — создаём пользователя
       const { data: newUser, error: createError } = await supabase.auth.admin.createUser({
@@ -197,8 +197,8 @@ app.post('/api/auth/telegram', async (req, res) => {
       } else {
         console.log('[AUTH] Пользователь успешно создан:', newUser?.id);
       }
-    } else {
-      // Если пользователь уже есть — сбрасываем пароль на общий
+    } else if (user.email === email) {
+      // Если пользователь уже есть и email совпадает — сбрасываем пароль на общий
       const { error: updateError } = await supabase.auth.admin.updateUserById(user.id, {
         password
       });
@@ -206,7 +206,12 @@ app.post('/api/auth/telegram', async (req, res) => {
         console.error('[AUTH] Ошибка при сбросе пароля:', updateError);
       } else {
         console.log('[AUTH] Пароль пользователя успешно сброшен:', user.id);
+        await new Promise(resolve => setTimeout(resolve, 1000)); // Пауза 1 секунда
       }
+    } else {
+      // Найден пользователь с другим email — логируем ошибку и не трогаем его
+      console.error('[AUTH] Найден пользователь с другим email:', user.email, 'Ожидался:', email);
+      return res.status(500).json({ error: 'User with this Telegram ID/email already exists with a different email.' });
     }
     // Логиним пользователя и получаем JWT
     const { data: sessionData, error: signInError } = await supabase.auth.signInWithPassword({
