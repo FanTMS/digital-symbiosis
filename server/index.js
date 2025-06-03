@@ -189,6 +189,11 @@ app.post('/api/auth/telegram', async (req, res) => {
         console.error('Supabase createUser error (full):', JSON.stringify(createError, null, 2));
         return res.status(500).json({ error: createError.message || 'Database error creating new user' });
       }
+    } else {
+      // Если пользователь уже есть — сбрасываем пароль на общий
+      await supabase.auth.admin.updateUserById(user.id, {
+        password
+      });
     }
     // Логиним пользователя и получаем JWT
     const { data: sessionData, error: signInError } = await supabase.auth.signInWithPassword({
