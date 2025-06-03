@@ -318,47 +318,62 @@ export default function ChatPage() {
         </AnimatePresence>
       </div>
 
-      <form
-        className="bg-white border-t border-gray-200 p-3 flex items-center gap-2 w-full max-w-2xl mx-auto rounded-2xl z-20 chat-input-bar shadow-lg fixed bottom-0 left-0 right-0 md:static md:rounded-t-2xl md:mx-auto md:mb-4"
-        style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0) + 4px)', borderTopLeftRadius: '1.25rem', borderTopRightRadius: '1.25rem', borderBottomLeftRadius: 0, borderBottomRightRadius: 0, boxShadow: '0 4px 24px 0 rgba(0,160,255,0.07)' }}
-        onSubmit={e => { e.preventDefault(); send(); }}
-      >
-        <button
-          type="button"
-          className="p-2 rounded-full hover:bg-cyan-100 transition"
-          onClick={() => fileInputRef.current?.click()}
-          disabled={uploading}
-          title="Прикрепить файл"
+      {/* Панель ввода сообщения */}
+      <div className="w-full max-w-2xl mx-auto">
+        <form
+          className="bg-white border-t border-gray-200 p-3 flex items-center gap-2 w-full rounded-2xl z-20 chat-input-bar shadow-lg fixed bottom-0 left-0 right-0 md:static md:rounded-t-2xl md:mx-auto md:mb-4"
+          style={{
+            paddingBottom: 'calc(env(safe-area-inset-bottom, 0) + 4px)',
+            borderTopLeftRadius: '1.25rem',
+            borderTopRightRadius: '1.25rem',
+            borderBottomLeftRadius: 0,
+            borderBottomRightRadius: 0,
+            boxShadow: '0 4px 24px 0 rgba(0,160,255,0.07)',
+            background: '#fff',
+            zIndex: 50
+          }}
+          onSubmit={e => { e.preventDefault(); send(); }}
         >
-          <Paperclip size={22} className="text-cyan-500" />
-        </button>
-        <input
-          type="file"
-          ref={fileInputRef}
-          className="hidden"
-          onChange={handleFileChange}
-          disabled={uploading}
-        />
-        <input
-          className="flex-1 border-none outline-none rounded-full px-4 py-2 bg-gray-100 focus:ring-2 focus:ring-cyan-400 text-base shadow-sm transition"
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          onFocus={() => setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 300)}
-          onKeyDown={e => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), send())}
-          placeholder="Введите сообщение..."
-          autoComplete="off"
-          style={{ minHeight: 40, maxHeight: 80, borderRadius: '9999px' }}
-          disabled={uploading}
-        />
-        <button
-          type="submit"
-          className="ml-2 px-5 py-2 bg-gradient-to-r from-cyan-400 to-blue-500 text-white rounded-full font-semibold shadow hover:from-cyan-500 hover:to-blue-600 transition disabled:opacity-50"
-          disabled={!input.trim() || uploading}
-          style={{ minHeight: 40 }}
-        >
-          Отправить
-        </button>
-      </form>
+          <button
+            type="button"
+            className="p-2 rounded-full hover:bg-cyan-100 transition"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploading}
+            title="Прикрепить файл"
+            tabIndex={0}
+          >
+            <Paperclip size={22} className="text-cyan-500" />
+          </button>
+          <input
+            type="file"
+            ref={fileInputRef}
+            className="hidden"
+            onChange={handleFileChange}
+            disabled={uploading}
+          />
+          <input
+            className="flex-1 border-none outline-none rounded-full px-4 py-2 bg-gray-100 focus:ring-2 focus:ring-cyan-400 text-base shadow-sm transition"
+            value={input}
+            onChange={e => setInput(e.target.value)}
+            onFocus={() => setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 300)}
+            onKeyDown={e => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), send())}
+            placeholder="Введите сообщение..."
+            autoComplete="off"
+            style={{ minHeight: 40, maxHeight: 80, borderRadius: '9999px' }}
+            disabled={uploading}
+            tabIndex={0}
+          />
+          <button
+            type="submit"
+            className="ml-2 px-5 py-2 bg-gradient-to-r from-cyan-400 to-blue-500 text-white rounded-full font-semibold shadow hover:from-cyan-500 hover:to-blue-600 transition disabled:opacity-50"
+            disabled={!input.trim() || uploading}
+            style={{ minHeight: 40 }}
+            tabIndex={0}
+          >
+            Отправить
+          </button>
+        </form>
+      </div>
 
       {/* Модалка для жалобы */}
       <Modal isOpen={showComplaintModal} onClose={() => setShowComplaintModal(false)}>
