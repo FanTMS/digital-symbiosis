@@ -287,8 +287,8 @@ export default function ChatPage() {
 
       {/* Сообщения */}
       <div
-        className="flex-1 min-h-0 overflow-y-auto p-4 pb-32 max-w-full chat-messages-container"
-        style={{ minHeight: 0 }}
+        className="flex-1 min-h-0 overflow-y-auto p-4 max-w-full chat-messages-container"
+        style={{ minHeight: 0, paddingBottom: '110px', background: '#fff' }}
         onScroll={handleScroll}
       >
         {loadingMore && (
@@ -459,19 +459,9 @@ export default function ChatPage() {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Белый фон под формой ввода, чтобы не было "дыры" снизу */}
-      <div style={{
-        position: 'fixed',
-        left: 0,
-        right: 0,
-        bottom: 0,
-        height: 'calc(env(safe-area-inset-bottom, 0) + 32px)',
-        background: '#fff',
-        zIndex: 10
-      }} />
       <form
-        className="bg-white border-t border-gray-200 p-3 flex items-center gap-2 w-full md:max-w-3xl md:mx-auto md:rounded-b-2xl z-20 chat-input-bar shadow-lg rounded-t-2xl rounded-b-2xl mb-4"
-        style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0) + 16px)', borderRadius: '1.25rem' }}
+        className="bg-white border-t border-gray-200 p-3 flex items-center gap-2 w-full md:max-w-3xl md:mx-auto rounded-t-2xl z-20 chat-input-bar shadow-lg"
+        style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0) + 4px)', borderTopLeftRadius: '1.25rem', borderTopRightRadius: '1.25rem', borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }}
         onSubmit={e => { e.preventDefault(); send(); }}
       >
         <button
