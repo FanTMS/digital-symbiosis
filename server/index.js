@@ -198,16 +198,9 @@ app.post('/api/auth/telegram', async (req, res) => {
         console.log('[AUTH] Пользователь успешно создан:', newUser?.id);
       }
     } else if (user.email === email) {
-      // Если пользователь уже есть и email совпадает — сбрасываем пароль на общий
-      const { error: updateError } = await supabase.auth.admin.updateUserById(user.id, {
-        password
-      });
-      if (updateError) {
-        console.error('[AUTH] Ошибка при сбросе пароля:', updateError);
-      } else {
-        console.log('[AUTH] Пароль пользователя успешно сброшен:', user.id);
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Пауза 1 секунда
-      }
+      // Если пользователь уже есть и email совпадает — НЕ сбрасываем пароль повторно
+      console.log('[AUTH] Пользователь уже существует, пароль НЕ сбрасывается повторно:', user.id);
+      // Просто продолжаем к логину
     } else {
       // Найден пользователь с другим email — логируем ошибку и не трогаем его
       console.error('[AUTH] Найден пользователь с другим email:', user.email, 'Ожидался:', email);
