@@ -124,7 +124,7 @@ const ServicesPage: React.FC = () => {
           <h1 className="text-2xl font-bold flex items-center gap-2">
             Услуги
             <button
-              className="ml-2 p-1 rounded-full hover:bg-yellow-100 dark:hover:bg-yellow-900 transition text-yellow-400"
+              className="ml-2 p-1 rounded-full hover:bg-yellow-100 transition text-yellow-400"
               onClick={() => navigate('/favorites')}
               title="Избранное"
             >
@@ -142,8 +142,8 @@ const ServicesPage: React.FC = () => {
         </div>
         
         {/* Search bar */}
-        <div className="relative bg-gray-100 dark:bg-gray-700 rounded-lg mb-4 flex items-center overflow-hidden">
-          <Search size={18} className="text-gray-500 dark:text-gray-400 absolute left-3" />
+        <div className="relative bg-gray-100 rounded-lg mb-4 flex items-center overflow-hidden">
+          <Search size={18} className="text-gray-500 absolute left-3" />
           <input
             type="text"
             placeholder="Поиск услуг и специалистов..."
@@ -168,11 +168,7 @@ const ServicesPage: React.FC = () => {
               <button
                 key={category.id}
                 onClick={() => setSelectedCategory(category.id)}
-                className={`flex items-center space-x-1 whitespace-nowrap px-3 py-1.5 rounded-full text-sm ${
-                  selectedCategory === category.id
-                    ? 'bg-primary-500 text-white'
-                    : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
-                }`}
+                className={`flex items-center space-x-1 whitespace-nowrap px-3 py-1.5 rounded-full text-sm ${selectedCategory === category.id ? 'bg-primary-500 text-white' : 'bg-gray-100 text-gray-800'}`}
               >
                 <span>{category.emoji}</span>
                 <span>{category.label}</span>
@@ -182,22 +178,22 @@ const ServicesPage: React.FC = () => {
         </div>
         
         {/* Фильтры и сортировка */}
-        <div className="flex flex-wrap gap-2 mb-4 items-end bg-white dark:bg-gray-800 rounded-lg shadow-card px-3 py-2 border border-gray-100 dark:border-gray-700">
+        <div className="flex flex-wrap gap-2 mb-4 items-end bg-white rounded-lg shadow-card px-3 py-2 border border-gray-100">
           <div className="flex items-center gap-1">
             <span className="text-gray-400 text-base font-bold">₽</span>
-            <input type="number" min={0} className="w-16 rounded-md border border-gray-200 dark:border-gray-700 px-2 py-1 bg-gray-50 dark:bg-gray-900 text-sm focus:ring-2 focus:ring-primary-200 transition" value={priceFrom} onChange={e => setPriceFrom(e.target.value)} placeholder="от" />
+            <input type="number" min={0} className="w-16 rounded-md border border-gray-200 px-2 py-1 bg-gray-50 text-sm focus:ring-2 focus:ring-primary-200 transition" value={priceFrom} onChange={e => setPriceFrom(e.target.value)} placeholder="от" />
             <span className="mx-1 text-gray-400">–</span>
-            <input type="number" min={0} className="w-16 rounded-md border border-gray-200 dark:border-gray-700 px-2 py-1 bg-gray-50 dark:bg-gray-900 text-sm focus:ring-2 focus:ring-primary-200 transition" value={priceTo} onChange={e => setPriceTo(e.target.value)} placeholder="до" />
+            <input type="number" min={0} className="w-16 rounded-md border border-gray-200 px-2 py-1 bg-gray-50 text-sm focus:ring-2 focus:ring-primary-200 transition" value={priceTo} onChange={e => setPriceTo(e.target.value)} placeholder="до" />
           </div>
           <div className="flex items-center gap-1">
             <StarIcon size={16} className="text-yellow-400" />
-            <input type="number" min={0} max={5} step={0.1} className="w-12 rounded-md border border-gray-200 dark:border-gray-700 px-2 py-1 bg-gray-50 dark:bg-gray-900 text-sm focus:ring-2 focus:ring-primary-200 transition" value={ratingFrom} onChange={e => setRatingFrom(e.target.value)} placeholder="от" />
+            <input type="number" min={0} max={5} step={0.1} className="w-12 rounded-md border border-gray-200 px-2 py-1 bg-gray-50 text-sm focus:ring-2 focus:ring-primary-200 transition" value={ratingFrom} onChange={e => setRatingFrom(e.target.value)} placeholder="от" />
             <span className="mx-1 text-gray-400">–</span>
-            <input type="number" min={0} max={5} step={0.1} className="w-12 rounded-md border border-gray-200 dark:border-gray-700 px-2 py-1 bg-gray-50 dark:bg-gray-900 text-sm focus:ring-2 focus:ring-primary-200 transition" value={ratingTo} onChange={e => setRatingTo(e.target.value)} placeholder="до" />
+            <input type="number" min={0} max={5} step={0.1} className="w-12 rounded-md border border-gray-200 px-2 py-1 bg-gray-50 text-sm focus:ring-2 focus:ring-primary-200 transition" value={ratingTo} onChange={e => setRatingTo(e.target.value)} placeholder="до" />
           </div>
           <div className="flex items-center gap-1">
             <SortAsc size={16} className="text-gray-400" />
-            <select className="rounded-md border border-gray-200 dark:border-gray-700 px-2 py-1 bg-gray-50 dark:bg-gray-900 text-sm focus:ring-2 focus:ring-primary-200 transition" value={sortBy} onChange={e => setSortBy(e.target.value as any)}>
+            <select className="rounded-md border border-gray-200 px-2 py-1 bg-gray-50 text-sm focus:ring-2 focus:ring-primary-200 transition" value={sortBy} onChange={e => setSortBy(e.target.value as any)}>
               <option value="date_desc">Сначала новые</option>
               <option value="date_asc">Сначала старые</option>
               <option value="price_asc">Цена ↑</option>
@@ -219,7 +215,7 @@ const ServicesPage: React.FC = () => {
         {isLoading && activeTab === 'all' ? (
           <div className="space-y-3">
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="bg-gray-100 dark:bg-gray-800 animate-pulse h-32 rounded-lg"></div>
+              <div key={i} className="bg-gray-100 animate-pulse h-32 rounded-lg"></div>
             ))}
           </div>
         ) : activeTab === 'all' ? (
@@ -244,7 +240,7 @@ const ServicesPage: React.FC = () => {
             >
               <div className="text-4xl mb-2">🔍</div>
               <h3 className="text-lg font-medium mb-1">Ничего не найдено</h3>
-              <p className="text-gray-500 dark:text-gray-400 mb-4 max-w-xs">
+              <p className="text-gray-500 mb-4 max-w-xs">
                 Попробуйте изменить параметры поиска или создайте новую услугу
               </p>
               <Button 
@@ -279,7 +275,7 @@ const ServicesPage: React.FC = () => {
             >
               <div className="text-4xl mb-2">⭐</div>
               <h3 className="text-lg font-medium mb-1">Нет избранных услуг</h3>
-              <p className="text-gray-500 dark:text-gray-400 mb-4 max-w-xs">
+              <p className="text-gray-500 mb-4 max-w-xs">
                 Добавьте услуги в избранное, чтобы быстро находить их позже
               </p>
             </motion.div>

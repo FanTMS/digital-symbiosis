@@ -25,6 +25,8 @@ export interface Database {
           joined_at: string
           updated_at: string
           role: string | null
+          referral_code: string | null
+          used_referral_code: string | null
         }
         Insert: {
           id: number

@@ -57,9 +57,9 @@ const BalanceTopupBar: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center gap-2 bg-white/90 dark:bg-gray-800/90 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-1 shadow-sm">
+    <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-xl px-3 py-1 shadow-sm">
       <Coins size={18} className="text-amber-400 mr-1" />
-      <span className="text-base font-medium text-gray-800 dark:text-gray-100">
+      <span className="text-base font-medium text-gray-800">
         <span className="text-primary-500 font-bold">{user?.credits ?? 0}</span> кредитов
       </span>
       <Button
@@ -77,7 +77,7 @@ const BalanceTopupBar: React.FC = () => {
           {defaultTemplates.map((tpl, idx) => (
             <button
               key={tpl.credits}
-              className={`w-full flex items-center justify-between px-4 py-3 rounded-lg border transition mb-1 ${selected === idx ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20' : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'}`}
+              className={`w-full flex items-center justify-between px-4 py-3 rounded-lg border transition mb-1 ${selected === idx ? 'border-primary-500 bg-primary-50' : 'border-gray-200 bg-white'}`}
               onClick={() => setSelected(idx)}
             >
               <span className="font-medium">{tpl.credits} кредитов</span>
