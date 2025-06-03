@@ -6,6 +6,7 @@ import { ArrowLeft, CircleDot, Circle, AlertCircle, Star, Paperclip, Check, Chec
 import { supabase } from '../lib/supabase';
 import { ordersApi } from '../lib/api/orders';
 import Modal from '../components/ui/Modal';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function ChatPage() {
   const { chatId } = useParams<{ chatId: string }>();
@@ -244,39 +245,29 @@ export default function ChatPage() {
   }, [otherUser?.id]);
 
   return (
-    <div
-      className="flex flex-col min-h-screen max-h-screen w-full bg-gray-50 md:max-w-3xl md:mx-auto md:rounded-2xl md:shadow-2xl md:my-6 md:border md:border-gray-200"
-      style={{ position: 'relative' }}
-    >
-      {/* Верхний заголовок */}
-      <div className="flex items-center px-4 py-3 border-b bg-white sticky top-0 z-10">
-        <button onClick={() => navigate(-1)} className="mr-3 p-1 rounded hover:bg-gray-100">
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-cyan-50 via-blue-50 to-white">
+      {/* Header */}
+      <div className="sticky top-0 z-20 w-full bg-gradient-to-r from-cyan-100 via-blue-50 to-white shadow flex items-center px-4 py-3 gap-3">
+        <button onClick={() => navigate(-1)} className="mr-2 p-1 rounded hover:bg-gray-100">
           <ArrowLeft size={22} />
         </button>
-        <div className="flex items-center space-x-3 w-full justify-between">
-          <div className="flex items-center space-x-3">
-            <img
-              src={otherUser?.avatar_url || 'https://images.pexels.com/photos/4926674/pexels-photo-4926674.jpeg?auto=compress&cs=tinysrgb&w=150'}
-              alt={otherUser?.name}
-              className="w-10 h-10 rounded-full object-cover border border-gray-200"
-            />
-            <div>
-              <div className="font-semibold text-lg text-gray-900 cursor-pointer hover:underline" onClick={() => otherUser?.id && navigate(`/profile/${otherUser.id}`)}>{otherUser?.name}</div>
-              <div className="text-xs text-gray-500 flex items-center">
-                {isOnline ? (
-                  <span className="relative flex h-3 w-3 mr-1">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-                  </span>
-                ) : (
-                  <Circle size={10} className="text-gray-400 mr-1" />
-                )}
-                {status}
-              </div>
-            </div>
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 rounded-full border-2 border-blue-200 bg-gradient-to-br from-cyan-100 to-blue-100 flex items-center justify-center overflow-hidden relative">
+            {otherUser?.avatar_url ? (
+              <img src={otherUser.avatar_url} alt={otherUser.name} className="w-full h-full rounded-full object-cover" />
+            ) : (
+              <CircleDot size={32} className="text-blue-200" />
+            )}
+            {isOnline && <span className="absolute bottom-1 right-1 w-3 h-3 bg-green-400 border-2 border-white rounded-full"></span>}
           </div>
+          <div className="flex flex-col">
+            <span className="font-semibold text-base text-gray-900">{otherUser?.name || 'Пользователь'}</span>
+            <span className={`text-xs ${isOnline ? 'text-green-500' : 'text-gray-400'}`}>{status}</span>
+          </div>
+        </div>
+        <div className="ml-auto flex items-center gap-2">
           <button
-            className="flex items-center px-3 py-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 text-xs font-medium border border-red-200 ml-2"
+            className="flex items-center px-3 py-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 text-xs font-medium border border-red-200"
             onClick={() => setShowComplaintModal(true)}
             title="Пожаловаться"
           >
@@ -286,192 +277,60 @@ export default function ChatPage() {
       </div>
 
       {/* Сообщения */}
-      <div
-        className="flex-1 min-h-0 overflow-y-auto p-4 max-w-full chat-messages-container"
-        style={{ minHeight: 0, paddingBottom: '110px', background: '#fff' }}
-        onScroll={handleScroll}
-      >
-        {loadingMore && (
-          <div className="text-center text-xs text-gray-400 mb-2">Загрузка...</div>
-        )}
-        {messages.map(m => {
-          // Системные сообщения с action-кнопками для исполнителя
-          if (m.meta?.type === 'system_action' && user?.id && m.meta.role === 'provider' && user.id === m.meta?.providerId) {
-            const orderId = m.meta.orderId;
-            const status = orderStatuses[orderId] || m.meta.status;
-            if (!(status === 'pending' || status === 'accepted' || status === 'in_progress')) return null;
-            return (
-              <div key={m.id} className="mb-4 text-center">
-                <div className="inline-block px-4 py-3 rounded-lg bg-yellow-50 text-yellow-900 font-medium max-w-[90%]">
-                  {m.content.split('\n').map((line: string, i: number) => <div key={i}>{line}</div>)}
-                  <button
-                    className={`px-4 py-1.5 rounded-lg font-semibold text-white bg-green-600 hover:bg-green-700 disabled:opacity-60`}
-                    disabled={actionLoading}
-                    onClick={async () => {
-                      setActionLoading(true);
-                      await ordersApi.updateOrderStatus(orderId, 'accepted');
-                      setActionedOrders(prev => ({ ...prev, [orderId]: 'accepted' }));
-                      setActionLoading(false);
-                    }}
-                  >
-                    Принять
-                  </button>
-                  <button
-                    className={`px-4 py-1.5 rounded-lg font-semibold text-white bg-red-600 hover:bg-red-700 disabled:opacity-60`}
-                    disabled={actionLoading}
-                    onClick={async () => {
-                      setActionLoading(true);
-                      await ordersApi.updateOrderStatus(orderId, 'cancelled');
-                      setActionedOrders(prev => ({ ...prev, [orderId]: 'cancelled' }));
-                      setActionLoading(false);
-                    }}
-                  >
-                    Отклонить
-                  </button>
-                </div>
-                <div className="text-xs text-gray-400 mt-1">{new Date(m.created_at).toLocaleTimeString()}</div>
-              </div>
-            );
-          }
-          // Обычные системные сообщения
-          if (m.meta?.type === 'system') {
-            return (
-              <div key={m.id} className="mb-4 text-center">
-                <div className="inline-block px-4 py-3 rounded-lg bg-gray-200 text-gray-900 font-medium max-w-[90%]">
-                  {m.content}
-                </div>
-                <div className="text-xs text-gray-400 mt-1">{new Date(m.created_at).toLocaleTimeString()}</div>
-              </div>
-            );
-          }
-          // Action-кнопки для клиента после завершения заказа исполнителем
-          if (m.meta?.type === 'system_action_client' && user?.id && m.meta.role === 'client' && user.id !== otherUser?.id) {
-            const orderId = m.meta.orderId;
-            const status = orderStatuses[orderId] || m.meta.status;
-            if (status !== 'completed_by_provider') return null;
-            return (
-              <div key={m.id} className="mb-4 text-center">
-                <div className="inline-block px-4 py-3 rounded-lg bg-yellow-50 text-yellow-900 font-medium max-w-[90%]">
-                  {m.content.split('\n').map((line: string, i: number) => <div key={i}>{line}</div>)}
-                  <button
-                    className={`px-4 py-1.5 rounded-lg font-semibold text-white bg-green-600 hover:bg-green-700 disabled:opacity-60`}
-                    disabled={actionLoading}
-                    onClick={async () => {
-                      setActionLoading(true);
-                      await ordersApi.updateOrderStatus(orderId, 'completed');
-                      setActionedOrders(prev => ({ ...prev, [orderId]: 'completed' }));
-                      if (chatId) {
-                        await chatApi.sendMessage(
-                          chatId,
-                          user.id,
-                          'Заказ подтверждён. Пожалуйста, оцените исполнителя.',
-                          { type: 'system', orderId, role: 'client', status: 'completed' }
-                        );
-                      }
-                      setActionLoading(false);
-                      // Открыть модалку отзыва
-                      setReviewOrderId(orderId);
-                      setShowReviewModal(true);
-                    }}
-                  >
-                    Подтвердить выполнение
-                  </button>
-                  <button
-                    className={`px-4 py-1.5 rounded-lg font-semibold text-white bg-red-600 hover:bg-red-700 disabled:opacity-60 ml-2`}
-                    disabled={actionLoading}
-                    onClick={async () => {
-                      setActionLoading(true);
-                      await ordersApi.updateOrderStatus(orderId, 'dispute');
-                      setActionedOrders(prev => ({ ...prev, [orderId]: 'dispute' }));
-                      if (chatId) {
-                        await chatApi.sendMessage(
-                          chatId,
-                          user.id,
-                          'Пользователь вызвал администратора для разрешения вопроса по заказу.',
-                          { type: 'system', orderId, role: 'client', status: 'dispute' }
-                        );
-                      }
-                      setActionLoading(false);
-                    }}
-                  >
-                    Позвать администратора
-                  </button>
-                </div>
-                <div className="text-xs text-gray-400 mt-1">{new Date(m.created_at).toLocaleTimeString()}</div>
-              </div>
-            );
-          }
-          // Обычные сообщения
-          return (
-            <div key={m.id} className={`mb-2 ${m.sender_id === user?.id ? 'text-right' : 'text-left'}`}
-              style={{ maxWidth: '100%' }}>
-              <div className={`inline-block px-3 py-2 rounded-lg max-w-[80vw] break-words bg-blue-500 text-white`}
-                style={{ boxSizing: 'border-box', wordBreak: 'break-word' }}>
-                {m.attachments && m.attachments.length > 0 && m.attachments.map((a: any) => {
-                  if (a.type === 'image') {
-                    return <img key={a.id} src={a.url} alt="attachment" className="max-w-[200px] max-h-[200px] mb-2 rounded" />;
-                  } else {
-                    const full = decodeURIComponent(a.url.split('/').pop()?.split('?')[0] || 'Скачать файл');
-                    const name = full.includes('-') ? full.substring(full.lastIndexOf('-') + 1) : full;
-                    const linkClass = m.sender_id === user?.id
-                      ? 'inline-flex items-center gap-1 underline text-white hover:text-blue-200 mr-2'
-                      : 'inline-flex items-center gap-1 text-blue-300 underline mr-2';
-                    // Форматируем размер файла
-                    let sizeStr = '';
-                    if (a.size) {
-                      if (a.size > 1024 * 1024) {
-                        sizeStr = (a.size / (1024 * 1024)).toFixed(2) + ' МБ';
-                      } else if (a.size > 1024) {
-                        sizeStr = (a.size / 1024).toFixed(1) + ' КБ';
-                      } else {
-                        sizeStr = a.size + ' Б';
-                      }
-                    }
-                    return (
-                      <a key={a.id} href={a.url} target="_blank" rel="noopener noreferrer" className={linkClass}>
-                        <FileIcon size={16} className={m.sender_id === user?.id ? 'text-white' : 'text-blue-300'} />
-                        {name}
-                        {sizeStr && <span className="ml-1 text-xs opacity-70">({sizeStr})</span>}
-                      </a>
-                    );
-                  }
-                })}
-                {m.content}
-                {/* Индикатор прочтения для последних сообщений пользователя */}
-                {m.sender_id === user?.id && (
-                  <span className="ml-2 align-middle text-xs inline-flex items-center">
-                    {m.reads && m.reads.length > 1 ? (
-                      <span title={m.reads[1]?.read_at ? `Прочитано: ${new Date(m.reads[1].read_at).toLocaleTimeString()}` : 'Прочитано'}>
-                        <CheckCheck size={16} className="text-green-500" />
-                      </span>
-                    ) : (
-                      <span title="Доставлено">
-                        <Check size={16} className="text-gray-400" />
-                      </span>
+      <div className="flex-1 overflow-y-auto px-2 py-4" style={{ maxHeight: 'calc(100vh - 140px)' }}>
+        <AnimatePresence initial={false}>
+          <div className="flex flex-col gap-3">
+            {messages.map((msg, idx) => {
+              const isOwn = msg.sender_id === user?.id;
+              return (
+                <motion.div
+                  key={msg.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 20 }}
+                  transition={{ duration: 0.25, delay: 0.01 * (messages.length - idx) }}
+                  className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}
+                >
+                  <div className={`max-w-[80%] rounded-2xl px-4 py-2 shadow-card relative ${isOwn ? 'bg-gradient-to-br from-cyan-400 to-blue-500 text-white rounded-br-md' : 'bg-gray-100 text-gray-900 rounded-bl-md'}`}>
+                    {/* Вложения */}
+                    {msg.attachments && msg.attachments.length > 0 && (
+                      <div className="mb-1">
+                        {msg.attachments[0].type === 'image' ? (
+                          <img src={msg.attachments[0].url} alt="Фото" className="rounded-lg max-w-[180px] max-h-[180px] mb-1" />
+                        ) : (
+                          <a href={msg.attachments[0].url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-blue-200 hover:underline">
+                            <FileIcon size={18} />
+                            <span className="truncate max-w-[120px]">{decodeURIComponent(msg.attachments[0].url.split('/').pop()?.split('?')[0] || 'Файл')}</span>
+                          </a>
+                        )}
+                      </div>
                     )}
-                  </span>
-                )}
-              </div>
-              <div className="text-xs text-gray-400">{new Date(m.created_at).toLocaleTimeString()}</div>
-            </div>
-          );
-        })}
-        <div ref={messagesEndRef} />
+                    {/* Текст сообщения */}
+                    {msg.content && <div className="whitespace-pre-line break-words text-base">{msg.content}</div>}
+                    {/* Время */}
+                    <div className={`text-xs mt-1 ${isOwn ? 'text-cyan-100/80' : 'text-gray-400'}`}>{new Date(msg.created_at).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}</div>
+                  </div>
+                </motion.div>
+              );
+            })}
+            <div ref={messagesEndRef} />
+          </div>
+        </AnimatePresence>
       </div>
 
       <form
-        className="bg-white border-t border-gray-200 p-3 flex items-center gap-2 w-full md:max-w-3xl md:mx-auto rounded-t-2xl z-20 chat-input-bar shadow-lg"
-        style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0) + 4px)', borderTopLeftRadius: '1.25rem', borderTopRightRadius: '1.25rem', borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }}
+        className="bg-white border-t border-gray-200 p-3 flex items-center gap-2 w-full max-w-2xl mx-auto rounded-2xl z-20 chat-input-bar shadow-lg fixed bottom-0 left-0 right-0 md:static md:rounded-t-2xl md:mx-auto md:mb-4"
+        style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0) + 4px)', borderTopLeftRadius: '1.25rem', borderTopRightRadius: '1.25rem', borderBottomLeftRadius: 0, borderBottomRightRadius: 0, boxShadow: '0 4px 24px 0 rgba(0,160,255,0.07)' }}
         onSubmit={e => { e.preventDefault(); send(); }}
       >
         <button
           type="button"
-          className="p-2 rounded-full hover:bg-gray-100"
+          className="p-2 rounded-full hover:bg-cyan-100 transition"
           onClick={() => fileInputRef.current?.click()}
           disabled={uploading}
           title="Прикрепить файл"
         >
-          <Paperclip size={20} />
+          <Paperclip size={22} className="text-cyan-500" />
         </button>
         <input
           type="file"
@@ -481,19 +340,20 @@ export default function ChatPage() {
           disabled={uploading}
         />
         <input
-          className="flex-1 border rounded-2xl px-4 py-2 bg-gray-100 focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 outline-none text-base shadow-sm"
+          className="flex-1 border-none outline-none rounded-full px-4 py-2 bg-gray-100 focus:ring-2 focus:ring-cyan-400 text-base shadow-sm transition"
           value={input}
           onChange={e => setInput(e.target.value)}
           onFocus={() => setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 300)}
           onKeyDown={e => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), send())}
           placeholder="Введите сообщение..."
           autoComplete="off"
-          style={{ minHeight: 40, maxHeight: 80, borderRadius: '1.25rem' }}
+          style={{ minHeight: 40, maxHeight: 80, borderRadius: '9999px' }}
+          disabled={uploading}
         />
         <button
           type="submit"
-          className="ml-2 px-5 py-2 bg-primary-500 text-white rounded-full font-medium disabled:opacity-50"
-          disabled={!input.trim()}
+          className="ml-2 px-5 py-2 bg-gradient-to-r from-cyan-400 to-blue-500 text-white rounded-full font-semibold shadow hover:from-cyan-500 hover:to-blue-600 transition disabled:opacity-50"
+          disabled={!input.trim() || uploading}
           style={{ minHeight: 40 }}
         >
           Отправить

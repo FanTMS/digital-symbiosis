@@ -53,7 +53,7 @@ export default function AuthPage() {
       <div className="text-center">
         <h1 className="text-2xl font-bold mb-4">Добро пожаловать!</h1>
         <p className="text-gray-600 mb-8">
-          Для использования приложения необходимо авторизоваться через Telegram.
+          Мы рады видеть вас в нашем приложении!
         </p>
       </div>
     </div>
