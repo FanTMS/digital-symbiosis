@@ -177,7 +177,7 @@ app.post('/api/auth/telegram', async (req, res) => {
     console.log('[AUTH] Попытка входа/регистрации:', { email, telegramId });
     // Проверяем, есть ли пользователь
     let { data: users, error } = await supabase.auth.admin.listUsers({ email });
-    let user = users?.users?.[0];
+    let user = users?.users?.find(u => u.email === email);
     console.log('[AUTH] Найден пользователь:', user ? user.id : null, user ? user.email : null);
     if (!user) {
       // Если нет — создаём пользователя
