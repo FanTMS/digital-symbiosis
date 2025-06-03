@@ -459,10 +459,19 @@ export default function ChatPage() {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Поле ввода */}
+      {/* Белый фон под формой ввода, чтобы не было "дыры" снизу */}
+      <div style={{
+        position: 'fixed',
+        left: 0,
+        right: 0,
+        bottom: 0,
+        height: 'calc(env(safe-area-inset-bottom, 0) + 32px)',
+        background: '#fff',
+        zIndex: 10
+      }} />
       <form
-        className="bg-white border-t border-gray-200 p-3 flex items-center gap-2 w-full md:max-w-3xl md:mx-auto md:rounded-b-2xl z-20 chat-input-bar shadow-lg rounded-t-2xl rounded-b-2xl mb-2"
-        style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0) + 12px)', borderRadius: '1.25rem' }}
+        className="bg-white border-t border-gray-200 p-3 flex items-center gap-2 w-full md:max-w-3xl md:mx-auto md:rounded-b-2xl z-20 chat-input-bar shadow-lg rounded-t-2xl rounded-b-2xl mb-4"
+        style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0) + 16px)', borderRadius: '1.25rem' }}
         onSubmit={e => { e.preventDefault(); send(); }}
       >
         <button
