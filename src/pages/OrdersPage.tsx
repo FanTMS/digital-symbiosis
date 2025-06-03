@@ -12,6 +12,11 @@ import { supabase } from '../lib/supabase';
 import { useToast } from '../components/ui/ToastProvider';
 import { useOrders, useUpdateOrderStatus } from '../hooks/useOrders';
 import { useQueryClient } from '@tanstack/react-query';
+import { FixedSizeList as List } from 'react-window';
+
+const PAGE_SIZE = 20;
+const CARD_HEIGHT = 120; // px, высота одной карточки заказа
+const VISIBLE_COUNT = 8;
 
 const OrdersPage: React.FC = () => {
   const navigate = useNavigate();
@@ -22,8 +27,11 @@ const OrdersPage: React.FC = () => {
   const [selectedOrder, setSelectedOrder] = useState<any | null>(null);
   const queryClient = useQueryClient();
   const userId = user?.id;
-  const { data: userOrders = [], isLoading } = useOrders(userId ?? 0, activeTab);
+  const [page, setPage] = useState(0);
+  const [allOrders, setAllOrders] = useState<any[]>([]);
+  const { data: userOrders = [], isLoading, isFetching } = useOrders(userId ?? 0, activeTab, PAGE_SIZE, page * PAGE_SIZE);
   const updateOrderStatus = useUpdateOrderStatus();
+  const [hasMore, setHasMore] = useState(true);
   
   useEffect(() => {
     if (tg) {
@@ -36,6 +44,22 @@ const OrdersPage: React.FC = () => {
       };
     }
   }, [tg, navigate]);
+  
+  useEffect(() => {
+    if (userOrders && userOrders.length > 0) {
+      setAllOrders(prev => page === 0 ? userOrders : [...prev, ...userOrders]);
+      setHasMore(userOrders.length === PAGE_SIZE);
+    } else if (page === 0) {
+      setAllOrders([]);
+      setHasMore(false);
+    } else if (userOrders && userOrders.length < PAGE_SIZE) {
+      setHasMore(false);
+    }
+  }, [userOrders, page]);
+
+  useEffect(() => {
+    setPage(0);
+  }, [activeTab]);
   
   const getOrderStatusInfo = (status: string) => {
     switch (status) {
@@ -123,121 +147,123 @@ const OrdersPage: React.FC = () => {
         {/* Orders list с анимацией перехода между вкладками */}
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
-            key={activeTab + (isLoading ? '-loading' : userOrders.length > 0 ? '-list' : '-empty')}
+            key={activeTab + (isLoading ? '-loading' : allOrders.length > 0 ? '-list' : '-empty')}
             initial={{ opacity: 0, x: 40 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -40 }}
-            transition={{ duration: 0.3, type: 'tween' }}
+            transition={{ duration: 0.4, ease: 'easeOut' }}
           >
-            {isLoading ? (
+            {isLoading && page === 0 ? (
               <div className="space-y-3">
                 {[1, 2, 3].map((i) => (
                   <div key={i} className="bg-gray-100 animate-pulse h-32 rounded-lg"></div>
                 ))}
               </div>
-            ) : userOrders.length > 0 ? (
-              <div className="space-y-4">
-                {userOrders
-                  .slice() // копия массива
-                  .sort((a, b) => {
-                    const activeStatuses = ['pending', 'accepted', 'in_progress'];
-                    const aActive = activeStatuses.includes(a.status);
-                    const bActive = activeStatuses.includes(b.status);
-                    if (aActive === bActive) return 0;
-                    return aActive ? -1 : 1;
-                  })
-                  .map(order => {
+            ) : allOrders.length > 0 ? (
+              <>
+                <List
+                  height={CARD_HEIGHT * Math.min(allOrders.length, VISIBLE_COUNT)}
+                  itemCount={allOrders.length}
+                  itemSize={CARD_HEIGHT}
+                  width={"100%"}
+                  style={{ minHeight: CARD_HEIGHT * Math.min(allOrders.length, VISIBLE_COUNT) }}
+                >
+                  {({ index, style }: { index: number; style: React.CSSProperties }) => {
+                    const order = allOrders[index];
                     const statusInfo = getOrderStatusInfo(order.status);
-                    const StatusIcon = statusInfo.icon;
                     const service = order.service;
                     const otherUser = activeTab === 'client' ? order.provider : order.client;
+                    const StatusIcon = statusInfo.icon;
                     return (
-                      <motion.div
-                        key={order.id}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 10 }}
-                        className="bg-white rounded-lg shadow-card overflow-hidden"
-                      >
-                        <div className="p-4">
-                          <div className="flex justify-between items-start mb-2">
-                            <h3 className="font-medium text-gray-900">{service?.title}</h3>
-                            <div className={`flex items-center px-2 py-1 rounded-full text-xs ${statusInfo.bgColor} ${statusInfo.color}`}>
-                              <StatusIcon size={12} className="mr-1" />
-                              {statusInfo.label}
-                            </div>
-                          </div>
-                          <div className="flex items-center text-sm text-gray-500 mb-3">
-                            <Clock size={14} className="mr-1" />
-                            <span>{formatDate(new Date(order.created_at))}</span>
-                          </div>
-                          <div className="flex justify-between items-center mb-3">
-                            <div>
-                              <div className="text-xs text-gray-500">
-                                {activeTab === 'client' ? 'Исполнитель' : 'Заказчик'}
+                      <div style={style} key={order.id}>
+                        <motion.div
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.4, ease: 'easeOut' }}
+                          className="bg-white rounded-lg shadow mb-4"
+                        >
+                          <div className="p-4">
+                            <div className="flex justify-between items-start mb-2">
+                              <h3 className="font-medium text-gray-900">{service?.title}</h3>
+                              <div className={`flex items-center px-2 py-1 rounded-full text-xs ${statusInfo.bgColor} ${statusInfo.color}`}>
+                                <StatusIcon size={12} className="mr-1" />
+                                {statusInfo.label}
                               </div>
-                              <div className="font-medium cursor-pointer text-primary-600 hover:underline" onClick={() => otherUser?.id && navigate(`/profile/${otherUser.id}`)}>{otherUser?.name}</div>
                             </div>
-                            <div className="text-right">
-                              <div className="text-xs text-gray-500">Стоимость</div>
-                              <div className="font-medium text-accent-500">{order.price} кр.</div>
+                            <div className="flex items-center text-sm text-gray-500 mb-3">
+                              <Clock size={14} className="mr-1" />
+                              <span>{formatDate(new Date(order.created_at))}</span>
                             </div>
-                          </div>
-                          <div className="flex space-x-2">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              leftIcon={<ExternalLink size={14} />}
-                              onClick={() => handleViewDetails(order)}
-                              className="flex-1"
-                            >
-                              Детали
-                            </Button>
-                            <Button
-                              variant="primary"
-                              size="sm"
-                              leftIcon={<MessageCircle size={14} />}
-                              onClick={() => handleContact(otherUser?.id)}
-                              className="flex-1"
-                            >
-                              Связаться
-                            </Button>
-                            {/* Кнопка Завершить для исполнителя */}
-                            {activeTab === 'provider' && (order.status === 'accepted' || order.status === 'in_progress') && (
+                            <div className="flex justify-between items-center mb-3">
+                              <div>
+                                <div className="text-xs text-gray-500 mb-1">
+                                  {activeTab === 'client' ? 'Исполнитель' : 'Заказчик'}
+                                </div>
+                                <div className="font-medium cursor-pointer text-primary-600 hover:underline" onClick={() => otherUser?.id && navigate(`/profile/${otherUser.id}`)}>{otherUser?.name}</div>
+                              </div>
+                              <div className="text-right">
+                                <div className="text-xs text-gray-500">Стоимость</div>
+                                <div className="font-medium text-accent-500">{order.price} кр.</div>
+                              </div>
+                            </div>
+                            <div className="flex gap-2">
                               <Button
-                                variant="success"
+                                variant="outline"
                                 size="sm"
-                                onClick={() => handleCompleteOrder(order.id)}
+                                leftIcon={<ExternalLink size={14} />}
+                                onClick={() => handleViewDetails(order)}
                                 className="flex-1"
                               >
-                                Завершить
+                                Подробнее
                               </Button>
-                            )}
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                leftIcon={<MessageCircle size={14} />}
+                                onClick={() => handleContact(otherUser?.id)}
+                                className="flex-1"
+                              >
+                                Связаться
+                              </Button>
+                              {/* Кнопка Завершить для исполнителя */}
+                              {activeTab === 'provider' && (order.status === 'accepted' || order.status === 'in_progress') && (
+                                <Button
+                                  variant="success"
+                                  size="sm"
+                                  onClick={() => handleCompleteOrder(order.id)}
+                                  className="flex-1"
+                                >
+                                  Завершить
+                                </Button>
+                              )}
+                            </div>
                           </div>
-                        </div>
-                      </motion.div>
+                        </motion.div>
+                      </div>
                     );
-                  })}
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center py-8 text-center text-gray-400">
-                <div className="text-4xl mb-2">{activeTab === 'client' ? '' : '🧑‍💼'}</div>
-                <h3 className="text-lg font-medium mb-1">{activeTab === 'client' ? 'Нет заказов как клиент' : 'Нет заказов как исполнитель'}</h3>
-                <p className="text-gray-500 mb-4 max-w-xs">
-                  {activeTab === 'client'
-                    ? 'Вы ещё не сделали ни одного заказа. Найдите услугу и оформите первый заказ!'
-                    : 'У вас пока нет заказов как исполнитель. Ожидайте новых заявок!'}
-                </p>
-                {activeTab === 'client' && (
-                  <Button 
-                    variant="primary" 
-                    leftIcon={<Plus size={16} />}
-                    onClick={() => navigate('/services')}
-                  >
-                    Найти услугу
-                  </Button>
+                  }}
+                </List>
+                {hasMore && (
+                  <div className="flex justify-center mt-4">
+                    <Button variant="outline" onClick={() => setPage(p => p + 1)} disabled={isFetching}>
+                      {isFetching ? 'Загрузка...' : 'Показать ещё'}
+                    </Button>
+                  </div>
                 )}
-              </div>
+              </>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3 }}
+                className="flex flex-col items-center justify-center py-8 text-center"
+              >
+                <div className="text-4xl mb-2">📦</div>
+                <h3 className="text-lg font-medium mb-1">Нет заказов</h3>
+                <p className="text-gray-500 mb-4 max-w-xs">
+                  Пока у вас нет заказов. Попробуйте заказать услугу!
+                </p>
+              </motion.div>
             )}
           </motion.div>
         </AnimatePresence>

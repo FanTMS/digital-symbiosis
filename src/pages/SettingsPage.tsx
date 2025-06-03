@@ -45,10 +45,9 @@ const SettingsPage: React.FC = () => {
       tg.setHeaderColor('#0BBBEF');
       tg.BackButton.show();
       tg.BackButton.onClick(() => navigate('/profile'));
-      
       return () => {
         tg.BackButton.hide();
-        tg.BackButton.offClick();
+        tg.BackButton.offClick(() => navigate('/profile'));
       };
     }
   }, [tg, navigate]);
@@ -163,7 +162,7 @@ const SettingsPage: React.FC = () => {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.25, ease: 'easeOut' }}
+      transition={{ duration: 0.4, ease: 'easeOut' }}
       className="pb-16 pt-2"
     >
       <div className="px-4">

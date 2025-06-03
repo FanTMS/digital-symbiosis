@@ -1,27 +1,27 @@
-import React, { useEffect } from 'react';
-import { Routes, Route } from 'react-router-dom';
-import { AnimatePresence } from 'framer-motion';
+import React, { useEffect, Suspense, lazy } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useTelegram } from './hooks/useTelegram';
 import { useUser } from './contexts/UserContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 
-// Pages
-import HomePage from './pages/HomePage';
-import ProfilePage from './pages/ProfilePage';
-import ServicesPage from './pages/ServicesPage';
-import ServiceDetailPage from './pages/ServiceDetailPage';
-import CreateServicePage from './pages/CreateServicePage';
-import OrdersPage from './pages/OrdersPage';
-import ReferralsPage from './pages/ReferralsPage';
-import NotFoundPage from './pages/NotFoundPage';
-import AuthPage from './pages/AuthPage';
-import NotificationsPage from './pages/NotificationsPage';
-import ChatPage from './pages/ChatPage';
-import ChatsPage from './pages/ChatsPage';
-import AchievementsPage from './pages/AchievementsPage';
-import AdminDashboardPage from './pages/AdminDashboardPage';
-import SettingsPage from './pages/SettingsPage';
-import FavoritesPage from './pages/FavoritesPage';
+// Pages (ленивый импорт)
+const HomePage = lazy(() => import('./pages/HomePage'));
+const ProfilePage = lazy(() => import('./pages/ProfilePage'));
+const ServicesPage = lazy(() => import('./pages/ServicesPage'));
+const ServiceDetailPage = lazy(() => import('./pages/ServiceDetailPage'));
+const CreateServicePage = lazy(() => import('./pages/CreateServicePage'));
+const OrdersPage = lazy(() => import('./pages/OrdersPage'));
+const ReferralsPage = lazy(() => import('./pages/ReferralsPage'));
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
+const AuthPage = lazy(() => import('./pages/AuthPage'));
+const NotificationsPage = lazy(() => import('./pages/NotificationsPage'));
+const ChatPage = lazy(() => import('./pages/ChatPage'));
+const ChatsPage = lazy(() => import('./pages/ChatsPage'));
+const AchievementsPage = lazy(() => import('./pages/AchievementsPage'));
+const AdminDashboardPage = lazy(() => import('./pages/AdminDashboardPage'));
+const SettingsPage = lazy(() => import('./pages/SettingsPage'));
+const FavoritesPage = lazy(() => import('./pages/FavoritesPage'));
 
 // Components
 import NavigationBar from './components/ui/NavigationBar';
@@ -30,6 +30,7 @@ import LoadingScreen from './components/ui/LoadingScreen';
 function App() {
   const { tg, user: telegramUser, error: telegramError } = useTelegram();
   const { loading: userLoading } = useUser();
+  const location = useLocation();
 
   useEffect(() => {
     if (tg) {
@@ -77,100 +78,102 @@ function App() {
       <div className="absolute inset-0 bg-gradient-to-br from-cyan-100 via-teal-100 to-blue-100 opacity-15 pointer-events-none z-0"></div>
       {/* Контент приложения */}
       <div className="relative z-10 flex flex-col min-h-screen text-gray-900">
-        <AnimatePresence mode="wait">
-          <Routes>
-            <Route path="/auth" element={<AuthPage />} />
-            
-            <Route path="/" element={
-              <ProtectedRoute>
-                <HomePage />
-              </ProtectedRoute>
-            } />
-            
-            <Route path="/services" element={
-              <ProtectedRoute>
-                <ServicesPage />
-              </ProtectedRoute>
-            } />
-            
-            <Route path="/services/:id" element={
-              <ProtectedRoute>
-                <ServiceDetailPage />
-              </ProtectedRoute>
-            } />
-            
-            <Route path="/orders" element={
-              <ProtectedRoute>
-                <OrdersPage />
-              </ProtectedRoute>
-            } />
-            
-            <Route path="/profile" element={
-              <ProtectedRoute>
-                <ProfilePage />
-              </ProtectedRoute>
-            } />
-            
-            <Route path="/referrals" element={
-              <ProtectedRoute>
-                <ReferralsPage />
-              </ProtectedRoute>
-            } />
-            
-            <Route path="/notifications" element={
-              <ProtectedRoute>
-                <NotificationsPage />
-              </ProtectedRoute>
-            } />
-            
-            <Route path="/create-service" element={
-              <ProtectedRoute>
-                <CreateServicePage />
-              </ProtectedRoute>
-            } />
-            
-            <Route path="/chat/:chatId" element={
-              <ProtectedRoute>
-                <ChatPage />
-              </ProtectedRoute>
-            } />
-            
-            <Route path="/chats" element={
-              <ProtectedRoute>
-                <ChatsPage />
-              </ProtectedRoute>
-            } />
-            
-            <Route path="/achievements" element={
-              <ProtectedRoute>
-                <AchievementsPage />
-              </ProtectedRoute>
-            } />
-            
-            <Route path="/admin-dashboard" element={
-              <ProtectedRoute>
-                <AdminDashboardPage />
-              </ProtectedRoute>
-            } />
-            
-            <Route path="/settings" element={
-              <ProtectedRoute>
-                <SettingsPage />
-              </ProtectedRoute>
-            } />
-            
-            <Route path="/favorites" element={
-              <ProtectedRoute>
-                <FavoritesPage />
-              </ProtectedRoute>
-            } />
-            
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
-        </AnimatePresence>
+        <Suspense fallback={<LoadingScreen />}>
+          <AnimatePresence mode="wait" initial={false}>
+            <Routes location={location} key={location.pathname}>
+              <Route path="/auth" element={<AuthPage />} />
+              <Route path="/" element={
+                <ProtectedRoute>
+                  <PageWrapper><HomePage /></PageWrapper>
+                </ProtectedRoute>
+              } />
+              <Route path="/services" element={
+                <ProtectedRoute>
+                  <PageWrapper><ServicesPage /></PageWrapper>
+                </ProtectedRoute>
+              } />
+              <Route path="/services/:id" element={
+                <ProtectedRoute>
+                  <PageWrapper><ServiceDetailPage /></PageWrapper>
+                </ProtectedRoute>
+              } />
+              <Route path="/orders" element={
+                <ProtectedRoute>
+                  <PageWrapper><OrdersPage /></PageWrapper>
+                </ProtectedRoute>
+              } />
+              <Route path="/profile" element={
+                <ProtectedRoute>
+                  <PageWrapper><ProfilePage /></PageWrapper>
+                </ProtectedRoute>
+              } />
+              <Route path="/referrals" element={
+                <ProtectedRoute>
+                  <PageWrapper><ReferralsPage /></PageWrapper>
+                </ProtectedRoute>
+              } />
+              <Route path="/notifications" element={
+                <ProtectedRoute>
+                  <PageWrapper><NotificationsPage /></PageWrapper>
+                </ProtectedRoute>
+              } />
+              <Route path="/create-service" element={
+                <ProtectedRoute>
+                  <PageWrapper><CreateServicePage /></PageWrapper>
+                </ProtectedRoute>
+              } />
+              <Route path="/chat/:chatId" element={
+                <ProtectedRoute>
+                  <PageWrapper><ChatPage /></PageWrapper>
+                </ProtectedRoute>
+              } />
+              <Route path="/chats" element={
+                <ProtectedRoute>
+                  <PageWrapper><ChatsPage /></PageWrapper>
+                </ProtectedRoute>
+              } />
+              <Route path="/achievements" element={
+                <ProtectedRoute>
+                  <PageWrapper><AchievementsPage /></PageWrapper>
+                </ProtectedRoute>
+              } />
+              <Route path="/admin-dashboard" element={
+                <ProtectedRoute>
+                  <PageWrapper><AdminDashboardPage /></PageWrapper>
+                </ProtectedRoute>
+              } />
+              <Route path="/settings" element={
+                <ProtectedRoute>
+                  <PageWrapper><SettingsPage /></PageWrapper>
+                </ProtectedRoute>
+              } />
+              <Route path="/favorites" element={
+                <ProtectedRoute>
+                  <PageWrapper><FavoritesPage /></PageWrapper>
+                </ProtectedRoute>
+              } />
+              <Route path="*" element={<PageWrapper><NotFoundPage /></PageWrapper>} />
+            </Routes>
+          </AnimatePresence>
+        </Suspense>
         <NavigationBar />
       </div>
     </div>
+  );
+}
+
+// Обёртка для анимации появления/ухода страниц
+function PageWrapper({ children }: { children: React.ReactNode }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 20 }}
+      transition={{ duration: 0.25, ease: 'easeOut' }}
+      className="min-h-[calc(100vh-72px)]"
+    >
+      {children}
+    </motion.div>
   );
 }
 

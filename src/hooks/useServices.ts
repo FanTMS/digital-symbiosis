@@ -4,10 +4,10 @@ import type { Database } from '../types/supabase';
 
 type Service = Database['public']['Tables']['services']['Row'];
 
-export function useServices(category?: string) {
+export function useServices(category?: string, limit: number = 20, offset: number = 0) {
   return useQuery({
-    queryKey: ['services', category],
-    queryFn: () => servicesApi.listServices(category),
+    queryKey: ['services', category, limit, offset],
+    queryFn: () => servicesApi.listServices(category, limit, offset),
   });
 }
 

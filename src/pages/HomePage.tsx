@@ -238,7 +238,12 @@ const HomePage: React.FC = () => {
             ))}
           </div>
         ) : recommendedServices.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-8 text-center">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3 }}
+            className="flex flex-col items-center justify-center py-8 text-center"
+          >
             <div className="text-4xl mb-2">🔍</div>
             <h3 className="text-lg font-medium mb-1">Нет рекомендаций</h3>
             <p className="text-gray-500 mb-4 max-w-xs">
@@ -250,12 +255,12 @@ const HomePage: React.FC = () => {
             >
               Создать услугу
             </button>
-          </div>
+          </motion.div>
         ) : (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.25, ease: 'easeOut' }}
+            transition={{ duration: 0.4, ease: 'easeOut' }}
             className="space-y-3"
           >
             {recommendedServices.map((service) => (
@@ -294,7 +299,7 @@ const HomePage: React.FC = () => {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.25, ease: 'easeOut' }}
+                transition={{ duration: 0.4, ease: 'easeOut' }}
                 className="contents"
               >
                 <div className="text-center">
@@ -310,7 +315,7 @@ const HomePage: React.FC = () => {
                   <div className="text-sm text-gray-500">Категорий услуг</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-amber-500">{stats.avgRating > 0 ? stats.avgRating.toFixed(1) : '—'}</div>
+                  <div className="text-2xl font-bold text-yellow-500">{stats.avgRating}</div>
                   <div className="text-sm text-gray-500">Средний рейтинг</div>
                 </div>
               </motion.div>

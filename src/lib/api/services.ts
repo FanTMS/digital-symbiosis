@@ -7,14 +7,15 @@ type ServiceWithUser = Service & {
 };
 
 export const servicesApi = {
-  async listServices(category?: string): Promise<ServiceWithUser[]> {
+  async listServices(category?: string, limit: number = 20, offset: number = 0): Promise<ServiceWithUser[]> {
     const query = supabase
       .from('services')
       .select(`
         *,
         user:users!services_user_id_fkey(*)
       `)
-      .eq('is_active', true);
+      .eq('is_active', true)
+      .range(offset, offset + limit - 1);
     
     if (category) {
       query.eq('category', category);

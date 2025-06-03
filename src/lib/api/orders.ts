@@ -10,7 +10,7 @@ type OrderWithDetails = Order & {
 };
 
 export const ordersApi = {
-  async listUserOrders(userId: number, role: 'client' | 'provider'): Promise<OrderWithDetails[]> {
+  async listUserOrders(userId: number, role: 'client' | 'provider', limit: number = 20, offset: number = 0): Promise<OrderWithDetails[]> {
     const { data, error } = await supabase
       .from('orders')
       .select(`
@@ -20,7 +20,8 @@ export const ordersApi = {
         provider:users!orders_provider_id_fkey(*),
         review:reviews(*)
       `)
-      .eq(role === 'client' ? 'client_id' : 'provider_id', userId);
+      .eq(role === 'client' ? 'client_id' : 'provider_id', userId)
+      .range(offset, offset + limit - 1);
 
     if (error) throw error;
     return data;

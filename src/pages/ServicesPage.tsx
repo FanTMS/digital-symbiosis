@@ -9,9 +9,12 @@ import Button from '../components/ui/Button';
 import type { Database } from '../types/supabase';
 import { supabase } from '../lib/supabase';
 import Modal from '../components/ui/Modal';
+import { FixedSizeList as List } from 'react-window';
 
 type Service = Database['public']['Tables']['services']['Row'];
 type ServiceCategory = 'education' | 'it' | 'design' | 'languages' | 'business' | 'lifestyle';
+
+const PAGE_SIZE = 20;
 
 const ServicesPage: React.FC = () => {
   const navigate = useNavigate();
@@ -26,8 +29,10 @@ const ServicesPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'all' | 'favorites'>('all');
   const [favoriteServices, setFavoriteServices] = useState<any[]>([]);
   const [showSortModal, setShowSortModal] = useState(false);
-  
-  const { data: services, isLoading } = useServices(selectedCategory === 'all' ? undefined : selectedCategory);
+  const [page, setPage] = useState(0);
+  const [allServices, setAllServices] = useState<any[]>([]);
+  const { data: services, isLoading, isFetching } = useServices(selectedCategory === 'all' ? undefined : selectedCategory, PAGE_SIZE, page * PAGE_SIZE);
+  const [hasMore, setHasMore] = useState(true);
   
   const location = useLocation();
   
@@ -77,10 +82,27 @@ const ServicesPage: React.FC = () => {
   }, [location.search]);
   
   useEffect(() => {
+    if (services && services.length > 0) {
+      setAllServices(prev => page === 0 ? services : [...prev, ...services]);
+      setHasMore(services.length === PAGE_SIZE);
+    } else if (page === 0) {
+      setAllServices([]);
+      setHasMore(false);
+    } else if (services && services.length < PAGE_SIZE) {
+      setHasMore(false);
+    }
+  }, [services, page]);
+  
+  useEffect(() => {
     if (services) {
       console.log('services:', services);
     }
   }, [services]);
+  
+  // Сброс при смене фильтров/категории
+  useEffect(() => {
+    setPage(0);
+  }, [selectedCategory, searchTerm, priceFrom, priceTo, ratingFrom, ratingTo, sortBy]);
   
   const handleCreateService = () => {
     navigate('/create-service');
@@ -111,13 +133,16 @@ const ServicesPage: React.FC = () => {
     show: { opacity: 1, y: 0 }
   };
 
-  const filteredServices = services?.filter((service: any) => {
+  const filteredServices = allServices.filter((service: any) => {
     const matchesTitle = service.title.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === 'all' || service.category === selectedCategory;
     const matchesPrice = (priceFrom === '' || service.price >= parseFloat(priceFrom)) && (priceTo === '' || service.price <= parseFloat(priceTo));
     const matchesRating = (ratingFrom === '' || service.rating >= parseFloat(ratingFrom)) && (ratingTo === '' || service.rating <= parseFloat(ratingTo));
     return matchesTitle && matchesCategory && matchesPrice && matchesRating;
   }) || [];
+
+  const CARD_HEIGHT = 120; // px, высота одной карточки с отступами
+  const VISIBLE_COUNT = 8; // сколько карточек видно на экране
 
   return (
     <div className="pb-16 pt-2">
@@ -213,7 +238,7 @@ const ServicesPage: React.FC = () => {
         </div>
         
         {/* Services list */}
-        {isLoading && activeTab === 'all' ? (
+        {isLoading && page === 0 && activeTab === 'all' ? (
           <div className="space-y-3">
             {[1, 2, 3, 4].map((i) => (
               <div key={i} className="bg-gray-100 animate-pulse h-32 rounded-lg"></div>
@@ -221,22 +246,33 @@ const ServicesPage: React.FC = () => {
           </div>
         ) : activeTab === 'all' ? (
           filteredServices.length > 0 ? (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.25, ease: 'easeOut' }}
-              className="space-y-3"
-            >
-              {filteredServices.map((service) => (
-                <motion.div key={service.id} variants={item}>
-                  <ServiceCard service={service} />
-                </motion.div>
-              ))}
-            </motion.div>
+            <>
+              <List
+                height={CARD_HEIGHT * Math.min(filteredServices.length, VISIBLE_COUNT)}
+                itemCount={filteredServices.length}
+                itemSize={CARD_HEIGHT}
+                width={"100%"}
+                style={{ minHeight: CARD_HEIGHT * Math.min(filteredServices.length, VISIBLE_COUNT) }}
+              >
+                {({ index, style }: { index: number; style: React.CSSProperties }) => (
+                  <div style={style} key={filteredServices[index].id}>
+                    <ServiceCard service={filteredServices[index]} />
+                  </div>
+                )}
+              </List>
+              {hasMore && (
+                <div className="flex justify-center mt-4">
+                  <Button variant="outline" onClick={() => setPage(p => p + 1)} disabled={isFetching}>
+                    {isFetching ? 'Загрузка...' : 'Показать ещё'}
+                  </Button>
+                </div>
+              )}
+            </>
           ) : (
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
               className="flex flex-col items-center justify-center py-8 text-center"
             >
               <div className="text-4xl mb-2">🔍</div>

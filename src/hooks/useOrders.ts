@@ -4,10 +4,10 @@ import type { Database } from '../types/supabase';
 
 type Order = Database['public']['Tables']['orders']['Row'];
 
-export function useOrders(userId: number, role: 'client' | 'provider') {
+export function useOrders(userId: number, role: 'client' | 'provider', limit: number = 20, offset: number = 0) {
   return useQuery({
-    queryKey: ['orders', userId, role],
-    queryFn: () => ordersApi.listUserOrders(userId, role),
+    queryKey: ['orders', userId, role, limit, offset],
+    queryFn: () => ordersApi.listUserOrders(userId, role, limit, offset),
     enabled: !!userId,
   });
 }

@@ -188,15 +188,6 @@ const ReferralsPage: React.FC = () => {
             </div>
             <div className="text-xs text-gray-500 mb-2 text-center">Ваш реферальный код: <span className="font-mono text-primary-500">{user?.referral_code}</span></div>
             
-            <Button 
-              variant="primary" 
-              fullWidth 
-              leftIcon={<Share2 size={18} />}
-              onClick={handleShare}
-            >
-              Поделиться ссылкой
-            </Button>
-            
             {/* Форма для промокода */}
             <form onSubmit={handleActivatePromo} className="mb-4 flex flex-col gap-2">
               <label className="font-medium text-sm">У вас есть промокод?</label>
@@ -253,9 +244,9 @@ const ReferralsPage: React.FC = () => {
           </div>
         ) : invitedUsers.length > 0 ? (
           <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: 'easeOut' }}
             className="space-y-3"
           >
             {userReferrals.map((referral, idx) => {
@@ -301,24 +292,17 @@ const ReferralsPage: React.FC = () => {
             })}
           </motion.div>
         ) : (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="bg-white rounded-lg shadow-card p-6 text-center"
+            transition={{ duration: 0.3 }}
+            className="flex flex-col items-center justify-center py-8 text-center"
           >
             <div className="text-4xl mb-2">👥</div>
-            <h3 className="text-lg font-medium mb-1">Пока никого нет</h3>
-            <p className="text-gray-500 mb-4">
-              Поделитесь своей реферальной ссылкой с друзьями, чтобы получить бонусы
+            <h3 className="text-lg font-medium mb-1">Нет приглашённых</h3>
+            <p className="text-gray-500 mb-4 max-w-xs">
+              Вы ещё никого не пригласили. Поделитесь своим промокодом!
             </p>
-            <Button 
-              variant="primary" 
-              leftIcon={<Share2 size={18} />}
-              onClick={handleShare}
-            >
-              Пригласить друзей
-            </Button>
           </motion.div>
         )}
       </div>

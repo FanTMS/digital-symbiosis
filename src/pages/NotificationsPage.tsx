@@ -3,6 +3,7 @@ import { useUser } from '../contexts/UserContext';
 import { notificationsApi } from '../lib/api/notifications';
 import type { Notification } from '../types/models';
 import Button from '../components/ui/Button';
+import { motion } from 'framer-motion';
 
 export default function NotificationsPage() {
   const { user } = useUser();
@@ -63,10 +64,29 @@ export default function NotificationsPage() {
     </div>
   );
   if (error) return <div className="p-4 text-red-500">Ошибка: {error}</div>;
-  if (!notifications.length) return <div className="p-4">Нет уведомлений</div>;
+  if (!notifications.length) return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+      className="p-4 max-w-xl mx-auto flex flex-col items-center justify-center py-8 text-center"
+    >
+      <h1 className="text-2xl font-bold mb-4">Уведомления</h1>
+      <div className="text-4xl mb-2">🔔</div>
+      <h3 className="text-lg font-medium mb-1">Нет уведомлений</h3>
+      <p className="text-gray-500 mb-4 max-w-xs">
+        У вас пока нет уведомлений.
+      </p>
+    </motion.div>
+  );
 
   return (
-    <div className="p-4 max-w-xl mx-auto">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: 'easeOut' }}
+      className="p-4 max-w-xl mx-auto"
+    >
       <h1 className="text-2xl font-bold mb-4">Уведомления</h1>
       <ul className="space-y-3">
         {notifications.map(n => (
@@ -86,6 +106,6 @@ export default function NotificationsPage() {
           </li>
         ))}
       </ul>
-    </div>
+    </motion.div>
   );
 } 

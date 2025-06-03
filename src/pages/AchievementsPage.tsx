@@ -247,7 +247,7 @@ const AchievementsPage: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.25, ease: 'easeOut' }}
+            transition={{ duration: 0.4, ease: 'easeOut' }}
             className="space-y-3"
           >
             {badges.map((badge, index) => {
@@ -317,13 +317,18 @@ const AchievementsPage: React.FC = () => {
             })}
           </motion.div>
         ) : (
-          <div className="flex flex-col items-center justify-center py-8 text-center text-gray-400">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3 }}
+            className="flex flex-col items-center justify-center py-8 text-center"
+          >
             <div className="text-4xl mb-2">🏆</div>
-            <h3 className="text-lg font-medium mb-1">Нет достижений</h3>
+            <h3 className="text-lg font-medium mb-1">Нет наград</h3>
             <p className="text-gray-500 mb-4 max-w-xs">
-              Вы ещё не получили ни одного достижения. Выполняйте задания, получайте отзывы и приглашайте друзей, чтобы зарабатывать бейджи!
+              Вы ещё не получили ни одной награды. Активнее участвуйте в платформе!
             </p>
-          </div>
+          </motion.div>
         )}
       </div>
     </div>
