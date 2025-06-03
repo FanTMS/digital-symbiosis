@@ -126,7 +126,7 @@ const HomePage: React.FC = () => {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 sm:mb-4 gap-2 sm:gap-0">
           <div className="flex items-center gap-3 mb-1">
             <img src="/logo.svg" alt="WL Blend" className="w-10 h-10 hidden sm:block" />
-            <h1 className="text-3xl sm:text-4xl font-extrabold bg-gradient-to-r from-fuchsia-500 via-pink-400 to-rose-400 bg-clip-text text-transparent drop-shadow-sm tracking-tight animate-fade-in">WL Blend</h1>
+            <h1 className="text-3xl sm:text-4xl font-extrabold bg-gradient-to-r from-cyan-400 via-sky-400 to-blue-500 bg-clip-text text-transparent drop-shadow-sm tracking-tight animate-fade-in">WL Blend</h1>
           </div>
           <div className="flex flex-col items-end gap-2 w-full sm:w-auto">
             <button 
@@ -139,14 +139,14 @@ const HomePage: React.FC = () => {
               )}
             </button>
             <div className="w-full sm:w-auto">
-              <div className="relative flex items-center gap-3 px-5 py-3 rounded-2xl shadow-lg bg-gradient-to-r from-fuchsia-50 via-pink-50 to-rose-50 border border-fuchsia-200 min-w-[220px]">
+              <div className="relative flex items-center gap-3 px-5 py-3 rounded-2xl shadow-lg bg-gradient-to-r from-cyan-50 via-sky-50 to-blue-50 border border-cyan-200 min-w-[220px]">
                 <img src="/logo.svg" alt="WL Blend" className="w-8 h-8 mr-2 hidden sm:block" />
                 <div className="flex-1">
                   <div className="text-xs text-gray-500 font-medium mb-0.5">Баланс</div>
-                  <div className="text-2xl font-extrabold text-fuchsia-600 drop-shadow-sm">{(user && 'credits' in user ? (user as any).credits : 0)} <span className="text-base font-semibold text-gray-500">кредитов</span></div>
+                  <div className="text-2xl font-extrabold text-cyan-600 drop-shadow-sm">{(user && 'credits' in user ? (user as any).credits : 0)} <span className="text-base font-semibold text-gray-500">кредитов</span></div>
                 </div>
                 <button
-                  className="ml-2 px-4 py-2 bg-gradient-to-r from-fuchsia-500 to-pink-500 text-white rounded-xl font-bold shadow hover:from-fuchsia-600 hover:to-pink-600 transition text-sm"
+                  className="ml-2 px-4 py-2 bg-gradient-to-r from-cyan-400 to-blue-500 text-white rounded-xl font-bold shadow hover:from-cyan-500 hover:to-blue-600 transition text-sm"
                   onClick={() => {
                     const btn = document.querySelector('.balance-topup-bar button');
                     if (btn && btn instanceof HTMLButtonElement) btn.click();
