@@ -97,7 +97,7 @@ const CreateServicePage: React.FC = () => {
   ];
 
   return (
-    <div className="pb-20 pt-2">
+    <div className="pb-20 pt-2 min-h-screen bg-white overflow-auto">
       <div className="px-4">
         <h1 className="text-2xl font-bold mb-4">Создание услуги</h1>
         
@@ -113,7 +113,7 @@ const CreateServicePage: React.FC = () => {
               type="text"
               id="title"
               placeholder="Например: Уроки английского языка"
-              className={`w-full p-3 rounded-lg border ${errors.title ? 'border-red-400' : 'border-gray-300 dark:border-gray-600'} bg-white dark:bg-gray-700 focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 outline-none`}
+              className={`w-full p-3 rounded-lg border ${errors.title ? 'border-red-400' : 'border-gray-300'} bg-white focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 outline-none`}
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
@@ -127,7 +127,7 @@ const CreateServicePage: React.FC = () => {
             <textarea
               id="description"
               placeholder="Опишите, что включает ваша услуга..."
-              className={`w-full p-3 rounded-lg border ${errors.description ? 'border-red-400' : 'border-gray-300 dark:border-gray-600'} bg-white dark:bg-gray-700 focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 outline-none min-h-[100px]`}
+              className={`w-full p-3 rounded-lg border ${errors.description ? 'border-red-400' : 'border-gray-300'} bg-white focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 outline-none min-h-[100px]`}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               required
@@ -147,7 +147,7 @@ const CreateServicePage: React.FC = () => {
                   className={`flex items-center space-x-1 px-3 py-2 rounded-lg text-sm ${
                     category === cat.id
                       ? 'bg-primary-500 text-white'
-                      : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
+                      : 'bg-gray-100 text-gray-800'
                   }`}
                 >
                   <span>{cat.emoji}</span>
@@ -166,7 +166,7 @@ const CreateServicePage: React.FC = () => {
               id="price"
               min="1"
               max="10000"
-              className={`w-full p-3 rounded-lg border ${errors.price ? 'border-red-400' : 'border-gray-300 dark:border-gray-600'} bg-white dark:bg-gray-700 focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 outline-none`}
+              className={`w-full p-3 rounded-lg border ${errors.price ? 'border-red-400' : 'border-gray-300'} bg-white focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 outline-none`}
               value={price}
               onChange={(e) => setPrice(e.target.value)}
               required
@@ -181,7 +181,7 @@ const CreateServicePage: React.FC = () => {
               {skills.map((skill, index) => (
                 <div 
                   key={index}
-                  className="flex items-center bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-3 py-1 rounded-full text-sm"
+                  className="flex items-center bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm"
                 >
                   {skill}
                   <button 
@@ -198,7 +198,7 @@ const CreateServicePage: React.FC = () => {
               <input
                 type="text"
                 placeholder="Добавьте навык (например, JavaScript)"
-                className="flex-1 p-3 rounded-l-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 outline-none"
+                className="flex-1 p-3 rounded-l-lg border border-gray-300 bg-white focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 outline-none"
                 value={newSkill}
                 onChange={(e) => setNewSkill(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddSkill())}
@@ -216,7 +216,7 @@ const CreateServicePage: React.FC = () => {
           </div>
           
           {/* Submit button */}
-          <div className="fixed bottom-16 left-0 right-0 p-4 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+          <div className="sticky bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-200" style={{zIndex: 20}}>
             <Button 
               type="submit" 
               variant="primary" 
