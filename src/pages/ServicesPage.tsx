@@ -141,7 +141,7 @@ const ServicesPage: React.FC = () => {
     return matchesTitle && matchesCategory && matchesPrice && matchesRating;
   }) || [];
 
-  const CARD_HEIGHT = 180; // px, увеличено для корректного отображения ServiceCard
+  const CARD_HEIGHT = 320; // px, увеличено для корректного отображения ServiceCard
   const VISIBLE_COUNT = 8; // сколько карточек видно на экране
 
   return (
