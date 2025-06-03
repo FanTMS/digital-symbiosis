@@ -113,12 +113,12 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, onFavoriteChange }) 
     <motion.div
       whileHover={{ y: -4 }}
       whileTap={{ scale: 0.98 }}
-      className="bg-white dark:bg-gray-800 rounded-lg shadow-card hover:shadow-card-hover transition-all duration-300 overflow-hidden relative"
+      className="bg-white rounded-lg shadow-card hover:shadow-card-hover transition-all duration-300 overflow-hidden relative"
       onClick={handleClick}
     >
       {/* Сердце избранного */}
       <button
-        className={`absolute top-3 right-3 z-20 p-2 rounded-full bg-white/90 dark:bg-gray-900/90 shadow transition ${isFavorite ? 'text-red-500' : 'text-gray-300'} hover:bg-red-50 dark:hover:bg-red-900/40`}
+        className={`absolute top-3 right-3 z-20 p-2 rounded-full bg-white/90 shadow transition ${isFavorite ? 'text-red-500' : 'text-gray-300'} hover:bg-red-50`}
         onClick={handleFavorite}
         aria-label={isFavorite ? 'Удалить из избранного' : 'Добавить в избранное'}
         disabled={loading}
@@ -129,11 +129,11 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, onFavoriteChange }) 
       <div className="p-4">
         <div className="flex items-center mb-3">
           <span className="text-lg mr-2">{getCategoryIcon(service.category)}</span>
-          <span className="text-xs bg-primary-100 dark:bg-primary-900 text-primary-800 dark:text-primary-200 py-1 px-2 rounded-full">
+          <span className="text-xs bg-primary-100 text-primary-800 py-1 px-2 rounded-full">
             {getCategoryName(service.category)}
           </span>
         </div>
-        <h3 className="font-medium text-gray-900 dark:text-white text-lg mb-1 line-clamp-2">{service.title}</h3>
+        <h3 className="font-medium text-gray-900 text-lg mb-1 line-clamp-2">{service.title}</h3>
         {/* Рейтинг под заголовком */}
         <div className="flex items-center text-yellow-500 mb-2">
           <Star size={16} className="fill-yellow-500" />
@@ -145,16 +145,16 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, onFavoriteChange }) 
             <img
               src={user.avatar_url || 'https://images.pexels.com/photos/4926674/pexels-photo-4926674.jpeg?auto=compress&cs=tinysrgb&w=150'}
               alt={user.name}
-              className="w-6 h-6 rounded-full object-cover border border-gray-200 dark:border-gray-700"
+              className="w-6 h-6 rounded-full object-cover border border-gray-200"
             />
-            <span className="text-xs text-gray-700 dark:text-gray-300 font-medium">{user.name}</span>
+            <span className="text-xs text-gray-700 font-medium">{user.name}</span>
           </div>
         )}
-        <p className="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-3">{service.description}</p>
+        <p className="text-gray-600 text-sm mb-4 line-clamp-3">{service.description}</p>
         <div className="flex justify-between items-center">
           <div className="flex items-center">
             <Clock size={14} className="text-gray-400" />
-            <span className="ml-1 text-xs text-gray-500 dark:text-gray-400">
+            <span className="ml-1 text-xs text-gray-500">
               {formatDate(service.created_at)}
             </span>
           </div>

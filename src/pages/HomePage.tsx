@@ -124,13 +124,13 @@ const HomePage: React.FC = () => {
       {/* Header */}
       <div className="px-2 sm:px-4 mb-4 sm:mb-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 sm:mb-4 gap-2 sm:gap-0">
-          <div>
-            <h1 className="text-xl sm:text-2xl font-bold">WL Blend</h1>
-            <p className="text-gray-600 text-sm sm:text-base">Обмен услугами в один клик</p>
+          <div className="flex items-center gap-3 mb-1">
+            <img src="/logo.svg" alt="WL Blend" className="w-10 h-10 hidden sm:block" />
+            <h1 className="text-3xl sm:text-4xl font-extrabold bg-gradient-to-r from-primary-500 via-accent-500 to-blue-500 bg-clip-text text-transparent drop-shadow-sm tracking-tight animate-fade-in">WL Blend</h1>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col items-end gap-2 w-full sm:w-auto">
             <button 
-              className="relative p-2 bg-gray-100 rounded-full"
+              className="relative p-2 bg-gray-100 rounded-full self-end"
               onClick={() => navigate('/notifications')}
             >
               <Bell size={20} />
@@ -138,7 +138,24 @@ const HomePage: React.FC = () => {
                 <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-accent-500 rounded-full border-2 border-white flex items-center justify-center text-[10px] font-bold text-white" style={{minWidth:16, minHeight:16, padding:'0 4px'}}>{unreadCount}</span>
               )}
             </button>
-            <BalanceTopupBar />
+            <div className="w-full sm:w-auto">
+              <div className="relative flex items-center gap-3 px-5 py-3 rounded-2xl shadow-lg bg-gradient-to-r from-primary-100 via-blue-50 to-accent-50 border border-primary-200 min-w-[220px]">
+                <img src="/logo.svg" alt="WL Blend" className="w-8 h-8 mr-2 hidden sm:block" />
+                <div className="flex-1">
+                  <div className="text-xs text-gray-500 font-medium mb-0.5">Баланс</div>
+                  <div className="text-2xl font-extrabold text-primary-600 drop-shadow-sm">{(user && 'credits' in user ? (user as any).credits : 0)} <span className="text-base font-semibold text-gray-500">кредитов</span></div>
+                </div>
+                <button
+                  className="ml-2 px-4 py-2 bg-gradient-to-r from-primary-500 to-accent-500 text-white rounded-xl font-bold shadow hover:from-primary-600 hover:to-accent-600 transition text-sm"
+                  onClick={() => {
+                    const btn = document.querySelector('.balance-topup-bar button');
+                    if (btn && btn instanceof HTMLButtonElement) btn.click();
+                  }}
+                >
+                  Пополнить
+                </button>
+              </div>
+            </div>
           </div>
         </div>
         

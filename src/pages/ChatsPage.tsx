@@ -65,7 +65,7 @@ const ChatsPage: React.FC = () => {
   if (loading) return <div className="p-4">Загрузка...</div>;
 
   return (
-    <div className="p-4 w-full max-w-full">
+    <div className="p-4 w-full max-w-full pb-20 sm:pb-8">
       <h1 className="text-2xl font-bold mb-4 flex items-center gap-2">
         <MessageCircle size={24} /> Чаты
       </h1>
@@ -76,11 +76,11 @@ const ChatsPage: React.FC = () => {
           {chats.map((chat) => (
             <li
               key={chat.id}
-              className="p-3 rounded-lg border bg-white dark:bg-gray-800 shadow flex items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 w-full"
+              className="p-3 rounded-lg border bg-white shadow flex items-center cursor-pointer hover:bg-gray-50 w-full"
               style={{ minWidth: 0 }}
               onClick={() => navigate(`/chat/${chat.id}`)}
             >
-              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center mr-3">
+              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center mr-3">
                 {chat.otherUser?.avatar_url ? (
                   <img src={chat.otherUser.avatar_url} alt={chat.otherUser.name} className="w-10 h-10 rounded-full object-cover" />
                 ) : (
@@ -115,7 +115,12 @@ const ChatsPage: React.FC = () => {
                   })()}
                 </div>
               </div>
-              <Button size="sm" variant="outline" className="ml-2" onClick={e => { e.stopPropagation(); navigate(`/chat/${chat.id}`); }}>
+              <Button
+                size="sm"
+                variant="outline"
+                className="ml-2 min-w-[70px] sm:min-w-[90px] px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm"
+                onClick={e => { e.stopPropagation(); navigate(`/chat/${chat.id}`); }}
+              >
                 Открыть
               </Button>
             </li>

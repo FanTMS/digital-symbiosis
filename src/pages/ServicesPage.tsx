@@ -8,6 +8,7 @@ import ServiceCard from '../components/ui/ServiceCard';
 import Button from '../components/ui/Button';
 import type { Database } from '../types/supabase';
 import { supabase } from '../lib/supabase';
+import Modal from '../components/ui/Modal';
 
 type Service = Database['public']['Tables']['services']['Row'];
 type ServiceCategory = 'education' | 'it' | 'design' | 'languages' | 'business' | 'lifestyle';
@@ -24,6 +25,7 @@ const ServicesPage: React.FC = () => {
   const [sortBy, setSortBy] = useState<'date_desc' | 'date_asc' | 'price_asc' | 'price_desc' | 'rating_asc' | 'rating_desc'>('date_desc');
   const [activeTab, setActiveTab] = useState<'all' | 'favorites'>('all');
   const [favoriteServices, setFavoriteServices] = useState<any[]>([]);
+  const [showSortModal, setShowSortModal] = useState(false);
   
   const { data: services, isLoading } = useServices(selectedCategory === 'all' ? undefined : selectedCategory);
   
@@ -192,15 +194,14 @@ const ServicesPage: React.FC = () => {
             <input type="number" min={0} max={5} step={0.1} className="w-12 rounded-md border border-gray-200 px-2 py-1 bg-gray-50 text-sm focus:ring-2 focus:ring-primary-200 transition" value={ratingTo} onChange={e => setRatingTo(e.target.value)} placeholder="до" />
           </div>
           <div className="flex items-center gap-1">
-            <SortAsc size={16} className="text-gray-400" />
-            <select className="rounded-md border border-gray-200 px-2 py-1 bg-gray-50 text-sm focus:ring-2 focus:ring-primary-200 transition" value={sortBy} onChange={e => setSortBy(e.target.value as any)}>
-              <option value="date_desc">Сначала новые</option>
-              <option value="date_asc">Сначала старые</option>
-              <option value="price_asc">Цена ↑</option>
-              <option value="price_desc">Цена ↓</option>
-              <option value="rating_desc">Рейтинг ↓</option>
-              <option value="rating_asc">Рейтинг ↑</option>
-            </select>
+            <button
+              type="button"
+              className="flex items-center gap-1 px-2 py-1 rounded bg-gray-50 border border-gray-200 text-gray-700 hover:bg-primary-50 transition text-sm font-medium"
+              onClick={() => setShowSortModal(true)}
+            >
+              <SortAsc size={16} className="text-primary-500" />
+              <span>Сортировка</span>
+            </button>
           </div>
           <button
             className="ml-auto flex items-center gap-1 text-xs text-primary-500 hover:text-primary-700 transition underline px-2 py-1 rounded focus:outline-none focus:ring-2 focus:ring-primary-200"
@@ -282,6 +283,20 @@ const ServicesPage: React.FC = () => {
           )
         )}
       </div>
+      {/* Модалка сортировки */}
+      <Modal isOpen={showSortModal} onClose={() => setShowSortModal(false)}>
+        <div className="p-4">
+          <h2 className="text-lg font-semibold mb-4">Сортировка</h2>
+          <div className="flex flex-col gap-2">
+            <button className={`w-full text-left px-4 py-2 rounded-lg ${sortBy === 'date_desc' ? 'bg-primary-100 text-primary-800 font-bold' : 'hover:bg-gray-100'}`} onClick={() => { setSortBy('date_desc'); setShowSortModal(false); }}>Сначала новые</button>
+            <button className={`w-full text-left px-4 py-2 rounded-lg ${sortBy === 'date_asc' ? 'bg-primary-100 text-primary-800 font-bold' : 'hover:bg-gray-100'}`} onClick={() => { setSortBy('date_asc'); setShowSortModal(false); }}>Сначала старые</button>
+            <button className={`w-full text-left px-4 py-2 rounded-lg ${sortBy === 'price_asc' ? 'bg-primary-100 text-primary-800 font-bold' : 'hover:bg-gray-100'}`} onClick={() => { setSortBy('price_asc'); setShowSortModal(false); }}>Цена ↑</button>
+            <button className={`w-full text-left px-4 py-2 rounded-lg ${sortBy === 'price_desc' ? 'bg-primary-100 text-primary-800 font-bold' : 'hover:bg-gray-100'}`} onClick={() => { setSortBy('price_desc'); setShowSortModal(false); }}>Цена ↓</button>
+            <button className={`w-full text-left px-4 py-2 rounded-lg ${sortBy === 'rating_desc' ? 'bg-primary-100 text-primary-800 font-bold' : 'hover:bg-gray-100'}`} onClick={() => { setSortBy('rating_desc'); setShowSortModal(false); }}>Рейтинг ↓</button>
+            <button className={`w-full text-left px-4 py-2 rounded-lg ${sortBy === 'rating_asc' ? 'bg-primary-100 text-primary-800 font-bold' : 'hover:bg-gray-100'}`} onClick={() => { setSortBy('rating_asc'); setShowSortModal(false); }}>Рейтинг ↑</button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };
