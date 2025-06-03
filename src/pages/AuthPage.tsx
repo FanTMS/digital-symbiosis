@@ -55,13 +55,6 @@ export default function AuthPage() {
         <p className="text-gray-600 mb-8">
           Для использования приложения необходимо авторизоваться через Telegram.
         </p>
-        <div className="flex justify-center">
-          <img 
-            src="/telegram-logo.svg" 
-            alt="Telegram Logo" 
-            className="w-24 h-24 animate-bounce"
-          />
-        </div>
       </div>
     </div>
   );

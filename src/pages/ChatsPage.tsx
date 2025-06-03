@@ -4,12 +4,24 @@ import { useUser } from '../contexts/UserContext';
 import { supabase } from '../lib/supabase';
 import { MessageCircle, File as FileIcon, Image as ImageIcon } from 'lucide-react';
 import Button from '../components/ui/Button';
+import { motion } from 'framer-motion';
+import { BadgeCheck, Circle } from 'lucide-react';
 
 // Типы для чата и пользователя
 import type { Database } from '../types/supabase';
 type Chat = Database["public"]["Tables"]["chats"]["Row"];
 type User = Database["public"]["Tables"]["users"]["Row"];
 type Message = Database["public"]["Tables"]["messages"]["Row"];
+
+const formatTime = (dateStr?: string) => {
+  if (!dateStr) return '';
+  const date = new Date(dateStr);
+  const now = new Date();
+  if (date.toDateString() === now.toDateString()) {
+    return date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+  }
+  return date.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' });
+};
 
 const ChatsPage: React.FC = () => {
   const { user } = useUser();
@@ -65,66 +77,68 @@ const ChatsPage: React.FC = () => {
   if (loading) return <div className="p-4">Загрузка...</div>;
 
   return (
-    <div className="p-4 w-full max-w-full pb-20 sm:pb-8">
-      <h1 className="text-2xl font-bold mb-4 flex items-center gap-2">
-        <MessageCircle size={24} /> Чаты
+    <div className="p-4 w-full max-w-2xl mx-auto pb-20 sm:pb-8 bg-gradient-to-br from-cyan-50 via-blue-50 to-white min-h-screen">
+      <h1 className="text-2xl font-bold mb-6 flex items-center gap-2 text-blue-700">
+        <MessageCircle size={28} /> Чаты
       </h1>
       {chats.length === 0 ? (
-        <div className="text-gray-500">Нет активных чатов</div>
+        <div className="text-gray-500 text-center mt-16">Нет активных чатов</div>
       ) : (
-        <ul className="space-y-3">
-          {chats.map((chat) => (
-            <li
-              key={chat.id}
-              className="p-3 rounded-lg border bg-white shadow flex items-center cursor-pointer hover:bg-gray-50 w-full"
-              style={{ minWidth: 0 }}
-              onClick={() => navigate(`/chat/${chat.id}`)}
-            >
-              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center mr-3">
-                {chat.otherUser?.avatar_url ? (
-                  <img src={chat.otherUser.avatar_url} alt={chat.otherUser.name} className="w-10 h-10 rounded-full object-cover" />
-                ) : (
-                  <MessageCircle size={24} className="text-gray-400" />
-                )}
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="font-medium truncate">{chat.otherUser?.name || 'Пользователь'}</div>
-                <div className="text-xs text-gray-500 truncate">
-                  {(() => {
-                    const msg = chat.lastMessage;
-                    if (msg && msg.attachments && msg.attachments.length > 0) {
-                      const a = msg.attachments[0];
-                      if (a.type === 'image') {
-                        return <span className="inline-flex items-center gap-1"><ImageIcon size={14} className="text-blue-400" /> Фото</span>;
-                      } else {
-                        const full = decodeURIComponent(a.url.split('/').pop()?.split('?')[0] || 'Файл');
-                        const name = full.includes('-') ? full.substring(full.lastIndexOf('-') + 1) : full;
-                        let sizeStr = '';
-                        if (a.size) {
-                          if (a.size > 1024 * 1024) sizeStr = (a.size / (1024 * 1024)).toFixed(2) + ' МБ';
-                          else if (a.size > 1024) sizeStr = (a.size / 1024).toFixed(1) + ' КБ';
-                          else sizeStr = a.size + ' Б';
-                        }
-                        return <span className="inline-flex items-center gap-1"><FileIcon size={14} className="text-blue-400" />{name}{sizeStr && <span className="opacity-70 ml-1">({sizeStr})</span>}</span>;
-                      }
-                    } else if (msg && msg.content) {
-                      return msg.content;
-                    } else {
-                      return 'Нет сообщений';
-                    }
-                  })()}
-                </div>
-              </div>
-              <Button
-                size="sm"
-                variant="outline"
-                className="ml-2 min-w-[70px] sm:min-w-[90px] px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm"
-                onClick={e => { e.stopPropagation(); navigate(`/chat/${chat.id}`); }}
+        <ul className="space-y-4">
+          {chats.map((chat) => {
+            const lastMsg = chat.lastMessage;
+            const unread = lastMsg && !lastMsg.read && lastMsg.sender_id !== user?.id;
+            return (
+              <motion.li
+                key={chat.id}
+                whileHover={{ y: -2, scale: 1.01, boxShadow: '0 6px 32px 0 rgba(0, 160, 255, 0.08)' }}
+                transition={{ type: 'spring', stiffness: 300, damping: 22 }}
+                className={`group p-4 rounded-2xl border border-blue-100 bg-white shadow-card flex items-center cursor-pointer hover:bg-blue-50 transition min-w-0 relative ${unread ? 'ring-2 ring-blue-200' : ''}`}
+                onClick={() => navigate(`/chat/${chat.id}`)}
               >
-                Открыть
-              </Button>
-            </li>
-          ))}
+                <div className="flex-shrink-0 w-14 h-14 rounded-full bg-gradient-to-br from-cyan-100 to-blue-100 border-2 border-blue-200 flex items-center justify-center mr-4 overflow-hidden relative">
+                  {chat.otherUser?.avatar_url ? (
+                    <img src={chat.otherUser.avatar_url} alt={chat.otherUser.name} className="w-full h-full rounded-full object-cover" />
+                  ) : (
+                    <MessageCircle size={32} className="text-blue-300" />
+                  )}
+                  {/* Индикатор онлайн (пример, если появится поле online) */}
+                  {/* {chat.otherUser?.online && <span className="absolute bottom-1 right-1 w-3 h-3 bg-green-400 border-2 border-white rounded-full"></span>} */}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-0.5">
+                    <span className="font-semibold text-base text-gray-900 truncate max-w-[160px] sm:max-w-[220px]">{chat.otherUser?.name || 'Пользователь'}</span>
+                    {/* Badge "Непрочитанные" */}
+                    {unread && <span className="ml-1 px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 text-xs font-bold animate-pulse">Новое</span>}
+                  </div>
+                  <div className="flex items-center gap-1 text-sm text-gray-500 truncate max-w-[220px]">
+                    {/* Иконка типа сообщения */}
+                    {lastMsg && lastMsg.attachments && lastMsg.attachments.length > 0 ? (
+                      lastMsg.attachments[0].type === 'image' ? <ImageIcon size={16} className="text-blue-400 mr-1" /> : <FileIcon size={16} className="text-blue-400 mr-1" />
+                    ) : null}
+                    <span className="truncate">
+                      {lastMsg && lastMsg.attachments && lastMsg.attachments.length > 0
+                        ? (lastMsg.attachments[0].type === 'image' ? 'Фото' : 'Файл')
+                        : lastMsg && lastMsg.content
+                        ? lastMsg.content
+                        : 'Нет сообщений'}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex flex-col items-end ml-4 min-w-[60px]">
+                  <span className="text-xs text-gray-400 mb-1">{formatTime(lastMsg?.created_at)}</span>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="min-w-[70px] sm:min-w-[90px] px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm"
+                    onClick={e => { e.stopPropagation(); navigate(`/chat/${chat.id}`); }}
+                  >
+                    Открыть
+                  </Button>
+                </div>
+              </motion.li>
+            );
+          })}
         </ul>
       )}
     </div>
