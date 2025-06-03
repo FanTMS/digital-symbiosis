@@ -144,7 +144,7 @@ const ServiceDetailPage: React.FC = () => {
         chat.id,
         provider.id, // теперь sender_id = provider.id
         `Здравствуйте, пользователь: ${user.name} приобрёл вашу услугу за ${service.price} кредитов.\nВам необходимо принять или отклонить.`,
-        { type: 'system_action', orderId: order.id, role: 'provider', clientName: user.name, serviceTitle: service.title, price: service.price }
+        { type: 'system_action', orderId: order.id, role: 'provider', clientName: user.name, serviceTitle: service.title, price: service.price, providerId: provider.id }
       );
 
       // Перенаправляем пользователя в чат
@@ -228,8 +228,8 @@ const ServiceDetailPage: React.FC = () => {
   }
 
   return (
-    <div className="pb-24 pt-2">
-      <div className="px-4">
+    <div className="min-h-screen flex flex-col pb-28 pt-2 bg-gray-50 overflow-y-auto">
+      <div className="px-4 flex-1">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}
@@ -335,7 +335,8 @@ const ServiceDetailPage: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="fixed bottom-16 left-0 right-0 bg-white p-5 shadow-2xl border-t border-gray-200 z-10 rounded-t-2xl"
+          className="fixed bottom-0 left-0 right-0 bg-white p-5 shadow-2xl border-t border-gray-200 z-20 rounded-t-2xl"
+          style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 20px) + 8px)' }}
         >
           <div className="flex items-center justify-between mb-3">
             <div>

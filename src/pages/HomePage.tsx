@@ -27,7 +27,7 @@ const HomePage: React.FC = () => {
       setLoading(true);
       const { data, error } = await supabase
         .from('services')
-        .select('*, user:users(*)')
+        .select('*, user:users!services_user_id_fkey(*)')
         .eq('is_active', true)
         .order('created_at', { ascending: false })
         .limit(3);

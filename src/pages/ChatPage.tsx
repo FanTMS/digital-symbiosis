@@ -296,7 +296,7 @@ export default function ChatPage() {
         )}
         {messages.map(m => {
           // Системные сообщения с action-кнопками для исполнителя
-          if (m.meta?.type === 'system_action' && user?.id && m.meta.role === 'provider' && user.id === otherUser?.id) {
+          if (m.meta?.type === 'system_action' && user?.id && m.meta.role === 'provider' && user.id === m.meta?.providerId) {
             const orderId = m.meta.orderId;
             const status = orderStatuses[orderId] || m.meta.status;
             if (!(status === 'pending' || status === 'accepted' || status === 'in_progress')) return null;
@@ -461,8 +461,8 @@ export default function ChatPage() {
 
       {/* Поле ввода */}
       <form
-        className="bg-white border-t border-gray-200 p-3 flex items-center gap-2 w-full md:max-w-3xl md:mx-auto md:rounded-b-2xl z-20 chat-input-bar"
-        style={{ paddingBottom: 'env(safe-area-inset-bottom, 0)' }}
+        className="bg-white border-t border-gray-200 p-3 flex items-center gap-2 w-full md:max-w-3xl md:mx-auto md:rounded-b-2xl z-20 chat-input-bar shadow-lg rounded-t-2xl rounded-b-2xl mb-2"
+        style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0) + 12px)', borderRadius: '1.25rem' }}
         onSubmit={e => { e.preventDefault(); send(); }}
       >
         <button
@@ -482,14 +482,14 @@ export default function ChatPage() {
           disabled={uploading}
         />
         <input
-          className="flex-1 border rounded-full px-4 py-2 bg-gray-100 focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 outline-none text-base"
+          className="flex-1 border rounded-2xl px-4 py-2 bg-gray-100 focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 outline-none text-base shadow-sm"
           value={input}
           onChange={e => setInput(e.target.value)}
           onFocus={() => setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 300)}
           onKeyDown={e => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), send())}
           placeholder="Введите сообщение..."
           autoComplete="off"
-          style={{ minHeight: 40, maxHeight: 80 }}
+          style={{ minHeight: 40, maxHeight: 80, borderRadius: '1.25rem' }}
         />
         <button
           type="submit"

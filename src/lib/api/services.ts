@@ -40,9 +40,12 @@ export const servicesApi = {
   },
 
   async createService(service: Omit<Service, 'id' | 'created_at' | 'updated_at' | 'rating' | 'reviews_count'>) {
+    if (!service.user_id) {
+      throw new Error('user_id обязателен для создания услуги');
+    }
     const { data, error } = await supabase
       .from('services')
-      .insert({ ...service, is_active: true })
+      .insert({ ...service, is_active: true, user_id: service.user_id })
       .select()
       .single();
 
