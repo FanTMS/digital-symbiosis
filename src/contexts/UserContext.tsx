@@ -1,7 +1,7 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { useTelegram } from '../hooks/useTelegram';
-import { supabase } from '../lib/supabase';
-import type { User } from '../types/models';
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { useTelegram } from "../hooks/useTelegram";
+import { supabase } from "../lib/supabase";
+import type { User } from "../types/models";
 
 interface UserContextType {
   user: User | null;
@@ -21,7 +21,7 @@ const UserContext = createContext<UserContextType>({
 export const useUser = () => {
   const context = useContext(UserContext);
   if (context === undefined) {
-    throw new Error('useUser must be used within a UserProvider');
+    throw new Error("useUser must be used within a UserProvider");
   }
   return context;
 };
@@ -44,30 +44,31 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
       const fetchUser = async () => {
         try {
           const { data, error: userError } = await supabase
-            .from('users')
-            .select('*')
-            .eq('id', telegramUser.id)
+            .from("users")
+            .select("*")
+            .eq("id", telegramUser.id)
             .single();
 
           // Если пользователь не найден, создаём его
-          if (userError && userError.code === 'PGRST116') {
-            const { error: createError } = await supabase
-              .from('users')
-              .insert({
-                id: telegramUser.id,
-                name: [telegramUser.first_name, telegramUser.last_name].filter(Boolean).join(' '),
-                username: telegramUser.username || `user_${telegramUser.id}`,
-                joined_at: new Date().toISOString(),
-                updated_at: new Date().toISOString(),
-                avatar_url: telegramUser.photo_url
-              });
+          if (userError && userError.code === "PGRST116") {
+            const { error: createError } = await supabase.from("users").insert({
+              id: telegramUser.id,
+              name: [telegramUser.first_name, telegramUser.last_name]
+                .filter(Boolean)
+                .join(" "),
+              username: telegramUser.username || `user_${telegramUser.id}`,
+              joined_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+              avatar_url: telegramUser.photo_url,
+            });
             if (createError) throw createError;
             // После создания повторяем запрос
-            const { data: createdUser, error: fetchCreatedError } = await supabase
-              .from('users')
-              .select('*')
-              .eq('id', telegramUser.id)
-              .single();
+            const { data: createdUser, error: fetchCreatedError } =
+              await supabase
+                .from("users")
+                .select("*")
+                .eq("id", telegramUser.id)
+                .single();
             if (fetchCreatedError) throw fetchCreatedError;
             setUser(createdUser);
             setError(null);
@@ -75,13 +76,14 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
           }
 
           if (userError) throw userError;
-          if (!data) throw new Error('User not found');
-          
+          if (!data) throw new Error("User not found");
+
           setUser(data);
           setError(null);
         } catch (err) {
-          const error = err instanceof Error ? err : new Error('Failed to fetch user');
-          console.error('Error fetching user:', error);
+          const error =
+            err instanceof Error ? err : new Error("Failed to fetch user");
+          console.error("Error fetching user:", error);
           setError(error);
           setUser(null);
         } finally {
@@ -93,20 +95,20 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
 
       // Подписываемся на изменения пользователя в реальном времени
       const userSubscription = supabase
-        .channel('user_changes')
+        .channel("user_changes")
         .on(
-          'postgres_changes',
+          "postgres_changes",
           {
-            event: '*',
-            schema: 'public',
-            table: 'users',
+            event: "*",
+            schema: "public",
+            table: "users",
             filter: `id=eq.${telegramUser.id}`,
           },
           (payload) => {
             if (payload.new) {
               setUser(payload.new as User);
             }
-          }
+          },
         )
         .subscribe();
 
@@ -121,7 +123,10 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!user?.id) return;
     const interval = setInterval(() => {
-      supabase.from('users').update({ updated_at: new Date().toISOString() }).eq('id', user.id);
+      supabase
+        .from("users")
+        .update({ updated_at: new Date().toISOString() })
+        .eq("id", user.id);
     }, 60000); // раз в минуту
     return () => clearInterval(interval);
   }, [user?.id]);
@@ -132,15 +137,16 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     setLoading(true);
     try {
       const { data, error: userError } = await supabase
-        .from('users')
-        .select('*')
-        .eq('id', telegramUser.id)
+        .from("users")
+        .select("*")
+        .eq("id", telegramUser.id)
         .single();
       if (userError) throw userError;
       setUser(data);
       setError(null);
     } catch (err) {
-      const error = err instanceof Error ? err : new Error('Failed to fetch user');
+      const error =
+        err instanceof Error ? err : new Error("Failed to fetch user");
       setError(error);
       setUser(null);
     } finally {
@@ -149,8 +155,11 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <UserContext.Provider value={{ user, loading, error, refetch }}>
+    <UserContext.Provider
+      value={{ user, loading, error, refetch }}
+      data-oid="csix20r"
+    >
       {children}
     </UserContext.Provider>
   );
-} 
+}

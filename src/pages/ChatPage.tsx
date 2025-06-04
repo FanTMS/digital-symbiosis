@@ -1,35 +1,49 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useUser } from '../contexts/UserContext';
-import { chatApi } from '../lib/api/chat';
-import { ArrowLeft, CircleDot, Circle, AlertCircle, Star, Paperclip, Check, CheckCheck, File as FileIcon } from 'lucide-react';
-import { supabase } from '../lib/supabase';
-import { ordersApi } from '../lib/api/orders';
-import Modal from '../components/ui/Modal';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useEffect, useState, useRef } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useUser } from "../contexts/UserContext";
+import { chatApi } from "../lib/api/chat";
+import {
+  ArrowLeft,
+  CircleDot,
+  Circle,
+  AlertCircle,
+  Star,
+  Paperclip,
+  Check,
+  CheckCheck,
+  File as FileIcon,
+} from "lucide-react";
+import { supabase } from "../lib/supabase";
+import { ordersApi } from "../lib/api/orders";
+import Modal from "../components/ui/Modal";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function ChatPage() {
   const { chatId } = useParams<{ chatId: string }>();
   const { user } = useUser();
   const navigate = useNavigate();
   const [messages, setMessages] = useState<any[]>([]);
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState("");
   const [otherUser, setOtherUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [actionLoading, setActionLoading] = useState(false);
-  const [actionedOrders, setActionedOrders] = useState<{ [orderId: string]: string }>({}); // orderId -> статус
+  const [actionedOrders, setActionedOrders] = useState<{
+    [orderId: string]: string;
+  }>({}); // orderId -> статус
   const [showComplaintModal, setShowComplaintModal] = useState(false);
-  const [complaintText, setComplaintText] = useState('');
+  const [complaintText, setComplaintText] = useState("");
   const [complaintLoading, setComplaintLoading] = useState(false);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [reviewOrderId, setReviewOrderId] = useState<string | null>(null);
   const [reviewRating, setReviewRating] = useState(5);
-  const [reviewComment, setReviewComment] = useState('');
+  const [reviewComment, setReviewComment] = useState("");
   const [reviewLoading, setReviewLoading] = useState(false);
-  const [orderStatuses, setOrderStatuses] = useState<{ [orderId: string]: string }>({});
+  const [orderStatuses, setOrderStatuses] = useState<{
+    [orderId: string]: string;
+  }>({});
   const [serviceRating, setServiceRating] = useState(5);
-  const [serviceComment, setServiceComment] = useState('');
+  const [serviceComment, setServiceComment] = useState("");
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const PAGE_SIZE = 20;
@@ -39,13 +53,13 @@ export default function ChatPage() {
 
   const fetchMessages = async (before?: string) => {
     let query = supabase
-      .from('messages')
-      .select('*, attachments(*)')
-      .eq('chat_id', chatId)
-      .order('created_at', { ascending: false })
+      .from("messages")
+      .select("*, attachments(*)")
+      .eq("chat_id", chatId)
+      .order("created_at", { ascending: false })
       .limit(PAGE_SIZE);
     if (before) {
-      query = query.lt('created_at', before);
+      query = query.lt("created_at", before);
     }
     const { data, error } = await query;
     if (error) throw error;
@@ -62,17 +76,18 @@ export default function ChatPage() {
       // Получаем данные чата и собеседника
       (async () => {
         const { data: chat } = await supabase
-          .from('chats')
-          .select('*')
-          .eq('id', chatId)
+          .from("chats")
+          .select("*")
+          .eq("id", chatId)
           .single();
         if (chat) {
-          const otherUserId = chat.user1_id === user?.id ? chat.user2_id : chat.user1_id;
+          const otherUserId =
+            chat.user1_id === user?.id ? chat.user2_id : chat.user1_id;
           if (otherUserId) {
             const { data: userData } = await supabase
-              .from('users')
-              .select('*')
-              .eq('id', otherUserId)
+              .from("users")
+              .select("*")
+              .eq("id", otherUserId)
               .single();
             setOtherUser(userData);
           }
@@ -83,21 +98,34 @@ export default function ChatPage() {
   }, [chatId, user?.id]);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   // Загружаем статусы заказов для всех orderId из сообщений с action-кнопками
   useEffect(() => {
     const orderIds = messages
-      .filter(m => m.meta?.orderId && (m.meta?.type === 'system_action_client' || m.meta?.type === 'system_action'))
-      .map(m => m.meta.orderId);
+      .filter(
+        (m) =>
+          m.meta?.orderId &&
+          (m.meta?.type === "system_action_client" ||
+            m.meta?.type === "system_action"),
+      )
+      .map((m) => m.meta.orderId);
     if (orderIds.length > 0) {
-      Promise.all(orderIds.map(async (orderId) => {
-        const { data: order } = await supabase.from('orders').select('status').eq('id', orderId).single();
-        return { orderId, status: order?.status };
-      })).then(results => {
+      Promise.all(
+        orderIds.map(async (orderId) => {
+          const { data: order } = await supabase
+            .from("orders")
+            .select("status")
+            .eq("id", orderId)
+            .single();
+          return { orderId, status: order?.status };
+        }),
+      ).then((results) => {
         const statuses: { [orderId: string]: string } = {};
-        results.forEach(r => { if (r.orderId && r.status) statuses[r.orderId] = r.status; });
+        results.forEach((r) => {
+          if (r.orderId && r.status) statuses[r.orderId] = r.status;
+        });
         setOrderStatuses(statuses);
       });
     }
@@ -106,22 +134,26 @@ export default function ChatPage() {
   // Отметить сообщения как прочитанные
   useEffect(() => {
     if (!chatId || !user?.id || messages.length === 0) return;
-    const unread = messages.filter(m => m.sender_id !== user.id && (!m.reads || !m.reads.some((r: any) => r.user_id === user.id)));
+    const unread = messages.filter(
+      (m) =>
+        m.sender_id !== user.id &&
+        (!m.reads || !m.reads.some((r: any) => r.user_id === user.id)),
+    );
     if (unread.length === 0) return;
-    unread.forEach(async m => {
-      await supabase.from('message_reads').upsert({
+    unread.forEach(async (m) => {
+      await supabase.from("message_reads").upsert({
         message_id: m.id,
         user_id: user.id,
-        read_at: new Date().toISOString()
+        read_at: new Date().toISOString(),
       });
-      setReadIds(prev => new Set(prev).add(m.id));
+      setReadIds((prev) => new Set(prev).add(m.id));
     });
   }, [messages, chatId, user?.id]);
 
   const send = async () => {
     if (input.trim() && chatId && user?.id) {
       await chatApi.sendMessage(chatId, user.id, input);
-      setInput('');
+      setInput("");
       chatApi.listMessages(chatId).then(setMessages);
     }
   };
@@ -129,7 +161,7 @@ export default function ChatPage() {
   const handleSendComplaint = async () => {
     if (!complaintText.trim() || !chatId || !user?.id || !otherUser?.id) return;
     setComplaintLoading(true);
-    await supabase.from('complaints').insert({
+    await supabase.from("complaints").insert({
       chat_id: chatId,
       from_user_id: user.id,
       to_user_id: otherUser.id,
@@ -137,39 +169,39 @@ export default function ChatPage() {
     });
     setComplaintLoading(false);
     setShowComplaintModal(false);
-    setComplaintText('');
-    alert('Жалоба отправлена!');
+    setComplaintText("");
+    alert("Жалоба отправлена!");
   };
 
   // Статус онлайн/не в сети
-  let status = 'Не в сети';
-  let statusColor = 'text-gray-400';
+  let status = "Не в сети";
+  let statusColor = "text-gray-400";
   let isOnline = false;
-  let lastSeen = '';
+  let lastSeen = "";
   if (otherUser?.updated_at) {
     const updated = new Date(otherUser.updated_at);
     const now = new Date();
     const diffMs = now.getTime() - updated.getTime();
     if (diffMs < 5 * 60 * 1000) {
-      status = 'Онлайн';
-      statusColor = 'text-green-500';
+      status = "Онлайн";
+      statusColor = "text-green-500";
       isOnline = true;
     } else {
       // Формируем строку "был(а) в сети N минут/часов назад"
       const diffMin = Math.floor(diffMs / 60000);
       if (diffMin < 60) {
-        lastSeen = `был${otherUser?.gender === 'female' ? 'а' : ''} в сети ${diffMin} мин назад`;
+        lastSeen = `был${otherUser?.gender === "female" ? "а" : ""} в сети ${diffMin} мин назад`;
       } else {
         const diffH = Math.floor(diffMin / 60);
-        lastSeen = `был${otherUser?.gender === 'female' ? 'а' : ''} в сети ${diffH} ч назад`;
+        lastSeen = `был${otherUser?.gender === "female" ? "а" : ""} в сети ${diffH} ч назад`;
       }
       status = lastSeen;
     }
   }
 
   useEffect(() => {
-    document.body.classList.add('hide-tabbar');
-    return () => document.body.classList.remove('hide-tabbar');
+    document.body.classList.add("hide-tabbar");
+    return () => document.body.classList.remove("hide-tabbar");
   }, []);
 
   // Функция для загрузки вложения
@@ -180,35 +212,34 @@ export default function ChatPage() {
     try {
       const filePath = `user-${user.id}/${Date.now()}-${file.name}`;
       const { error: uploadError } = await supabase.storage
-        .from('chat-attachments')
+        .from("chat-attachments")
         .upload(filePath, file);
       if (uploadError) throw uploadError;
-      const { data: publicUrlData } = supabase
-        .storage
-        .from('chat-attachments')
+      const { data: publicUrlData } = supabase.storage
+        .from("chat-attachments")
         .getPublicUrl(filePath);
       const publicUrl = publicUrlData?.publicUrl;
       // Создаём сообщение с вложением
       const { data: message, error: msgError } = await supabase
-        .from('messages')
+        .from("messages")
         .insert({
           chat_id: chatId,
           sender_id: user.id,
-          content: '',
-          meta: { attachment: true }
+          content: "",
+          meta: { attachment: true },
         })
         .select()
         .single();
       if (msgError) throw msgError;
-      await supabase.from('attachments').insert({
+      await supabase.from("attachments").insert({
         message_id: message.id,
         url: publicUrl,
-        type: file.type.startsWith('image/') ? 'image' : 'file',
-        size: file.size
+        type: file.type.startsWith("image/") ? "image" : "file",
+        size: file.size,
       });
-      fetchMessages().then(msgs => setMessages(msgs.reverse()));
+      fetchMessages().then((msgs) => setMessages(msgs.reverse()));
     } catch (err) {
-      alert('Ошибка загрузки файла');
+      alert("Ошибка загрузки файла");
     }
     setUploading(false);
   };
@@ -218,7 +249,7 @@ export default function ChatPage() {
     setLoadingMore(true);
     const oldest = messages[0];
     const more = await fetchMessages(oldest?.created_at);
-    setMessages(prev => [...more.reverse(), ...prev]);
+    setMessages((prev) => [...more.reverse(), ...prev]);
     if (more.length < PAGE_SIZE) setHasMore(false);
     setLoadingMore(false);
   };
@@ -232,54 +263,104 @@ export default function ChatPage() {
   useEffect(() => {
     if (!otherUser?.id) return;
     const channel = supabase
-      .channel('user_status_' + otherUser.id)
+      .channel("user_status_" + otherUser.id)
       .on(
-        'postgres_changes',
-        { event: 'UPDATE', schema: 'public', table: 'users', filter: `id=eq.${otherUser.id}` },
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "users",
+          filter: `id=eq.${otherUser.id}`,
+        },
         (payload) => {
           setOtherUser((prev: any) => ({ ...prev, ...payload.new }));
-        }
+        },
       )
       .subscribe();
-    return () => { channel.unsubscribe(); };
+    return () => {
+      channel.unsubscribe();
+    };
   }, [otherUser?.id]);
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-cyan-50 via-blue-50 to-white">
+    <div
+      className="flex flex-col min-h-screen bg-gradient-to-br from-cyan-50 via-blue-50 to-white"
+      data-oid="y9d.rf_"
+    >
       {/* Header */}
-      <div className="sticky top-0 z-20 w-full bg-gradient-to-r from-cyan-100 via-blue-50 to-white shadow flex items-center px-4 py-3 gap-3">
-        <button onClick={() => navigate(-1)} className="mr-2 p-1 rounded hover:bg-gray-100">
-          <ArrowLeft size={22} />
+      <div
+        className="sticky top-0 z-20 w-full bg-gradient-to-r from-cyan-100 via-blue-50 to-white shadow flex items-center px-4 py-3 gap-3"
+        data-oid=":dtqvq7"
+      >
+        <button
+          onClick={() => navigate(-1)}
+          className="mr-2 p-1 rounded hover:bg-gray-100"
+          data-oid="1wl3y7b"
+        >
+          <ArrowLeft size={22} data-oid=":lvw_:5" />
         </button>
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-full border-2 border-blue-200 bg-gradient-to-br from-cyan-100 to-blue-100 flex items-center justify-center overflow-hidden relative">
+        <div className="flex items-center gap-3" data-oid="v9rol-o">
+          <div
+            className="w-12 h-12 rounded-full border-2 border-blue-200 bg-gradient-to-br from-cyan-100 to-blue-100 flex items-center justify-center overflow-hidden relative"
+            data-oid="d.ph.om"
+          >
             {otherUser?.avatar_url ? (
-              <img src={otherUser.avatar_url} alt={otherUser.name} className="w-full h-full rounded-full object-cover" />
+              <img
+                src={otherUser.avatar_url}
+                alt={otherUser.name}
+                className="w-full h-full rounded-full object-cover"
+                data-oid="p4kzm9n"
+              />
             ) : (
-              <CircleDot size={32} className="text-blue-200" />
+              <CircleDot
+                size={32}
+                className="text-blue-200"
+                data-oid="84e48x5"
+              />
             )}
-            {isOnline && <span className="absolute bottom-1 right-1 w-3 h-3 bg-green-400 border-2 border-white rounded-full"></span>}
+            {isOnline && (
+              <span
+                className="absolute bottom-1 right-1 w-3 h-3 bg-green-400 border-2 border-white rounded-full"
+                data-oid="2zcnsox"
+              ></span>
+            )}
           </div>
-          <div className="flex flex-col">
-            <span className="font-semibold text-base text-gray-900">{otherUser?.name || 'Пользователь'}</span>
-            <span className={`text-xs ${isOnline ? 'text-green-500' : 'text-gray-400'}`}>{status}</span>
+          <div className="flex flex-col" data-oid="bn7lkql">
+            <span
+              className="font-semibold text-base text-gray-900"
+              data-oid="._.9l-0"
+            >
+              {otherUser?.name || "Пользователь"}
+            </span>
+            <span
+              className={`text-xs ${isOnline ? "text-green-500" : "text-gray-400"}`}
+              data-oid="std4omd"
+            >
+              {status}
+            </span>
           </div>
         </div>
-        <div className="ml-auto flex items-center gap-2">
+        <div className="ml-auto flex items-center gap-2" data-oid="lnazykv">
           <button
             className="flex items-center px-3 py-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 text-xs font-medium border border-red-200"
             onClick={() => setShowComplaintModal(true)}
             title="Пожаловаться"
+            data-oid="7k3v1ol"
           >
-            <AlertCircle size={16} className="mr-1" /> Пожаловаться
+            <AlertCircle size={16} className="mr-1" data-oid="iuy726-" />{" "}
+            Пожаловаться
           </button>
         </div>
       </div>
 
       {/* Сообщения */}
-      <div className="flex-1 overflow-y-auto px-2 py-4" style={{ maxHeight: 'calc(100vh - 140px)' }}>
-        <AnimatePresence initial={false}>
-          <div className="flex flex-col gap-3">
+      <div
+        className="flex-1 overflow-y-auto px-2 py-4"
+        style={{ maxHeight: "calc(100vh - 140px)" }}
+        data-oid="46fbnt9"
+      >
+        <AnimatePresence initial={false} data-oid="w7.6qjf">
+          <div className="flex flex-col gap-3" data-oid="2zhf9gm">
             {messages.map((msg, idx) => {
               const isOwn = msg.sender_id === user?.id;
               return (
@@ -288,51 +369,98 @@ export default function ChatPage() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 20 }}
-                  transition={{ duration: 0.25, delay: 0.01 * (messages.length - idx) }}
-                  className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}
+                  transition={{
+                    duration: 0.25,
+                    delay: 0.01 * (messages.length - idx),
+                  }}
+                  className={`flex ${isOwn ? "justify-end" : "justify-start"}`}
+                  data-oid="vse7q_9"
                 >
-                  <div className={`max-w-[80%] rounded-2xl px-4 py-2 shadow-card relative ${isOwn ? 'bg-gradient-to-br from-cyan-400 to-blue-500 text-white rounded-br-md' : 'bg-gray-100 text-gray-900 rounded-bl-md'}`}>
+                  <div
+                    className={`max-w-[80%] rounded-2xl px-4 py-2 shadow-card relative ${isOwn ? "bg-gradient-to-br from-cyan-400 to-blue-500 text-white rounded-br-md" : "bg-gray-100 text-gray-900 rounded-bl-md"}`}
+                    data-oid="c_u2lzq"
+                  >
                     {/* Вложения */}
                     {msg.attachments && msg.attachments.length > 0 && (
-                      <div className="mb-1">
-                        {msg.attachments[0].type === 'image' ? (
-                          <img src={msg.attachments[0].url} alt="Фото" className="rounded-lg max-w-[180px] max-h-[180px] mb-1" />
+                      <div className="mb-1" data-oid="6etb0l6">
+                        {msg.attachments[0].type === "image" ? (
+                          <img
+                            src={msg.attachments[0].url}
+                            alt="Фото"
+                            className="rounded-lg max-w-[180px] max-h-[180px] mb-1"
+                            data-oid="zo:dqgf"
+                          />
                         ) : (
-                          <a href={msg.attachments[0].url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-blue-200 hover:underline">
-                            <FileIcon size={18} />
-                            <span className="truncate max-w-[120px]">{decodeURIComponent(msg.attachments[0].url.split('/').pop()?.split('?')[0] || 'Файл')}</span>
+                          <a
+                            href={msg.attachments[0].url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2 text-blue-200 hover:underline"
+                            data-oid="jt6ch3i"
+                          >
+                            <FileIcon size={18} data-oid="eqimcxf" />
+                            <span
+                              className="truncate max-w-[120px]"
+                              data-oid="xiru_hn"
+                            >
+                              {decodeURIComponent(
+                                msg.attachments[0].url
+                                  .split("/")
+                                  .pop()
+                                  ?.split("?")[0] || "Файл",
+                              )}
+                            </span>
                           </a>
                         )}
                       </div>
                     )}
                     {/* Текст сообщения */}
-                    {msg.content && <div className="whitespace-pre-line break-words text-base">{msg.content}</div>}
+                    {msg.content && (
+                      <div
+                        className="whitespace-pre-line break-words text-base"
+                        data-oid="dl-bdc2"
+                      >
+                        {msg.content}
+                      </div>
+                    )}
                     {/* Время */}
-                    <div className={`text-xs mt-1 ${isOwn ? 'text-cyan-100/80' : 'text-gray-400'}`}>{new Date(msg.created_at).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}</div>
+                    <div
+                      className={`text-xs mt-1 ${isOwn ? "text-cyan-100/80" : "text-gray-400"}`}
+                      data-oid="kaq:51."
+                    >
+                      {new Date(msg.created_at).toLocaleTimeString("ru-RU", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </div>
                   </div>
                 </motion.div>
               );
             })}
-            <div ref={messagesEndRef} />
+            <div ref={messagesEndRef} data-oid="9zfntgc" />
           </div>
         </AnimatePresence>
       </div>
 
       {/* Панель ввода сообщения */}
-      <div className="w-full max-w-2xl mx-auto">
+      <div className="w-full max-w-2xl mx-auto" data-oid="im8veor">
         <form
           className="bg-white border-t border-gray-200 p-3 flex items-center gap-2 w-full rounded-2xl z-20 chat-input-bar shadow-lg fixed bottom-0 left-0 right-0 md:static md:rounded-t-2xl md:mx-auto md:mb-4"
           style={{
-            paddingBottom: 'calc(env(safe-area-inset-bottom, 0) + 4px)',
-            borderTopLeftRadius: '1.25rem',
-            borderTopRightRadius: '1.25rem',
+            paddingBottom: "calc(env(safe-area-inset-bottom, 0) + 4px)",
+            borderTopLeftRadius: "1.25rem",
+            borderTopRightRadius: "1.25rem",
             borderBottomLeftRadius: 0,
             borderBottomRightRadius: 0,
-            boxShadow: '0 4px 24px 0 rgba(0,160,255,0.07)',
-            background: '#fff',
-            zIndex: 50
+            boxShadow: "0 4px 24px 0 rgba(0,160,255,0.07)",
+            background: "#fff",
+            zIndex: 50,
           }}
-          onSubmit={e => { e.preventDefault(); send(); }}
+          onSubmit={(e) => {
+            e.preventDefault();
+            send();
+          }}
+          data-oid="0riylyw"
         >
           <button
             type="button"
@@ -341,8 +469,9 @@ export default function ChatPage() {
             disabled={uploading}
             title="Прикрепить файл"
             tabIndex={0}
+            data-oid="sywp58."
           >
-            <Paperclip size={22} className="text-cyan-500" />
+            <Paperclip size={22} className="text-cyan-500" data-oid="nxi73_b" />
           </button>
           <input
             type="file"
@@ -350,25 +479,40 @@ export default function ChatPage() {
             className="hidden"
             onChange={handleFileChange}
             disabled={uploading}
+            data-oid="4h8z.lg"
           />
+
           <input
             className="flex-1 border-none outline-none rounded-full px-4 py-2 bg-gray-100 focus:ring-2 focus:ring-cyan-400 text-base shadow-sm transition"
             value={input}
-            onChange={e => setInput(e.target.value)}
-            onFocus={() => setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 300)}
-            onKeyDown={e => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), send())}
+            onChange={(e) => setInput(e.target.value)}
+            onFocus={() =>
+              setTimeout(
+                () =>
+                  messagesEndRef.current?.scrollIntoView({
+                    behavior: "smooth",
+                  }),
+                300,
+              )
+            }
+            onKeyDown={(e) =>
+              e.key === "Enter" && !e.shiftKey && (e.preventDefault(), send())
+            }
             placeholder="Введите сообщение..."
             autoComplete="off"
-            style={{ minHeight: 40, maxHeight: 80, borderRadius: '9999px' }}
+            style={{ minHeight: 40, maxHeight: 80, borderRadius: "9999px" }}
             disabled={uploading}
             tabIndex={0}
+            data-oid="eje2-8h"
           />
+
           <button
             type="submit"
             className="ml-2 px-5 py-2 bg-gradient-to-r from-cyan-400 to-blue-500 text-white rounded-full font-semibold shadow hover:from-cyan-500 hover:to-blue-600 transition disabled:opacity-50"
             disabled={!input.trim() || uploading}
             style={{ minHeight: 40 }}
             tabIndex={0}
+            data-oid=".qqw784"
           >
             Отправить
           </button>
@@ -376,21 +520,30 @@ export default function ChatPage() {
       </div>
 
       {/* Модалка для жалобы */}
-      <Modal isOpen={showComplaintModal} onClose={() => setShowComplaintModal(false)}>
-        <div className="p-4">
-          <h2 className="text-lg font-semibold mb-2">Пожаловаться на пользователя</h2>
+      <Modal
+        isOpen={showComplaintModal}
+        onClose={() => setShowComplaintModal(false)}
+        data-oid="3wv-ww4"
+      >
+        <div className="p-4" data-oid="8u8rw0j">
+          <h2 className="text-lg font-semibold mb-2" data-oid="tw7.19f">
+            Пожаловаться на пользователя
+          </h2>
           <textarea
             className="w-full border rounded p-2 mb-3 min-h-[80px]"
             placeholder="Опишите причину жалобы..."
             value={complaintText}
-            onChange={e => setComplaintText(e.target.value)}
+            onChange={(e) => setComplaintText(e.target.value)}
             disabled={complaintLoading}
+            data-oid="r7nzff7"
           />
-          <div className="flex justify-end gap-2">
+
+          <div className="flex justify-end gap-2" data-oid=".gji9ak">
             <button
               className="px-4 py-2 rounded bg-gray-200 text-gray-700"
               onClick={() => setShowComplaintModal(false)}
               disabled={complaintLoading}
+              data-oid="7.w_5b1"
             >
               Отмена
             </button>
@@ -398,26 +551,40 @@ export default function ChatPage() {
               className="px-4 py-2 rounded bg-red-500 text-white font-semibold disabled:opacity-60"
               onClick={handleSendComplaint}
               disabled={complaintLoading || !complaintText.trim()}
+              data-oid="h_w32y."
             >
-              {complaintLoading ? 'Отправка...' : 'Отправить'}
+              {complaintLoading ? "Отправка..." : "Отправить"}
             </button>
           </div>
         </div>
       </Modal>
 
       {/* Модалка для отзыва */}
-      <Modal isOpen={showReviewModal} onClose={() => setShowReviewModal(false)}>
-        <div className="p-4">
-          <h2 className="text-lg font-semibold mb-2">Оцените исполнителя и услугу</h2>
-          <div className="mb-4">
-            <div className="font-medium mb-1">Оценка исполнителя</div>
-            <div className="flex items-center mb-2">
-              {[1,2,3,4,5].map(star => (
+      <Modal
+        isOpen={showReviewModal}
+        onClose={() => setShowReviewModal(false)}
+        data-oid="9sd7m5x"
+      >
+        <div className="p-4" data-oid="an2nrwy">
+          <h2 className="text-lg font-semibold mb-2" data-oid="scq2:vb">
+            Оцените исполнителя и услугу
+          </h2>
+          <div className="mb-4" data-oid="ee4ce79">
+            <div className="font-medium mb-1" data-oid="jwx0a9q">
+              Оценка исполнителя
+            </div>
+            <div className="flex items-center mb-2" data-oid="523rf60">
+              {[1, 2, 3, 4, 5].map((star) => (
                 <Star
                   key={star}
                   size={28}
-                  className={star <= reviewRating ? 'text-yellow-400 fill-yellow-400 cursor-pointer' : 'text-gray-300 cursor-pointer'}
+                  className={
+                    star <= reviewRating
+                      ? "text-yellow-400 fill-yellow-400 cursor-pointer"
+                      : "text-gray-300 cursor-pointer"
+                  }
                   onClick={() => setReviewRating(star)}
+                  data-oid="0lo54v:"
                 />
               ))}
             </div>
@@ -425,19 +592,27 @@ export default function ChatPage() {
               className="w-full border rounded p-2 mb-3 min-h-[60px]"
               placeholder="Комментарий для исполнителя (необязательно)"
               value={reviewComment}
-              onChange={e => setReviewComment(e.target.value)}
+              onChange={(e) => setReviewComment(e.target.value)}
               disabled={reviewLoading}
+              data-oid="f_byjd6"
             />
           </div>
-          <div className="mb-4">
-            <div className="font-medium mb-1">Оценка услуги</div>
-            <div className="flex items-center mb-2">
-              {[1,2,3,4,5].map(star => (
+          <div className="mb-4" data-oid="ry_hxp8">
+            <div className="font-medium mb-1" data-oid="2.vymqu">
+              Оценка услуги
+            </div>
+            <div className="flex items-center mb-2" data-oid="iwi5:f.">
+              {[1, 2, 3, 4, 5].map((star) => (
                 <Star
                   key={star}
                   size={28}
-                  className={star <= serviceRating ? 'text-blue-400 fill-blue-400 cursor-pointer' : 'text-gray-300 cursor-pointer'}
+                  className={
+                    star <= serviceRating
+                      ? "text-blue-400 fill-blue-400 cursor-pointer"
+                      : "text-gray-300 cursor-pointer"
+                  }
                   onClick={() => setServiceRating(star)}
+                  data-oid="d2ip._k"
                 />
               ))}
             </div>
@@ -445,15 +620,17 @@ export default function ChatPage() {
               className="w-full border rounded p-2 mb-3 min-h-[60px]"
               placeholder="Комментарий для услуги (необязательно)"
               value={serviceComment}
-              onChange={e => setServiceComment(e.target.value)}
+              onChange={(e) => setServiceComment(e.target.value)}
               disabled={reviewLoading}
+              data-oid="454q3cr"
             />
           </div>
-          <div className="flex justify-end gap-2">
+          <div className="flex justify-end gap-2" data-oid="h.260ty">
             <button
               className="px-4 py-2 rounded bg-gray-200 text-gray-700"
               onClick={() => setShowReviewModal(false)}
               disabled={reviewLoading}
+              data-oid="p60zr9_"
             >
               Отмена
             </button>
@@ -464,13 +641,17 @@ export default function ChatPage() {
                 if (!reviewOrderId || !user?.id) return;
                 setReviewLoading(true);
                 // Получаем order для user_id исполнителя и service_id
-                const { data: order } = await supabase.from('orders').select('*').eq('id', reviewOrderId).single();
+                const { data: order } = await supabase
+                  .from("orders")
+                  .select("*")
+                  .eq("id", reviewOrderId)
+                  .single();
                 if (!order) {
                   setReviewLoading(false);
                   return;
                 }
                 // 1. Оценка исполнителя
-                await supabase.from('reviews').insert({
+                await supabase.from("reviews").insert({
                   order_id: reviewOrderId,
                   user_id: order.provider_id,
                   rating: reviewRating,
@@ -478,7 +659,7 @@ export default function ChatPage() {
                   created_at: new Date().toISOString(),
                 });
                 // 2. Оценка услуги (user_id = service_id)
-                await supabase.from('reviews').insert({
+                await supabase.from("reviews").insert({
                   order_id: reviewOrderId,
                   user_id: order.service_id, // service_id как user_id для услуги
                   rating: serviceRating,
@@ -487,19 +668,24 @@ export default function ChatPage() {
                 });
                 // Пересчитать средний рейтинг исполнителя
                 const { data: allReviews } = await supabase
-                  .from('reviews')
-                  .select('rating')
-                  .eq('user_id', order.provider_id);
+                  .from("reviews")
+                  .select("rating")
+                  .eq("user_id", order.provider_id);
                 if (allReviews && allReviews.length > 0) {
-                  const avgRating = allReviews.reduce((sum, r) => sum + r.rating, 0) / allReviews.length;
-                  await supabase.from('users').update({ rating: avgRating }).eq('id', order.provider_id);
+                  const avgRating =
+                    allReviews.reduce((sum, r) => sum + r.rating, 0) /
+                    allReviews.length;
+                  await supabase
+                    .from("users")
+                    .update({ rating: avgRating })
+                    .eq("id", order.provider_id);
                 }
                 // После добавления отзывов обновляем страницу
                 window.location.reload();
                 setShowReviewModal(false);
-                setReviewComment('');
+                setReviewComment("");
                 setReviewRating(5);
-                setServiceComment('');
+                setServiceComment("");
                 setServiceRating(5);
                 setReviewOrderId(null);
                 setReviewLoading(false);
@@ -507,11 +693,17 @@ export default function ChatPage() {
                   await chatApi.sendMessage(
                     chatId,
                     user.id,
-                    'Спасибо за ваш отзыв!',
-                    { type: 'system', orderId: reviewOrderId, role: 'client', status: 'reviewed' }
+                    "Спасибо за ваш отзыв!",
+                    {
+                      type: "system",
+                      orderId: reviewOrderId,
+                      role: "client",
+                      status: "reviewed",
+                    },
                   );
                 }
               }}
+              data-oid="h-650us"
             >
               Отправить
             </button>
@@ -520,4 +712,4 @@ export default function ChatPage() {
       </Modal>
     </div>
   );
-} 
+}

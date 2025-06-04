@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { supabase } from '../lib/supabase';
-import { useTelegram } from '../hooks/useTelegram';
-import ServiceCard from '../components/ui/ServiceCard';
-import Button from '../components/ui/Button';
-import { Star } from 'lucide-react';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { supabase } from "../lib/supabase";
+import { useTelegram } from "../hooks/useTelegram";
+import ServiceCard from "../components/ui/ServiceCard";
+import Button from "../components/ui/Button";
+import { Star } from "lucide-react";
 
 const FavoritesPage: React.FC = () => {
   const { user, tg } = useTelegram();
@@ -15,9 +15,9 @@ const FavoritesPage: React.FC = () => {
 
   useEffect(() => {
     if (tg) {
-      tg.setHeaderColor('#0BBBEF');
+      tg.setHeaderColor("#0BBBEF");
       tg.BackButton.show();
-      const handleBack = () => navigate('/');
+      const handleBack = () => navigate("/");
       tg.BackButton.onClick(handleBack);
       return () => {
         tg.BackButton.hide();
@@ -32,16 +32,16 @@ const FavoritesPage: React.FC = () => {
     (async () => {
       // Получаем id избранных услуг
       const { data: favs, error: favsError } = await supabase
-        .from('favorites')
-        .select('service_id')
-        .eq('user_id', user.id);
+        .from("favorites")
+        .select("service_id")
+        .eq("user_id", user.id);
       const ids = favs?.map((f: any) => f.service_id) || [];
       let services = [];
       if (ids.length > 0) {
         const { data: servicesData, error: servicesError } = await supabase
-          .from('services')
-          .select('*, user:users(*)')
-          .in('id', ids);
+          .from("services")
+          .select("*, user:users(*)")
+          .in("id", ids);
         services = servicesData || [];
       }
       setFavorites(services);
@@ -50,17 +50,31 @@ const FavoritesPage: React.FC = () => {
   }, [user?.id]);
 
   // Добавляю вывод в консоль для отладки
-  console.log('favorites', favorites);
+  console.log("favorites", favorites);
 
   return (
-    <div className="pb-16 pt-2 flex flex-col items-center justify-center min-h-screen">
-      <h1 className="text-2xl font-bold mb-4 flex items-center gap-2">
-        <Star className="text-yellow-400" /> Избранное
+    <div
+      className="pb-16 pt-2 flex flex-col items-center justify-center min-h-screen"
+      data-oid="lzcmctg"
+    >
+      <h1
+        className="text-2xl font-bold mb-4 flex items-center gap-2"
+        data-oid="tpl7ew."
+      >
+        <Star className="text-yellow-400" data-oid="x:x_cl_" /> Избранное
       </h1>
-      <div className="text-lg text-gray-500 mb-4">Функция избранного временно недоступна</div>
-      <Button variant="primary" onClick={() => navigate('/services')}>Перейти в каталог</Button>
+      <div className="text-lg text-gray-500 mb-4" data-oid="ubk:xuq">
+        Функция избранного временно недоступна
+      </div>
+      <Button
+        variant="primary"
+        onClick={() => navigate("/services")}
+        data-oid="u8j1hkz"
+      >
+        Перейти в каталог
+      </Button>
     </div>
   );
 };
 
-export default FavoritesPage; 
+export default FavoritesPage;
