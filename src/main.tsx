@@ -9,12 +9,12 @@ import { UserProvider } from "./contexts/UserContext";
 import { BrowserRouter as Router } from "react-router-dom";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode data-oid="f_hq7g4">
-    <QueryClientProvider client={queryClient} data-oid="hp1w::a">
-      <Router data-oid="or1rgsv">
-        <TelegramProvider data-oid="ao_.mlj">
-          <UserProvider data-oid="8xbv93u">
-            <App data-oid="vm6en_3" />
+  <React.StrictMode>
+    <QueryClientProvider client={queryClient}>
+      <Router>
+        <TelegramProvider>
+          <UserProvider>
+            <App />
           </UserProvider>
         </TelegramProvider>
       </Router>

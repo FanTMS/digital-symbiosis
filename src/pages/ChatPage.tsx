@@ -199,11 +199,6 @@ export default function ChatPage() {
     }
   }
 
-  useEffect(() => {
-    document.body.classList.add("hide-tabbar");
-    return () => document.body.classList.remove("hide-tabbar");
-  }, []);
-
   // Функция для загрузки вложения
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -283,72 +278,48 @@ export default function ChatPage() {
   }, [otherUser?.id]);
 
   return (
-    <div
-      className="flex flex-col min-h-screen bg-gradient-to-br from-cyan-50 via-blue-50 to-white"
-      data-oid="y9d.rf_"
-    >
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-cyan-50 via-blue-50 to-white">
       {/* Header */}
-      <div
-        className="sticky top-0 z-20 w-full bg-gradient-to-r from-cyan-100 via-blue-50 to-white shadow flex items-center px-4 py-3 gap-3"
-        data-oid=":dtqvq7"
-      >
+      <div className="sticky top-0 z-20 w-full bg-gradient-to-r from-cyan-100 via-blue-50 to-white shadow flex items-center px-4 py-3 gap-3">
         <button
           onClick={() => navigate(-1)}
           className="mr-2 p-1 rounded hover:bg-gray-100"
-          data-oid="1wl3y7b"
         >
-          <ArrowLeft size={22} data-oid=":lvw_:5" />
+          <ArrowLeft size={22} />
         </button>
-        <div className="flex items-center gap-3" data-oid="v9rol-o">
-          <div
-            className="w-12 h-12 rounded-full border-2 border-blue-200 bg-gradient-to-br from-cyan-100 to-blue-100 flex items-center justify-center overflow-hidden relative"
-            data-oid="d.ph.om"
-          >
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 rounded-full border-2 border-blue-200 bg-gradient-to-br from-cyan-100 to-blue-100 flex items-center justify-center overflow-hidden relative">
             {otherUser?.avatar_url ? (
               <img
                 src={otherUser.avatar_url}
                 alt={otherUser.name}
                 className="w-full h-full rounded-full object-cover"
-                data-oid="p4kzm9n"
               />
             ) : (
-              <CircleDot
-                size={32}
-                className="text-blue-200"
-                data-oid="84e48x5"
-              />
+              <CircleDot size={32} className="text-blue-200" />
             )}
             {isOnline && (
-              <span
-                className="absolute bottom-1 right-1 w-3 h-3 bg-green-400 border-2 border-white rounded-full"
-                data-oid="2zcnsox"
-              ></span>
+              <span className="absolute bottom-1 right-1 w-3 h-3 bg-green-400 border-2 border-white rounded-full"></span>
             )}
           </div>
-          <div className="flex flex-col" data-oid="bn7lkql">
-            <span
-              className="font-semibold text-base text-gray-900"
-              data-oid="._.9l-0"
-            >
+          <div className="flex flex-col">
+            <span className="font-semibold text-base text-gray-900">
               {otherUser?.name || "Пользователь"}
             </span>
             <span
               className={`text-xs ${isOnline ? "text-green-500" : "text-gray-400"}`}
-              data-oid="std4omd"
             >
               {status}
             </span>
           </div>
         </div>
-        <div className="ml-auto flex items-center gap-2" data-oid="lnazykv">
+        <div className="ml-auto flex items-center gap-2">
           <button
             className="flex items-center px-3 py-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 text-xs font-medium border border-red-200"
             onClick={() => setShowComplaintModal(true)}
             title="Пожаловаться"
-            data-oid="7k3v1ol"
           >
-            <AlertCircle size={16} className="mr-1" data-oid="iuy726-" />{" "}
-            Пожаловаться
+            <AlertCircle size={16} className="mr-1" /> Пожаловаться
           </button>
         </div>
       </div>
@@ -357,10 +328,9 @@ export default function ChatPage() {
       <div
         className="flex-1 overflow-y-auto px-2 py-4"
         style={{ maxHeight: "calc(100vh - 140px)" }}
-        data-oid="46fbnt9"
       >
-        <AnimatePresence initial={false} data-oid="w7.6qjf">
-          <div className="flex flex-col gap-3" data-oid="2zhf9gm">
+        <AnimatePresence initial={false}>
+          <div className="flex flex-col gap-3">
             {messages.map((msg, idx) => {
               const isOwn = msg.sender_id === user?.id;
               return (
@@ -374,21 +344,18 @@ export default function ChatPage() {
                     delay: 0.01 * (messages.length - idx),
                   }}
                   className={`flex ${isOwn ? "justify-end" : "justify-start"}`}
-                  data-oid="vse7q_9"
                 >
                   <div
                     className={`max-w-[80%] rounded-2xl px-4 py-2 shadow-card relative ${isOwn ? "bg-gradient-to-br from-cyan-400 to-blue-500 text-white rounded-br-md" : "bg-gray-100 text-gray-900 rounded-bl-md"}`}
-                    data-oid="c_u2lzq"
                   >
                     {/* Вложения */}
                     {msg.attachments && msg.attachments.length > 0 && (
-                      <div className="mb-1" data-oid="6etb0l6">
+                      <div className="mb-1">
                         {msg.attachments[0].type === "image" ? (
                           <img
                             src={msg.attachments[0].url}
                             alt="Фото"
                             className="rounded-lg max-w-[180px] max-h-[180px] mb-1"
-                            data-oid="zo:dqgf"
                           />
                         ) : (
                           <a
@@ -396,13 +363,9 @@ export default function ChatPage() {
                             target="_blank"
                             rel="noopener noreferrer"
                             className="flex items-center gap-2 text-blue-200 hover:underline"
-                            data-oid="jt6ch3i"
                           >
-                            <FileIcon size={18} data-oid="eqimcxf" />
-                            <span
-                              className="truncate max-w-[120px]"
-                              data-oid="xiru_hn"
-                            >
+                            <FileIcon size={18} />
+                            <span className="truncate max-w-[120px]">
                               {decodeURIComponent(
                                 msg.attachments[0].url
                                   .split("/")
@@ -416,17 +379,13 @@ export default function ChatPage() {
                     )}
                     {/* Текст сообщения */}
                     {msg.content && (
-                      <div
-                        className="whitespace-pre-line break-words text-base"
-                        data-oid="dl-bdc2"
-                      >
+                      <div className="whitespace-pre-line break-words text-base">
                         {msg.content}
                       </div>
                     )}
                     {/* Время */}
                     <div
                       className={`text-xs mt-1 ${isOwn ? "text-cyan-100/80" : "text-gray-400"}`}
-                      data-oid="kaq:51."
                     >
                       {new Date(msg.created_at).toLocaleTimeString("ru-RU", {
                         hour: "2-digit",
@@ -437,13 +396,13 @@ export default function ChatPage() {
                 </motion.div>
               );
             })}
-            <div ref={messagesEndRef} data-oid="9zfntgc" />
+            <div ref={messagesEndRef} />
           </div>
         </AnimatePresence>
       </div>
 
       {/* Панель ввода сообщения */}
-      <div className="w-full max-w-2xl mx-auto" data-oid="im8veor">
+      <div className="w-full max-w-2xl mx-auto">
         <form
           className="bg-white border-t border-gray-200 p-3 flex items-center gap-2 w-full rounded-2xl z-20 chat-input-bar shadow-lg fixed bottom-0 left-0 right-0 md:static md:rounded-t-2xl md:mx-auto md:mb-4"
           style={{
@@ -460,7 +419,6 @@ export default function ChatPage() {
             e.preventDefault();
             send();
           }}
-          data-oid="0riylyw"
         >
           <button
             type="button"
@@ -469,9 +427,8 @@ export default function ChatPage() {
             disabled={uploading}
             title="Прикрепить файл"
             tabIndex={0}
-            data-oid="sywp58."
           >
-            <Paperclip size={22} className="text-cyan-500" data-oid="nxi73_b" />
+            <Paperclip size={22} className="text-cyan-500" />
           </button>
           <input
             type="file"
@@ -479,7 +436,6 @@ export default function ChatPage() {
             className="hidden"
             onChange={handleFileChange}
             disabled={uploading}
-            data-oid="4h8z.lg"
           />
 
           <input
@@ -503,7 +459,6 @@ export default function ChatPage() {
             style={{ minHeight: 40, maxHeight: 80, borderRadius: "9999px" }}
             disabled={uploading}
             tabIndex={0}
-            data-oid="eje2-8h"
           />
 
           <button
@@ -512,7 +467,6 @@ export default function ChatPage() {
             disabled={!input.trim() || uploading}
             style={{ minHeight: 40 }}
             tabIndex={0}
-            data-oid=".qqw784"
           >
             Отправить
           </button>
@@ -523,10 +477,9 @@ export default function ChatPage() {
       <Modal
         isOpen={showComplaintModal}
         onClose={() => setShowComplaintModal(false)}
-        data-oid="3wv-ww4"
       >
-        <div className="p-4" data-oid="8u8rw0j">
-          <h2 className="text-lg font-semibold mb-2" data-oid="tw7.19f">
+        <div className="p-4">
+          <h2 className="text-lg font-semibold mb-2">
             Пожаловаться на пользователя
           </h2>
           <textarea
@@ -535,15 +488,13 @@ export default function ChatPage() {
             value={complaintText}
             onChange={(e) => setComplaintText(e.target.value)}
             disabled={complaintLoading}
-            data-oid="r7nzff7"
           />
 
-          <div className="flex justify-end gap-2" data-oid=".gji9ak">
+          <div className="flex justify-end gap-2">
             <button
               className="px-4 py-2 rounded bg-gray-200 text-gray-700"
               onClick={() => setShowComplaintModal(false)}
               disabled={complaintLoading}
-              data-oid="7.w_5b1"
             >
               Отмена
             </button>
@@ -551,7 +502,6 @@ export default function ChatPage() {
               className="px-4 py-2 rounded bg-red-500 text-white font-semibold disabled:opacity-60"
               onClick={handleSendComplaint}
               disabled={complaintLoading || !complaintText.trim()}
-              data-oid="h_w32y."
             >
               {complaintLoading ? "Отправка..." : "Отправить"}
             </button>
@@ -560,20 +510,14 @@ export default function ChatPage() {
       </Modal>
 
       {/* Модалка для отзыва */}
-      <Modal
-        isOpen={showReviewModal}
-        onClose={() => setShowReviewModal(false)}
-        data-oid="9sd7m5x"
-      >
-        <div className="p-4" data-oid="an2nrwy">
-          <h2 className="text-lg font-semibold mb-2" data-oid="scq2:vb">
+      <Modal isOpen={showReviewModal} onClose={() => setShowReviewModal(false)}>
+        <div className="p-4">
+          <h2 className="text-lg font-semibold mb-2">
             Оцените исполнителя и услугу
           </h2>
-          <div className="mb-4" data-oid="ee4ce79">
-            <div className="font-medium mb-1" data-oid="jwx0a9q">
-              Оценка исполнителя
-            </div>
-            <div className="flex items-center mb-2" data-oid="523rf60">
+          <div className="mb-4">
+            <div className="font-medium mb-1">Оценка исполнителя</div>
+            <div className="flex items-center mb-2">
               {[1, 2, 3, 4, 5].map((star) => (
                 <Star
                   key={star}
@@ -584,7 +528,6 @@ export default function ChatPage() {
                       : "text-gray-300 cursor-pointer"
                   }
                   onClick={() => setReviewRating(star)}
-                  data-oid="0lo54v:"
                 />
               ))}
             </div>
@@ -594,14 +537,11 @@ export default function ChatPage() {
               value={reviewComment}
               onChange={(e) => setReviewComment(e.target.value)}
               disabled={reviewLoading}
-              data-oid="f_byjd6"
             />
           </div>
-          <div className="mb-4" data-oid="ry_hxp8">
-            <div className="font-medium mb-1" data-oid="2.vymqu">
-              Оценка услуги
-            </div>
-            <div className="flex items-center mb-2" data-oid="iwi5:f.">
+          <div className="mb-4">
+            <div className="font-medium mb-1">Оценка услуги</div>
+            <div className="flex items-center mb-2">
               {[1, 2, 3, 4, 5].map((star) => (
                 <Star
                   key={star}
@@ -612,7 +552,6 @@ export default function ChatPage() {
                       : "text-gray-300 cursor-pointer"
                   }
                   onClick={() => setServiceRating(star)}
-                  data-oid="d2ip._k"
                 />
               ))}
             </div>
@@ -622,15 +561,13 @@ export default function ChatPage() {
               value={serviceComment}
               onChange={(e) => setServiceComment(e.target.value)}
               disabled={reviewLoading}
-              data-oid="454q3cr"
             />
           </div>
-          <div className="flex justify-end gap-2" data-oid="h.260ty">
+          <div className="flex justify-end gap-2">
             <button
               className="px-4 py-2 rounded bg-gray-200 text-gray-700"
               onClick={() => setShowReviewModal(false)}
               disabled={reviewLoading}
-              data-oid="p60zr9_"
             >
               Отмена
             </button>
@@ -703,7 +640,6 @@ export default function ChatPage() {
                   );
                 }
               }}
-              data-oid="h-650us"
             >
               Отправить
             </button>

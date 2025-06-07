@@ -198,47 +198,32 @@ const ServicesPage: React.FC = () => {
   const VISIBLE_COUNT = 8; // сколько карточек видно на экране
 
   return (
-    <div className="pb-16 pt-2" data-oid="e4i8nq9">
-      <div className="px-4 mb-6" data-oid="6r.:66l">
-        <div
-          className="flex justify-between items-center mb-4"
-          data-oid="ohbc4b1"
-        >
-          <h1
-            className="text-2xl font-bold flex items-center gap-2"
-            data-oid="o910jmb"
-          >
+    <div className="pb-16 pt-2">
+      <div className="px-4 mb-6">
+        <div className="flex justify-between items-center mb-4">
+          <h1 className="text-2xl font-bold flex items-center gap-2">
             Услуги
             <button
               className="ml-2 p-1 rounded-full hover:bg-yellow-100 transition text-yellow-400"
               onClick={() => navigate("/favorites")}
               title="Избранное"
-              data-oid="kchia_r"
             >
-              <StarIcon size={24} data-oid="it983vr" />
+              <StarIcon size={24} />
             </button>
           </h1>
           <Button
             variant="primary"
             size="sm"
-            leftIcon={<Plus size={16} data-oid="6f_5l6_" />}
+            leftIcon={<Plus size={16} />}
             onClick={handleCreateService}
-            data-oid="fksqedk"
           >
             Создать
           </Button>
         </div>
 
         {/* Search bar */}
-        <div
-          className="relative bg-gray-100 rounded-lg mb-4 flex items-center overflow-hidden"
-          data-oid="pu.mv24"
-        >
-          <Search
-            size={18}
-            className="text-gray-500 absolute left-3"
-            data-oid="e0x-h2-"
-          />
+        <div className="relative bg-gray-100 rounded-lg mb-4 flex items-center overflow-hidden">
+          <Search size={18} className="text-gray-500 absolute left-3" />
 
           <input
             type="text"
@@ -246,14 +231,12 @@ const ServicesPage: React.FC = () => {
             className="bg-transparent w-full py-3 pl-10 pr-4 outline-none"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            data-oid="nkqt-gg"
           />
 
           {searchTerm && (
             <button
               className="absolute right-3 text-gray-500"
               onClick={() => setSearchTerm("")}
-              data-oid="b7_yxr_"
             >
               ✕
             </button>
@@ -261,34 +244,25 @@ const ServicesPage: React.FC = () => {
         </div>
 
         {/* Categories */}
-        <div className="overflow-x-auto pb-2 mb-4" data-oid="r8oq-5u">
-          <div className="flex space-x-2" data-oid="1_qyf:a">
+        <div className="overflow-x-auto pb-2 mb-4">
+          <div className="flex space-x-2">
             {categories.map((category) => (
               <button
                 key={category.id}
                 onClick={() => setSelectedCategory(category.id)}
                 className={`flex items-center space-x-1 whitespace-nowrap px-3 py-1.5 rounded-full text-sm ${selectedCategory === category.id ? "bg-primary-500 text-white" : "bg-gray-100 text-gray-800"}`}
-                data-oid="8:wm:g_"
               >
-                <span data-oid="du89fo4">{category.emoji}</span>
-                <span data-oid="aqct.in">{category.label}</span>
+                <span>{category.emoji}</span>
+                <span>{category.label}</span>
               </button>
             ))}
           </div>
         </div>
 
         {/* Фильтры и сортировка */}
-        <div
-          className="flex flex-wrap gap-2 mb-4 items-end bg-white rounded-lg shadow-card px-3 py-2 border border-gray-100"
-          data-oid="zwy.h48"
-        >
-          <div className="flex items-center gap-1" data-oid="kfypnq_">
-            <span
-              className="text-gray-400 text-base font-bold"
-              data-oid="fl0v93y"
-            >
-              ₽
-            </span>
+        <div className="flex flex-wrap gap-2 mb-4 items-end bg-white rounded-lg shadow-card px-3 py-2 border border-gray-100">
+          <div className="flex items-center gap-1">
+            <span className="text-gray-400 text-base font-bold">₽</span>
             <input
               type="number"
               min={0}
@@ -296,12 +270,9 @@ const ServicesPage: React.FC = () => {
               value={priceFrom}
               onChange={(e) => setPriceFrom(e.target.value)}
               placeholder="от"
-              data-oid="i212-hn"
             />
 
-            <span className="mx-1 text-gray-400" data-oid="p.g-l.i">
-              –
-            </span>
+            <span className="mx-1 text-gray-400">–</span>
             <input
               type="number"
               min={0}
@@ -309,15 +280,10 @@ const ServicesPage: React.FC = () => {
               value={priceTo}
               onChange={(e) => setPriceTo(e.target.value)}
               placeholder="до"
-              data-oid="4lyw1c."
             />
           </div>
-          <div className="flex items-center gap-1" data-oid="vxig--g">
-            <StarIcon
-              size={16}
-              className="text-yellow-400"
-              data-oid="8_t:4pj"
-            />
+          <div className="flex items-center gap-1">
+            <StarIcon size={16} className="text-yellow-400" />
 
             <input
               type="number"
@@ -328,12 +294,9 @@ const ServicesPage: React.FC = () => {
               value={ratingFrom}
               onChange={(e) => setRatingFrom(e.target.value)}
               placeholder="от"
-              data-oid="tmeyz3:"
             />
 
-            <span className="mx-1 text-gray-400" data-oid="1w55k8h">
-              –
-            </span>
+            <span className="mx-1 text-gray-400">–</span>
             <input
               type="number"
               min={0}
@@ -343,23 +306,17 @@ const ServicesPage: React.FC = () => {
               value={ratingTo}
               onChange={(e) => setRatingTo(e.target.value)}
               placeholder="до"
-              data-oid="cvw:s16"
             />
           </div>
-          <div className="flex items-center gap-1" data-oid="z097yvo">
+          <div className="flex items-center gap-1">
             <button
               type="button"
               className="flex items-center gap-1 px-2 py-1 rounded bg-gray-50 border border-gray-200 text-gray-700 hover:bg-primary-50 transition text-sm font-medium"
               onClick={() => setShowSortModal(true)}
-              data-oid="1wm3fw9"
             >
-              <SortAsc
-                size={16}
-                className="text-primary-500"
-                data-oid="q-77e48"
-              />
+              <SortAsc size={16} className="text-primary-500" />
 
-              <span data-oid="htnqlli">Сортировка</span>
+              <span>Сортировка</span>
             </button>
           </div>
           <button
@@ -372,20 +329,18 @@ const ServicesPage: React.FC = () => {
               setSortBy("date_desc");
             }}
             title="Сбросить фильтры"
-            data-oid=".5o_ofa"
           >
-            <X size={14} data-oid="asdy62l" /> Сбросить
+            <X size={14} /> Сбросить
           </button>
         </div>
 
         {/* Services list */}
         {isLoading && page === 0 && activeTab === "all" ? (
-          <div className="space-y-3" data-oid="y4znrce">
+          <div className="space-y-3">
             {[1, 2, 3, 4].map((i) => (
               <div
                 key={i}
                 className="bg-gray-100 animate-pulse h-32 rounded-lg"
-                data-oid="d82i_3p"
               ></div>
             ))}
           </div>
@@ -404,7 +359,6 @@ const ServicesPage: React.FC = () => {
                     CARD_HEIGHT *
                     Math.min(filteredServices.length, VISIBLE_COUNT),
                 }}
-                data-oid="b_e.13y"
               >
                 {({
                   index,
@@ -413,25 +367,17 @@ const ServicesPage: React.FC = () => {
                   index: number;
                   style: React.CSSProperties;
                 }) => (
-                  <div
-                    style={style}
-                    key={filteredServices[index].id}
-                    data-oid="mdodksb"
-                  >
-                    <ServiceCard
-                      service={filteredServices[index]}
-                      data-oid="kjkwtr4"
-                    />
+                  <div style={style} key={filteredServices[index].id}>
+                    <ServiceCard service={filteredServices[index]} />
                   </div>
                 )}
               </List>
               {hasMore && (
-                <div className="flex justify-center mt-4" data-oid="lj7myi2">
+                <div className="flex justify-center mt-4">
                   <Button
                     variant="outline"
                     onClick={() => setPage((p) => p + 1)}
                     disabled={isFetching}
-                    data-oid="gl-n:tr"
                   >
                     {isFetching ? "Загрузка..." : "Показать ещё"}
                   </Button>
@@ -444,22 +390,16 @@ const ServicesPage: React.FC = () => {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.3 }}
               className="flex flex-col items-center justify-center py-8 text-center"
-              data-oid="r._yhr_"
             >
-              <div className="text-4xl mb-2" data-oid="y61mro2">
-                🔍
-              </div>
-              <h3 className="text-lg font-medium mb-1" data-oid="5j-b:f7">
-                Ничего не найдено
-              </h3>
-              <p className="text-gray-500 mb-4 max-w-xs" data-oid="eyr7y19">
+              <div className="text-4xl mb-2">🔍</div>
+              <h3 className="text-lg font-medium mb-1">Ничего не найдено</h3>
+              <p className="text-gray-500 mb-4 max-w-xs">
                 Попробуйте изменить параметры поиска или создайте новую услугу
               </p>
               <Button
                 variant="primary"
-                leftIcon={<Plus size={16} data-oid="xr9ioi8" />}
+                leftIcon={<Plus size={16} />}
                 onClick={handleCreateService}
-                data-oid="7:po5s8"
               >
                 Создать услугу
               </Button>
@@ -472,7 +412,6 @@ const ServicesPage: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.25, ease: "easeOut" }}
             className="space-y-3"
-            data-oid="k881s5p"
           >
             {favoriteServices.map((service) => (
               <ServiceCard
@@ -482,7 +421,6 @@ const ServicesPage: React.FC = () => {
                   if ((window as any).refetchFavorites)
                     (window as any).refetchFavorites();
                 }}
-                data-oid="irw6gov"
               />
             ))}
           </motion.div>
@@ -491,38 +429,26 @@ const ServicesPage: React.FC = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="flex flex-col items-center justify-center py-8 text-center"
-            data-oid="vkluc12"
           >
-            <div className="text-4xl mb-2" data-oid=".9.d.mr">
-              ⭐
-            </div>
-            <h3 className="text-lg font-medium mb-1" data-oid="w:_i4kw">
-              Нет избранных услуг
-            </h3>
-            <p className="text-gray-500 mb-4 max-w-xs" data-oid="xw.gd0b">
+            <div className="text-4xl mb-2">⭐</div>
+            <h3 className="text-lg font-medium mb-1">Нет избранных услуг</h3>
+            <p className="text-gray-500 mb-4 max-w-xs">
               Добавьте услуги в избранное, чтобы быстро находить их позже
             </p>
           </motion.div>
         )}
       </div>
       {/* Модалка сортировки */}
-      <Modal
-        isOpen={showSortModal}
-        onClose={() => setShowSortModal(false)}
-        data-oid="by9qjkj"
-      >
-        <div className="p-4" data-oid="yh37l43">
-          <h2 className="text-lg font-semibold mb-4" data-oid="sr72sro">
-            Сортировка
-          </h2>
-          <div className="flex flex-col gap-2" data-oid="wwz8x6h">
+      <Modal isOpen={showSortModal} onClose={() => setShowSortModal(false)}>
+        <div className="p-4">
+          <h2 className="text-lg font-semibold mb-4">Сортировка</h2>
+          <div className="flex flex-col gap-2">
             <button
               className={`w-full text-left px-4 py-2 rounded-lg ${sortBy === "date_desc" ? "bg-primary-100 text-primary-800 font-bold" : "hover:bg-gray-100"}`}
               onClick={() => {
                 setSortBy("date_desc");
                 setShowSortModal(false);
               }}
-              data-oid="cy3dosc"
             >
               Сначала новые
             </button>
@@ -532,7 +458,6 @@ const ServicesPage: React.FC = () => {
                 setSortBy("date_asc");
                 setShowSortModal(false);
               }}
-              data-oid="q1jatpw"
             >
               Сначала старые
             </button>
@@ -542,7 +467,6 @@ const ServicesPage: React.FC = () => {
                 setSortBy("price_asc");
                 setShowSortModal(false);
               }}
-              data-oid="vcxd30x"
             >
               Цена ↑
             </button>
@@ -552,7 +476,6 @@ const ServicesPage: React.FC = () => {
                 setSortBy("price_desc");
                 setShowSortModal(false);
               }}
-              data-oid="wxrd9gf"
             >
               Цена ↓
             </button>
@@ -562,7 +485,6 @@ const ServicesPage: React.FC = () => {
                 setSortBy("rating_desc");
                 setShowSortModal(false);
               }}
-              data-oid="pnav5un"
             >
               Рейтинг ↓
             </button>
@@ -572,7 +494,6 @@ const ServicesPage: React.FC = () => {
                 setSortBy("rating_asc");
                 setShowSortModal(false);
               }}
-              data-oid="vey9ptt"
             >
               Рейтинг ↑
             </button>

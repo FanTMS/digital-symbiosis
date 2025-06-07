@@ -156,25 +156,18 @@ const SettingsPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="px-4 py-6" data-oid="7.y.-wt">
-        <div
-          className="h-6 w-48 bg-gray-200 rounded animate-pulse mb-6"
-          data-oid="u::l1wh"
-        />
+      <div className="px-4 py-6">
+        <div className="h-6 w-48 bg-gray-200 rounded animate-pulse mb-6" />
 
         {[1, 2, 3].map((i) => (
-          <div key={i} className="mb-6" data-oid="c6esmwk">
-            <div
-              className="h-4 w-24 bg-gray-200 rounded animate-pulse mb-3"
-              data-oid="bigh37h"
-            />
+          <div key={i} className="mb-6">
+            <div className="h-4 w-24 bg-gray-200 rounded animate-pulse mb-3" />
 
-            <div className="space-y-3" data-oid="lyghbie">
+            <div className="space-y-3">
               {[1, 2].map((j) => (
                 <div
                   key={j}
                   className="h-12 bg-gray-200 rounded animate-pulse"
-                  data-oid="zo7ll1b"
                 />
               ))}
             </div>
@@ -190,12 +183,9 @@ const SettingsPage: React.FC = () => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
       className="pb-16 pt-2"
-      data-oid="sjlrzjr"
     >
-      <div className="px-4" data-oid="562rp.i">
-        <h1 className="text-2xl font-bold mb-6" data-oid="os5b--s">
-          Настройки
-        </h1>
+      <div className="px-4">
+        <h1 className="text-2xl font-bold mb-6">Настройки</h1>
 
         {settingsGroups.map((group, groupIndex) => (
           <motion.div
@@ -204,18 +194,11 @@ const SettingsPage: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: groupIndex * 0.1 }}
             className="mb-6"
-            data-oid="szm6f5y"
           >
-            <h2
-              className="text-sm font-medium text-gray-500 mb-3"
-              data-oid="3i1bt4y"
-            >
+            <h2 className="text-sm font-medium text-gray-500 mb-3">
               {group.title}
             </h2>
-            <div
-              className="bg-white rounded-lg shadow-card overflow-hidden"
-              data-oid="9o3ww8d"
-            >
+            <div className="bg-white rounded-lg shadow-card overflow-hidden">
               {group.settings.map((setting, settingIndex) => (
                 <motion.div
                   key={setting.label}
@@ -227,18 +210,11 @@ const SettingsPage: React.FC = () => {
                       ? "border-b border-gray-100"
                       : ""
                   }`}
-                  data-oid="2vhchoc"
                 >
-                  <div className="flex items-center" data-oid="fvz-531">
-                    <setting.icon
-                      size={20}
-                      className="text-gray-500"
-                      data-oid=".5d-.-x"
-                    />
+                  <div className="flex items-center">
+                    <setting.icon size={20} className="text-gray-500" />
 
-                    <span className="ml-3 font-medium" data-oid="i363pv4">
-                      {setting.label}
-                    </span>
+                    <span className="ml-3 font-medium">{setting.label}</span>
                   </div>
                   {setting.type === "toggle" ? (
                     <button
@@ -246,26 +222,19 @@ const SettingsPage: React.FC = () => {
                       className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
                         setting.value ? "bg-primary-500" : "bg-gray-200"
                       }`}
-                      data-oid="s_9zf0z"
                     >
                       <motion.span
                         initial={false}
                         animate={{ x: setting.value ? 20 : 2 }}
                         className="inline-block h-5 w-5 transform rounded-full bg-white shadow-lg"
-                        data-oid="k6_jra."
                       />
                     </button>
                   ) : setting.type === "button" ? (
                     <button
                       onClick={setting.onClick}
                       className="flex items-center"
-                      data-oid="dnx0dvq"
                     >
-                      <ChevronRight
-                        size={18}
-                        className="text-gray-400"
-                        data-oid="gx:oa9l"
-                      />
+                      <ChevronRight size={18} className="text-gray-400" />
                     </button>
                   ) : null}
                 </motion.div>
@@ -274,12 +243,11 @@ const SettingsPage: React.FC = () => {
           </motion.div>
         ))}
 
-        <div className="mt-8" data-oid="q0sc2j1">
+        <div className="mt-8">
           <Button
             variant="outline"
             fullWidth
             onClick={() => alert("Выход из аккаунта")}
-            data-oid="zt50:s1"
           >
             Выйти из аккаунта
           </Button>

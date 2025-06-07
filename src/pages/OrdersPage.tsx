@@ -169,25 +169,16 @@ const OrdersPage: React.FC = () => {
   };
 
   if (!userId) {
-    return (
-      <div className="p-4" data-oid="6fik.tt">
-        Загрузка пользователя...
-      </div>
-    );
+    return <div className="p-4">Загрузка пользователя...</div>;
   }
 
   return (
-    <div className="pb-16 pt-2" data-oid="7qjrmqe">
-      <div className="px-4" data-oid="e:9.f2t">
-        <h1 className="text-2xl font-bold mb-4" data-oid="wnw7foc">
-          Мои заказы
-        </h1>
+    <div className="pb-16 pt-2">
+      <div className="px-4">
+        <h1 className="text-2xl font-bold mb-4">Мои заказы</h1>
 
         {/* Tabs */}
-        <div
-          className="flex mb-4 bg-gray-100 rounded-lg p-1"
-          data-oid="nxj5:ed"
-        >
+        <div className="flex mb-4 bg-gray-100 rounded-lg p-1">
           <button
             className={`flex-1 py-2 rounded-md text-center ${
               activeTab === "client"
@@ -195,7 +186,6 @@ const OrdersPage: React.FC = () => {
                 : "text-gray-600"
             }`}
             onClick={() => setActiveTab("client")}
-            data-oid="vkjszqa"
           >
             Я заказчик
           </button>
@@ -206,14 +196,13 @@ const OrdersPage: React.FC = () => {
                 : "text-gray-600"
             }`}
             onClick={() => setActiveTab("provider")}
-            data-oid="xi6.v01"
           >
             Я исполнитель
           </button>
         </div>
 
         {/* Orders list с анимацией перехода между вкладками */}
-        <AnimatePresence mode="wait" initial={false} data-oid="h:ybsax">
+        <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={
               activeTab +
@@ -227,15 +216,13 @@ const OrdersPage: React.FC = () => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -40 }}
             transition={{ duration: 0.4, ease: "easeOut" }}
-            data-oid="c.d67wq"
           >
             {isLoading && page === 0 ? (
-              <div className="space-y-3" data-oid="lscvfoh">
+              <div className="space-y-3">
                 {[1, 2, 3].map((i) => (
                   <div
                     key={i}
                     className="bg-gray-100 animate-pulse h-32 rounded-lg"
-                    data-oid="_xy7wr."
                   ></div>
                 ))}
               </div>
@@ -252,7 +239,6 @@ const OrdersPage: React.FC = () => {
                     minHeight:
                       CARD_HEIGHT * Math.min(allOrders.length, VISIBLE_COUNT),
                   }}
-                  data-oid="nbcybrd"
                 >
                   {({
                     index,
@@ -268,61 +254,36 @@ const OrdersPage: React.FC = () => {
                       activeTab === "client" ? order.provider : order.client;
                     const StatusIcon = statusInfo.icon;
                     return (
-                      <div style={style} key={order.id} data-oid="o.ib0kh">
+                      <div style={style} key={order.id}>
                         <motion.div
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ duration: 0.4, ease: "easeOut" }}
                           className="bg-white rounded-lg shadow mb-4"
-                          data-oid="iojrk.6"
                         >
-                          <div className="p-4" data-oid="8yi2_gb">
-                            <div
-                              className="flex justify-between items-start mb-2"
-                              data-oid=".tm:32s"
-                            >
-                              <h3
-                                className="font-medium text-gray-900"
-                                data-oid="k0__27t"
-                              >
+                          <div className="p-4">
+                            <div className="flex justify-between items-start mb-2">
+                              <h3 className="font-medium text-gray-900">
                                 {service?.title}
                               </h3>
                               <div
                                 className={`flex items-center px-2 py-1 rounded-full text-xs ${statusInfo.bgColor} ${statusInfo.color}`}
-                                data-oid="tikdazm"
                               >
-                                <StatusIcon
-                                  size={12}
-                                  className="mr-1"
-                                  data-oid="6dspv-t"
-                                />
+                                <StatusIcon size={12} className="mr-1" />
 
                                 {statusInfo.label}
                               </div>
                             </div>
-                            <div
-                              className="flex items-center text-sm text-gray-500 mb-3"
-                              data-oid="mgr1sjt"
-                            >
-                              <Clock
-                                size={14}
-                                className="mr-1"
-                                data-oid="-af-g5n"
-                              />
+                            <div className="flex items-center text-sm text-gray-500 mb-3">
+                              <Clock size={14} className="mr-1" />
 
-                              <span data-oid="e.n9joo">
+                              <span>
                                 {formatDate(new Date(order.created_at))}
                               </span>
                             </div>
-                            <div
-                              className="flex justify-between items-center mb-3"
-                              data-oid="l3fxmxm"
-                            >
-                              <div data-oid="_gg861l">
-                                <div
-                                  className="text-xs text-gray-500 mb-1"
-                                  data-oid="agd8:36"
-                                >
+                            <div className="flex justify-between items-center mb-3">
+                              <div>
+                                <div className="text-xs text-gray-500 mb-1">
                                   {activeTab === "client"
                                     ? "Исполнитель"
                                     : "Заказчик"}
@@ -333,48 +294,35 @@ const OrdersPage: React.FC = () => {
                                     otherUser?.id &&
                                     navigate(`/profile/${otherUser.id}`)
                                   }
-                                  data-oid="9vct-8k"
                                 >
                                   {otherUser?.name}
                                 </div>
                               </div>
-                              <div className="text-right" data-oid="tyvhz:l">
-                                <div
-                                  className="text-xs text-gray-500"
-                                  data-oid="ud0juya"
-                                >
+                              <div className="text-right">
+                                <div className="text-xs text-gray-500">
                                   Стоимость
                                 </div>
-                                <div
-                                  className="font-medium text-accent-500"
-                                  data-oid="8ger0dd"
-                                >
+                                <div className="font-medium text-accent-500">
                                   {order.price} кр.
                                 </div>
                               </div>
                             </div>
-                            <div className="flex gap-2" data-oid="v.gp-a2">
+                            <div className="flex gap-2">
                               <Button
                                 variant="outline"
                                 size="sm"
-                                leftIcon={
-                                  <ExternalLink size={14} data-oid="2_4:q9w" />
-                                }
+                                leftIcon={<ExternalLink size={14} />}
                                 onClick={() => handleViewDetails(order)}
                                 className="flex-1"
-                                data-oid="nqt0ysq"
                               >
                                 Подробнее
                               </Button>
                               <Button
                                 variant="outline"
                                 size="sm"
-                                leftIcon={
-                                  <MessageCircle size={14} data-oid="5ct_q5p" />
-                                }
+                                leftIcon={<MessageCircle size={14} />}
                                 onClick={() => handleContact(otherUser?.id)}
                                 className="flex-1"
-                                data-oid="n_o7r8a"
                               >
                                 Связаться
                               </Button>
@@ -389,7 +337,6 @@ const OrdersPage: React.FC = () => {
                                       handleCompleteOrder(order.id)
                                     }
                                     className="flex-1"
-                                    data-oid="yb5j-b3"
                                   >
                                     Завершить
                                   </Button>
@@ -402,12 +349,11 @@ const OrdersPage: React.FC = () => {
                   }}
                 </List>
                 {hasMore && (
-                  <div className="flex justify-center mt-4" data-oid="t0cmbe7">
+                  <div className="flex justify-center mt-4">
                     <Button
                       variant="outline"
                       onClick={() => setPage((p) => p + 1)}
                       disabled={isFetching}
-                      data-oid=".v4v5ib"
                     >
                       {isFetching ? "Загрузка..." : "Показать ещё"}
                     </Button>
@@ -420,15 +366,10 @@ const OrdersPage: React.FC = () => {
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.3 }}
                 className="flex flex-col items-center justify-center py-8 text-center"
-                data-oid="dfp95te"
               >
-                <div className="text-4xl mb-2" data-oid="2rpf0j1">
-                  📦
-                </div>
-                <h3 className="text-lg font-medium mb-1" data-oid="j:1t7h.">
-                  Нет заказов
-                </h3>
-                <p className="text-gray-500 mb-4 max-w-xs" data-oid="l.hq97n">
+                <div className="text-4xl mb-2">📦</div>
+                <h3 className="text-lg font-medium mb-1">Нет заказов</h3>
+                <p className="text-gray-500 mb-4 max-w-xs">
                   Пока у вас нет заказов. Попробуйте заказать услугу!
                 </p>
               </motion.div>
@@ -438,58 +379,41 @@ const OrdersPage: React.FC = () => {
       </div>
       {/* Модальное окно с деталями заказа */}
       {selectedOrder && (
-        <Modal
-          isOpen={!!selectedOrder}
-          onClose={handleCloseModal}
-          data-oid="n.b3la5"
-        >
-          <div className="p-4" data-oid="393l:w1">
-            <h2 className="text-xl font-bold mb-2" data-oid="s.akwuu">
-              Детали заказа
-            </h2>
-            <div className="mb-2" data-oid="n32wp78">
-              <span className="font-medium" data-oid="c21smjq">
-                Услуга:
-              </span>{" "}
+        <Modal isOpen={!!selectedOrder} onClose={handleCloseModal}>
+          <div className="p-4">
+            <h2 className="text-xl font-bold mb-2">Детали заказа</h2>
+            <div className="mb-2">
+              <span className="font-medium">Услуга:</span>{" "}
               {selectedOrder.service?.title}
             </div>
-            <div className="mb-2" data-oid="svr_-gf">
-              <span className="font-medium" data-oid="5septwb">
-                Описание:
-              </span>{" "}
+            <div className="mb-2">
+              <span className="font-medium">Описание:</span>{" "}
               {selectedOrder.service?.description}
             </div>
-            <div className="mb-2" data-oid="ji83xhg">
-              <span className="font-medium" data-oid="p36-25-">
-                Статус:
-              </span>{" "}
+            <div className="mb-2">
+              <span className="font-medium">Статус:</span>{" "}
               {getOrderStatusInfo(selectedOrder.status).label}
             </div>
-            <div className="mb-2" data-oid="510irto">
-              <span className="font-medium" data-oid="zmvw6t:">
-                Стоимость:
-              </span>{" "}
+            <div className="mb-2">
+              <span className="font-medium">Стоимость:</span>{" "}
               {selectedOrder.price} кр.
             </div>
-            <div className="mb-2" data-oid="zr3o6:u">
-              <span className="font-medium" data-oid="j3smgzu">
+            <div className="mb-2">
+              <span className="font-medium">
                 {activeTab === "client" ? "Исполнитель" : "Заказчик"}:
               </span>{" "}
               {activeTab === "client"
                 ? selectedOrder.provider?.name
                 : selectedOrder.client?.name}
             </div>
-            <div className="mb-2" data-oid="692lol_">
-              <span className="font-medium" data-oid="78b5lt_">
-                Создан:
-              </span>{" "}
+            <div className="mb-2">
+              <span className="font-medium">Создан:</span>{" "}
               {formatDate(new Date(selectedOrder.created_at))}
             </div>
             <Button
               variant="outline"
               onClick={handleCloseModal}
               className="mt-4 w-full"
-              data-oid="9imc525"
             >
               Закрыть
             </Button>
@@ -501,7 +425,6 @@ const OrdersPage: React.FC = () => {
                   navigate(`/services/${selectedOrder.service.id}`);
                 }
               }}
-              data-oid="rcpps-t"
             >
               Открыть услугу
             </Button>

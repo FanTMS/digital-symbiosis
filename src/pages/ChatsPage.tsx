@@ -84,30 +84,19 @@ const ChatsPage: React.FC = () => {
     fetchChats();
   }, [user?.id]);
 
-  if (loading)
-    return (
-      <div className="p-4" data-oid="gcjrbqi">
-        Загрузка...
-      </div>
-    );
+  if (loading) return <div className="p-4">Загрузка...</div>;
 
   return (
-    <div
-      className="p-4 w-full max-w-2xl mx-auto pb-20 sm:pb-8 bg-gradient-to-br from-cyan-50 via-blue-50 to-white min-h-screen"
-      data-oid="dmpogre"
-    >
-      <h1
-        className="text-2xl font-bold mb-6 flex items-center gap-2 text-blue-700"
-        data-oid="ygt3hez"
-      >
-        <MessageCircle size={28} data-oid="7a-i.58" /> Чаты
+    <div className="p-4 w-full max-w-2xl mx-auto pb-20 sm:pb-8 bg-gradient-to-br from-cyan-50 via-blue-50 to-white min-h-screen">
+      <h1 className="text-2xl font-bold mb-6 flex items-center gap-2 text-blue-700">
+        <MessageCircle size={28} /> Чаты
       </h1>
       {chats.length === 0 ? (
-        <div className="text-gray-500 text-center mt-16" data-oid="-xmdy-2">
+        <div className="text-gray-500 text-center mt-16">
           Нет активных чатов
         </div>
       ) : (
-        <ul className="space-y-4" data-oid="1lt:5wv">
+        <ul className="space-y-4">
           {chats.map((chat) => {
             const lastMsg = chat.lastMessage;
             const unread =
@@ -123,73 +112,44 @@ const ChatsPage: React.FC = () => {
                 transition={{ type: "spring", stiffness: 300, damping: 22 }}
                 className={`group p-4 rounded-2xl border border-blue-100 bg-white shadow-card flex items-center cursor-pointer hover:bg-blue-50 transition min-w-0 relative ${unread ? "ring-2 ring-blue-200" : ""}`}
                 onClick={() => navigate(`/chat/${chat.id}`)}
-                data-oid="_36-r58"
               >
-                <div
-                  className="flex-shrink-0 w-14 h-14 rounded-full bg-gradient-to-br from-cyan-100 to-blue-100 border-2 border-blue-200 flex items-center justify-center mr-4 overflow-hidden relative"
-                  data-oid="75eoteb"
-                >
+                <div className="flex-shrink-0 w-14 h-14 rounded-full bg-gradient-to-br from-cyan-100 to-blue-100 border-2 border-blue-200 flex items-center justify-center mr-4 overflow-hidden relative">
                   {chat.otherUser?.avatar_url ? (
                     <img
                       src={chat.otherUser.avatar_url}
                       alt={chat.otherUser.name}
                       className="w-full h-full rounded-full object-cover"
-                      data-oid="lus:m3v"
                     />
                   ) : (
-                    <MessageCircle
-                      size={32}
-                      className="text-blue-300"
-                      data-oid="qxqps02"
-                    />
+                    <MessageCircle size={32} className="text-blue-300" />
                   )}
                   {/* Индикатор онлайн (пример, если появится поле online) */}
                   {/* {chat.otherUser?.online && <span className="absolute bottom-1 right-1 w-3 h-3 bg-green-400 border-2 border-white rounded-full"></span>} */}
                 </div>
-                <div className="flex-1 min-w-0" data-oid="er6o1q_">
-                  <div
-                    className="flex items-center gap-2 mb-0.5"
-                    data-oid="_mv42nc"
-                  >
-                    <span
-                      className="font-semibold text-base text-gray-900 truncate max-w-[160px] sm:max-w-[220px]"
-                      data-oid=":osvms3"
-                    >
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-0.5">
+                    <span className="font-semibold text-base text-gray-900 truncate max-w-[160px] sm:max-w-[220px]">
                       {chat.otherUser?.name || "Пользователь"}
                     </span>
                     {/* Badge "Непрочитанные" */}
                     {unread && (
-                      <span
-                        className="ml-1 px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 text-xs font-bold animate-pulse"
-                        data-oid="e4vc3wm"
-                      >
+                      <span className="ml-1 px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 text-xs font-bold animate-pulse">
                         Новое
                       </span>
                     )}
                   </div>
-                  <div
-                    className="flex items-center gap-1 text-sm text-gray-500 truncate max-w-[220px]"
-                    data-oid="-lvd2b_"
-                  >
+                  <div className="flex items-center gap-1 text-sm text-gray-500 truncate max-w-[220px]">
                     {/* Иконка типа сообщения */}
                     {lastMsg &&
                     lastMsg.attachments &&
                     lastMsg.attachments.length > 0 ? (
                       lastMsg.attachments[0].type === "image" ? (
-                        <ImageIcon
-                          size={16}
-                          className="text-blue-400 mr-1"
-                          data-oid="gp8nmf5"
-                        />
+                        <ImageIcon size={16} className="text-blue-400 mr-1" />
                       ) : (
-                        <FileIcon
-                          size={16}
-                          className="text-blue-400 mr-1"
-                          data-oid="0c9tkcl"
-                        />
+                        <FileIcon size={16} className="text-blue-400 mr-1" />
                       )
                     ) : null}
-                    <span className="truncate" data-oid="cjl3tjn">
+                    <span className="truncate">
                       {lastMsg &&
                       lastMsg.attachments &&
                       lastMsg.attachments.length > 0
@@ -202,14 +162,8 @@ const ChatsPage: React.FC = () => {
                     </span>
                   </div>
                 </div>
-                <div
-                  className="flex flex-col items-end ml-4 min-w-[60px]"
-                  data-oid="bnl-6h3"
-                >
-                  <span
-                    className="text-xs text-gray-400 mb-1"
-                    data-oid="68t0bot"
-                  >
+                <div className="flex flex-col items-end ml-4 min-w-[60px]">
+                  <span className="text-xs text-gray-400 mb-1">
                     {formatTime(lastMsg?.created_at)}
                   </span>
                   <Button
@@ -220,7 +174,6 @@ const ChatsPage: React.FC = () => {
                       e.stopPropagation();
                       navigate(`/chat/${chat.id}`);
                     }}
-                    data-oid="e1:icca"
                   >
                     Открыть
                   </Button>

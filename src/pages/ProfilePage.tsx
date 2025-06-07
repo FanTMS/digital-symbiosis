@@ -140,98 +140,59 @@ const ProfilePage: React.FC = () => {
 
   if (loading)
     return (
-      <div className="pb-16 pt-2" data-oid="whwyo76">
-        <div className="px-4 mb-6" data-oid="w9ytkqc">
-          <div className="flex items-center gap-4 mb-6" data-oid="ncop5e6">
-            <div className="relative" data-oid="-rtrhus">
-              <div
-                className="w-20 h-20 rounded-full bg-gray-200 animate-pulse"
-                data-oid="d_-i048"
-              />
+      <div className="pb-16 pt-2">
+        <div className="px-4 mb-6">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="relative">
+              <div className="w-20 h-20 rounded-full bg-gray-200 animate-pulse" />
             </div>
-            <div className="flex-1" data-oid="trxuo0c">
-              <div
-                className="h-6 w-40 bg-gray-200 rounded mb-2 animate-pulse"
-                data-oid="i2xr0iy"
-              />
+            <div className="flex-1">
+              <div className="h-6 w-40 bg-gray-200 rounded mb-2 animate-pulse" />
 
-              <div
-                className="h-4 w-24 bg-gray-200 rounded mb-2 animate-pulse"
-                data-oid="mi.x8v_"
-              />
+              <div className="h-4 w-24 bg-gray-200 rounded mb-2 animate-pulse" />
 
-              <div
-                className="h-4 w-32 bg-gray-200 rounded animate-pulse"
-                data-oid=".e1f39-"
-              />
+              <div className="h-4 w-32 bg-gray-200 rounded animate-pulse" />
             </div>
           </div>
-          <div className="mb-6" data-oid="32l..n:">
-            <div
-              className="h-4 w-32 bg-gray-200 rounded mb-2 animate-pulse"
-              data-oid="damp6nm"
-            />
+          <div className="mb-6">
+            <div className="h-4 w-32 bg-gray-200 rounded mb-2 animate-pulse" />
 
-            <div
-              className="w-full bg-gray-200 rounded-full h-2.5 animate-pulse"
-              data-oid="sd54eg2"
-            />
+            <div className="w-full bg-gray-200 rounded-full h-2.5 animate-pulse" />
           </div>
-          <div
-            className="bg-white rounded-lg shadow-card overflow-hidden mb-6"
-            data-oid="1s6ywo2"
-          >
+          <div className="bg-white rounded-lg shadow-card overflow-hidden mb-6">
             {[1, 2, 3, 4, 5].map((i) => (
               <div
                 key={i}
                 className="flex items-center justify-between p-4 border-b border-gray-100 last:border-b-0"
-                data-oid="ic-xqg1"
               >
-                <div className="flex items-center" data-oid="sj-nz.y">
-                  <div
-                    className="w-5 h-5 bg-gray-200 rounded mr-3 animate-pulse"
-                    data-oid="9qyns5u"
-                  />
+                <div className="flex items-center">
+                  <div className="w-5 h-5 bg-gray-200 rounded mr-3 animate-pulse" />
 
-                  <div
-                    className="h-4 w-24 bg-gray-200 rounded animate-pulse"
-                    data-oid="542f43-"
-                  />
+                  <div className="h-4 w-24 bg-gray-200 rounded animate-pulse" />
                 </div>
-                <div
-                  className="h-4 w-8 bg-gray-200 rounded animate-pulse"
-                  data-oid="3-2cqhc"
-                />
+                <div className="h-4 w-8 bg-gray-200 rounded animate-pulse" />
               </div>
             ))}
           </div>
         </div>
-        <div className="px-4 grid md:grid-cols-2 gap-6" data-oid="f79v0:q">
-          <div data-oid="0jtg_xa">
-            <div
-              className="h-5 w-32 bg-gray-200 rounded mb-3 animate-pulse"
-              data-oid="rztp6l-"
-            />
+        <div className="px-4 grid md:grid-cols-2 gap-6">
+          <div>
+            <div className="h-5 w-32 bg-gray-200 rounded mb-3 animate-pulse" />
 
             {[1, 2].map((i) => (
               <div
                 key={i}
                 className="h-16 bg-gray-200 rounded-lg mb-2 animate-pulse"
-                data-oid="4i-3m.m"
               />
             ))}
           </div>
-          <div data-oid="n46.wuf">
-            <div
-              className="h-5 w-32 bg-gray-200 rounded mb-3 animate-pulse"
-              data-oid="nz188pq"
-            />
+          <div>
+            <div className="h-5 w-32 bg-gray-200 rounded mb-3 animate-pulse" />
 
             {[1, 2].map((i) => (
               <div
                 key={i}
                 className="h-16 bg-gray-200 rounded-lg mb-2 animate-pulse"
-                data-oid="r2:z34d"
               />
             ))}
           </div>
@@ -241,9 +202,7 @@ const ProfilePage: React.FC = () => {
 
   if (!user)
     return (
-      <div className="p-8 text-center text-red-500" data-oid=":.xq9t7">
-        Пользователь не найден
-      </div>
+      <div className="p-8 text-center text-red-500">Пользователь не найден</div>
     );
 
   return (
@@ -252,15 +211,12 @@ const ProfilePage: React.FC = () => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
       className="pb-16 pt-2"
-      data-oid="w6ow6ek"
     >
-      <div className="px-4 mb-6" data-oid="i50xs1g">
-        <h1 className="text-2xl font-bold mb-4" data-oid="y8ishlt">
-          Профиль
-        </h1>
+      <div className="px-4 mb-6">
+        <h1 className="text-2xl font-bold mb-4">Профиль</h1>
 
-        <div className="flex items-center gap-4 mb-6" data-oid="44w8:yl">
-          <div className="relative" data-oid="yrg3p.s">
+        <div className="flex items-center gap-4 mb-6">
+          <div className="relative">
             <img
               src={
                 user.avatar_url ||
@@ -269,14 +225,13 @@ const ProfilePage: React.FC = () => {
               alt={user.name}
               className="w-20 h-20 rounded-full object-cover border-2 border-primary-500 cursor-pointer"
               onClick={() => setShowEditModal(true)}
-              data-oid="h9n3cvk"
             />
           </div>
-          <div className="flex-1" data-oid="6ao1bid">
-            <div className="flex items-center gap-2" data-oid="qw65j.q">
-              <span className="text-2xl font-bold" data-oid="oi9-gvz">
+          <div className="flex-1">
+            <div className="flex items-center gap-2">
+              <span className="text-2xl font-bold">
                 {user.name}{" "}
-                <span className="text-gray-400 text-base" data-oid="2n2rl44">
+                <span className="text-gray-400 text-base">
                   @{user.username}
                 </span>
               </span>
@@ -285,36 +240,27 @@ const ProfilePage: React.FC = () => {
                   className="ml-2 p-1 rounded-full hover:bg-gray-100"
                   onClick={() => setShowEditModal(true)}
                   title="Редактировать профиль"
-                  data-oid="e7ig0m8"
                 >
-                  <Pencil size={18} data-oid="9.awvke" />
+                  <Pencil size={18} />
                 </button>
               )}
             </div>
-            <div className="flex items-center gap-2 mt-1" data-oid="idtmkhh">
-              <Star
-                size={18}
-                className="text-yellow-400 fill-yellow-400"
-                data-oid="1r57yhk"
-              />
+            <div className="flex items-center gap-2 mt-1">
+              <Star size={18} className="text-yellow-400 fill-yellow-400" />
 
-              <span className="font-medium" data-oid="7s-:na.">
+              <span className="font-medium">
                 {user.rating?.toFixed(1) ?? "—"}
               </span>
-              <span className="text-gray-400" data-oid="qw5du:l">
-                •
-              </span>
-              <span className="text-gray-500" data-oid="utx4zjc">
+              <span className="text-gray-400">•</span>
+              <span className="text-gray-500">
                 Уровень: {user.level ?? "-"}
               </span>
-              <span className="text-gray-400" data-oid="ykbg3ud">
-                •
-              </span>
-              <span className="text-gray-500" data-oid="i81.n-t">
+              <span className="text-gray-400">•</span>
+              <span className="text-gray-500">
                 Кредиты: {user.credits ?? 0}
               </span>
             </div>
-            <div className="flex items-center gap-2 mt-2" data-oid="mtsa-n.">
+            <div className="flex items-center gap-2 mt-2">
               {/* Бейджи */}
               {Array.isArray((user as any).badges) &&
               (user as any).badges.length > 0 ? (
@@ -323,25 +269,21 @@ const ProfilePage: React.FC = () => {
                     key={b.badge_id}
                     title={b.badge?.name}
                     className="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs gap-1"
-                    data-oid="wzmmygk"
                   >
-                    <Award size={14} data-oid="6xe3oh0" />
+                    <Award size={14} />
                     {b.badge?.name}
                   </span>
                 ))
               ) : (
-                <span className="text-gray-400 text-xs" data-oid="3mdipr-">
-                  Бейджей нет
-                </span>
+                <span className="text-gray-400 text-xs">Бейджей нет</span>
               )}
             </div>
           </div>
           {!isOwn && (
             <Button
               className="ml-auto"
-              leftIcon={<MessageCircle size={18} data-oid="x761ttl" />}
+              leftIcon={<MessageCircle size={18} />}
               onClick={() => navigate(`/chat/${user.id}`)}
-              data-oid=":16iojl"
             >
               Написать сообщение
             </Button>
@@ -351,18 +293,12 @@ const ProfilePage: React.FC = () => {
         {!loading && (
           <>
             {/* Level progress */}
-            <div className="mb-6" data-oid="jicngta">
-              <div
-                className="flex justify-between items-center mb-2"
-                data-oid="defap-i"
-              >
-                <h2
-                  className="text-sm font-medium text-gray-700"
-                  data-oid="b5qifdf"
-                >
+            <div className="mb-6">
+              <div className="flex justify-between items-center mb-2">
+                <h2 className="text-sm font-medium text-gray-700">
                   Прогресс уровня
                 </h2>
-                <span className="text-xs text-gray-500" data-oid="74hm8hb">
+                <span className="text-xs text-gray-500">
                   {completedTasks}/{TASKS_FOR_NEXT_LEVEL} заданий до "
                   {user!.level === "Новичок"
                     ? "Специалист"
@@ -372,25 +308,18 @@ const ProfilePage: React.FC = () => {
                   "
                 </span>
               </div>
-              <div
-                className="w-full bg-gray-200 rounded-full h-2.5"
-                data-oid="utakx5n"
-              >
+              <div className="w-full bg-gray-200 rounded-full h-2.5">
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${progressToNextLevel * 100}%` }}
                   transition={{ duration: 1, ease: "easeOut" }}
                   className="bg-primary-500 h-2.5 rounded-full"
-                  data-oid="r1t49jf"
                 ></motion.div>
               </div>
             </div>
 
             {/* Menu */}
-            <div
-              className="bg-white rounded-lg shadow-card overflow-hidden mb-6"
-              data-oid=":pye165"
-            >
+            <div className="bg-white rounded-lg shadow-card overflow-hidden mb-6">
               {menuItems.map((item, index) => (
                 <motion.div
                   key={index}
@@ -403,83 +332,47 @@ const ProfilePage: React.FC = () => {
                       : ""
                   }`}
                   onClick={item.onClick}
-                  data-oid="p9hldij"
                 >
-                  <div className="flex items-center" data-oid="._f9t61">
-                    <item.icon
-                      size={18}
-                      className="text-gray-500"
-                      data-oid="8dsq:yl"
-                    />
+                  <div className="flex items-center">
+                    <item.icon size={18} className="text-gray-500" />
 
-                    <span className="ml-3 font-medium" data-oid="01mgruf">
-                      {item.label}
-                    </span>
+                    <span className="ml-3 font-medium">{item.label}</span>
                   </div>
-                  <div className="flex items-center" data-oid="bqrxap2">
+                  <div className="flex items-center">
                     {item.value && (
-                      <span
-                        className="mr-2 text-accent-500 font-medium"
-                        data-oid="afkxaq4"
-                      >
+                      <span className="mr-2 text-accent-500 font-medium">
                         {item.value}
                       </span>
                     )}
                     {item.badge && (
-                      <span
-                        className="mr-2 bg-primary-100 text-primary-800 text-xs py-0.5 px-2 rounded-full"
-                        data-oid="cy4de_-"
-                      >
+                      <span className="mr-2 bg-primary-100 text-primary-800 text-xs py-0.5 px-2 rounded-full">
                         {item.badge}
                       </span>
                     )}
-                    <ChevronRight
-                      size={18}
-                      className="text-gray-400"
-                      data-oid="o:kx359"
-                    />
+                    <ChevronRight size={18} className="text-gray-400" />
                   </div>
                 </motion.div>
               ))}
             </div>
 
             {/* Стена профиля */}
-            <div
-              className="grid grid-cols-1 md:grid-cols-2 gap-6"
-              data-oid="jh51kve"
-            >
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Отзывы */}
-              <div data-oid="c0804nh">
-                <h3 className="font-semibold text-lg mb-2" data-oid="r5ccz35">
-                  Отзывы
-                </h3>
+              <div>
+                <h3 className="font-semibold text-lg mb-2">Отзывы</h3>
                 {reviews.length === 0 ? (
-                  <div
-                    className="flex flex-col items-center justify-center py-6 text-center text-gray-400"
-                    data-oid="ds24tq7"
-                  >
-                    <div className="text-3xl mb-2" data-oid="zm31zp4">
-                      💬
-                    </div>
-                    <div className="font-medium mb-1" data-oid="joet.pa">
-                      Нет отзывов
-                    </div>
-                    <div className="text-xs mb-2" data-oid="h0h.m0.">
+                  <div className="flex flex-col items-center justify-center py-6 text-center text-gray-400">
+                    <div className="text-3xl mb-2">💬</div>
+                    <div className="font-medium mb-1">Нет отзывов</div>
+                    <div className="text-xs mb-2">
                       Пользователь ещё не получил ни одного отзыва
                     </div>
                   </div>
                 ) : (
-                  <div className="space-y-2" data-oid="ojxbjhs">
+                  <div className="space-y-2">
                     {reviews.map((r) => (
-                      <div
-                        key={r.id}
-                        className="bg-gray-100 rounded-lg p-3"
-                        data-oid="22gxg49"
-                      >
-                        <div
-                          className="flex items-center gap-2 mb-1"
-                          data-oid="v.:2uqu"
-                        >
+                      <div key={r.id} className="bg-gray-100 rounded-lg p-3">
+                        <div className="flex items-center gap-2 mb-1">
                           {[1, 2, 3, 4, 5].map((i) => (
                             <Star
                               key={i}
@@ -489,19 +382,15 @@ const ProfilePage: React.FC = () => {
                                   ? "text-yellow-400 fill-yellow-400"
                                   : "text-gray-300"
                               }
-                              data-oid="xl2qrb0"
                             />
                           ))}
-                          <span
-                            className="text-xs text-gray-500 ml-2"
-                            data-oid="wcps5bs"
-                          >
+                          <span className="text-xs text-gray-500 ml-2">
                             {new Date(r.created_at).toLocaleDateString()}
                           </span>
                         </div>
-                        <div className="text-sm" data-oid="ow0:s5l">
+                        <div className="text-sm">
                           {r.comment || (
-                            <span className="text-gray-400" data-oid="m_f:36c">
+                            <span className="text-gray-400">
                               Без комментария
                             </span>
                           )}
@@ -512,40 +401,28 @@ const ProfilePage: React.FC = () => {
                 )}
               </div>
               {/* Выполненные заказы */}
-              <div data-oid="l6lm26b">
-                <h3 className="font-semibold text-lg mb-2" data-oid="ycr9jpd">
+              <div>
+                <h3 className="font-semibold text-lg mb-2">
                   Выполненные заказы
                 </h3>
                 {orders.length === 0 ? (
-                  <div
-                    className="flex flex-col items-center justify-center py-6 text-center text-gray-400"
-                    data-oid="0iykshe"
-                  >
-                    <div className="text-3xl mb-2" data-oid="lh0h3ml">
-                      📦
-                    </div>
-                    <div className="font-medium mb-1" data-oid="iyquw5b">
+                  <div className="flex flex-col items-center justify-center py-6 text-center text-gray-400">
+                    <div className="text-3xl mb-2">📦</div>
+                    <div className="font-medium mb-1">
                       Нет выполненных заказов
                     </div>
-                    <div className="text-xs mb-2" data-oid="e0x33e.">
+                    <div className="text-xs mb-2">
                       Пользователь ещё не выполнил ни одного заказа
                     </div>
                   </div>
                 ) : (
-                  <div className="space-y-2" data-oid="g_mqpa5">
+                  <div className="space-y-2">
                     {orders.map((o) => (
-                      <div
-                        key={o.id}
-                        className="bg-gray-100 rounded-lg p-3"
-                        data-oid="6frr0da"
-                      >
-                        <div className="font-medium" data-oid="_q7fr92">
+                      <div key={o.id} className="bg-gray-100 rounded-lg p-3">
+                        <div className="font-medium">
                           {o.service?.title || "Без названия"}
                         </div>
-                        <div
-                          className="text-xs text-gray-500"
-                          data-oid="b.99-:p"
-                        >
+                        <div className="text-xs text-gray-500">
                           {new Date(o.created_at).toLocaleDateString()}
                         </div>
                       </div>
@@ -554,22 +431,15 @@ const ProfilePage: React.FC = () => {
                 )}
               </div>
               {/* Услуги пользователя */}
-              <div className="md:col-span-2" data-oid="1285k_p">
-                <h3 className="font-semibold text-lg mb-2" data-oid="r:hpt8m">
+              <div className="md:col-span-2">
+                <h3 className="font-semibold text-lg mb-2">
                   Услуги пользователя
                 </h3>
                 {services.length === 0 ? (
-                  <div
-                    className="flex flex-col items-center justify-center py-6 text-center text-gray-400"
-                    data-oid=":z.xphk"
-                  >
-                    <div className="text-3xl mb-2" data-oid="haro5kq">
-                      🛠️
-                    </div>
-                    <div className="font-medium mb-1" data-oid=":gcp5:h">
-                      Нет активных услуг
-                    </div>
-                    <div className="text-xs mb-2" data-oid="w4vivkt">
+                  <div className="flex flex-col items-center justify-center py-6 text-center text-gray-400">
+                    <div className="text-3xl mb-2">🛠️</div>
+                    <div className="font-medium mb-1">Нет активных услуг</div>
+                    <div className="text-xs mb-2">
                       {isOwn
                         ? "Вы ещё не добавили ни одной услуги"
                         : "Пользователь ещё не добавил ни одной услуги"}
@@ -579,43 +449,29 @@ const ProfilePage: React.FC = () => {
                         size="sm"
                         variant="primary"
                         onClick={() => navigate("/create-service")}
-                        data-oid="xs64wim"
                       >
                         Добавить услугу
                       </Button>
                     )}
                   </div>
                 ) : (
-                  <div
-                    className="grid grid-cols-1 md:grid-cols-2 gap-3"
-                    data-oid="9ro3lbx"
-                  >
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {services.map((s) => (
                       <div
                         key={s.id}
                         className="bg-white rounded-lg shadow p-3 flex flex-col"
-                        data-oid="cnm7-1r"
                       >
-                        <div className="font-medium mb-1" data-oid="1py1b4q">
-                          {s.title}
-                        </div>
-                        <div
-                          className="text-xs text-gray-500 mb-1"
-                          data-oid="d-kmqj9"
-                        >
+                        <div className="font-medium mb-1">{s.title}</div>
+                        <div className="text-xs text-gray-500 mb-1">
                           {s.category}
                         </div>
-                        <div
-                          className="text-xs text-gray-500 mb-1"
-                          data-oid=".ea15.l"
-                        >
+                        <div className="text-xs text-gray-500 mb-1">
                           {s.price} кр.
                         </div>
                         <Button
                           size="sm"
                           variant="outline"
                           onClick={() => navigate(`/services/${s.id}`)}
-                          data-oid="bz3p3ns"
                         >
                           Подробнее
                         </Button>
@@ -630,9 +486,8 @@ const ProfilePage: React.FC = () => {
             <Button
               variant="outline"
               fullWidth
-              leftIcon={<LogOut size={16} data-oid="e4x2fcw" />}
+              leftIcon={<LogOut size={16} />}
               onClick={() => alert("Выход из системы")}
-              data-oid="0phe5c6"
             >
               Выйти из аккаунта
             </Button>
@@ -641,31 +496,16 @@ const ProfilePage: React.FC = () => {
       </div>
       {/* Модальное окно для редактирования профиля */}
       {showEditModal && (
-        <Modal
-          isOpen={showEditModal}
-          onClose={() => setShowEditModal(false)}
-          data-oid="qgho9v0"
-        >
-          <div className="p-4 w-80" data-oid="cgqyepb">
-            <div
-              className="flex justify-between items-center mb-4"
-              data-oid="piu026z"
-            >
-              <h2 className="text-xl font-bold" data-oid="jrasx2y">
-                Редактировать профиль
-              </h2>
-              <button
-                onClick={() => setShowEditModal(false)}
-                data-oid="6mx.:3v"
-              >
-                <X size={20} data-oid="ddoe1gt" />
+        <Modal isOpen={showEditModal} onClose={() => setShowEditModal(false)}>
+          <div className="p-4 w-80">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold">Редактировать профиль</h2>
+              <button onClick={() => setShowEditModal(false)}>
+                <X size={20} />
               </button>
             </div>
-            <div className="flex flex-col items-center mb-4" data-oid="m3o-dhx">
-              <label
-                className="relative cursor-pointer group"
-                data-oid="u4qvg:2"
-              >
+            <div className="flex flex-col items-center mb-4">
+              <label className="relative cursor-pointer group">
                 <img
                   src={
                     editAvatar ||
@@ -674,7 +514,6 @@ const ProfilePage: React.FC = () => {
                   }
                   alt="avatar"
                   className="w-24 h-24 rounded-full object-cover border-2 border-primary-500"
-                  data-oid="3ls56tb"
                 />
 
                 <input
@@ -690,61 +529,39 @@ const ProfilePage: React.FC = () => {
                       reader.readAsDataURL(file);
                     }
                   }}
-                  data-oid="yl1vx7b"
                 />
 
-                <span
-                  className="absolute bottom-2 right-2 bg-white p-1 rounded-full shadow group-hover:bg-primary-100"
-                  data-oid="kldg43_"
-                >
-                  <Pencil size={16} data-oid="9p6umcq" />
+                <span className="absolute bottom-2 right-2 bg-white p-1 rounded-full shadow group-hover:bg-primary-100">
+                  <Pencil size={16} />
                 </span>
               </label>
             </div>
-            <div className="mb-4" data-oid="qww14xr">
-              <label
-                className="block text-sm font-medium mb-1"
-                data-oid="vlxek6k"
-              >
-                Имя
-              </label>
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-1">Имя</label>
               <input
                 type="text"
                 className="w-full rounded border border-gray-300 px-3 py-2 bg-gray-50"
                 value={editName}
                 onChange={(e) => setEditName(e.target.value)}
-                data-oid="f936lol"
               />
             </div>
-            <div className="mb-4" data-oid="w2mdldb">
-              <label
-                className="block text-sm font-medium mb-1"
-                data-oid="-p36n1p"
-              >
-                Описание
-              </label>
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-1">Описание</label>
               <textarea
                 className="w-full rounded border border-gray-300 px-3 py-2 bg-gray-50 resize-none"
                 rows={3}
                 value={editDescription}
                 onChange={(e) => setEditDescription(e.target.value)}
-                data-oid="944d8sm"
               />
             </div>
-            <div className="mb-4" data-oid="-8yqbcb">
-              <label
-                className="block text-sm font-medium mb-1"
-                data-oid="jyc1v5r"
-              >
-                Навыки
-              </label>
-              <div className="flex flex-wrap gap-2 mb-2" data-oid="b23:2::">
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-1">Навыки</label>
+              <div className="flex flex-wrap gap-2 mb-2">
                 {editSkills.length > 0 ? (
                   editSkills.map((skill, idx) => (
                     <span
                       key={idx}
                       className="flex items-center bg-gray-100 text-gray-800 px-2 py-1 rounded-full text-xs"
-                      data-oid="4cff:0y"
                     >
                       {skill}
                       <button
@@ -754,14 +571,13 @@ const ProfilePage: React.FC = () => {
                         onClick={() =>
                           setEditSkills(editSkills.filter((_, i) => i !== idx))
                         }
-                        data-oid="3erb0kl"
                       >
                         ×
                       </button>
                     </span>
                   ))
                 ) : (
-                  <span className="text-gray-400 text-xs" data-oid="udpdyws">
+                  <span className="text-gray-400 text-xs">
                     Навыки не указаны
                   </span>
                 )}
@@ -789,10 +605,9 @@ const ProfilePage: React.FC = () => {
                 placeholder="Введите навык и нажмите Enter или запятую"
                 maxLength={30}
                 disabled={editSkills.length >= 10}
-                data-oid="17bh0pz"
               />
 
-              <div className="text-xs text-gray-400 mt-1" data-oid="d1jbmf-">
+              <div className="text-xs text-gray-400 mt-1">
                 Максимум 10 навыков, каждый до 30 символов
               </div>
             </div>
@@ -815,7 +630,6 @@ const ProfilePage: React.FC = () => {
                 setSaving(false);
                 window.location.reload();
               }}
-              data-oid="kcso-54"
             >
               Сохранить
             </button>

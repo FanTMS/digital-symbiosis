@@ -111,28 +111,18 @@ const CreateServicePage: React.FC = () => {
   ];
 
   return (
-    <div
-      className="pb-20 pt-2 min-h-screen bg-white overflow-auto"
-      data-oid="l53rp48"
-    >
-      <div className="px-4" data-oid="abicfgb">
-        <h1 className="text-2xl font-bold mb-4" data-oid=":3xkoia">
-          Создание услуги
-        </h1>
+    <div className="pb-20 pt-2 min-h-screen bg-white overflow-auto">
+      <div className="px-4">
+        <h1 className="text-2xl font-bold mb-4">Создание услуги</h1>
 
         <motion.form
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           onSubmit={handleSubmit}
-          data-oid="uafumpk"
         >
           {/* Title */}
-          <div className="mb-4" data-oid="q3hf6oq">
-            <label
-              htmlFor="title"
-              className="block font-medium mb-1"
-              data-oid="hpldj24"
-            >
+          <div className="mb-4">
+            <label htmlFor="title" className="block font-medium mb-1">
               Название услуги
             </label>
             <input
@@ -143,23 +133,16 @@ const CreateServicePage: React.FC = () => {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
-              data-oid="934m7hg"
             />
 
             {errors.title && (
-              <div className="text-red-500 text-xs mt-1" data-oid=".5resh_">
-                {errors.title}
-              </div>
+              <div className="text-red-500 text-xs mt-1">{errors.title}</div>
             )}
           </div>
 
           {/* Description */}
-          <div className="mb-4" data-oid="up909le">
-            <label
-              htmlFor="description"
-              className="block font-medium mb-1"
-              data-oid="i.::aa0"
-            >
+          <div className="mb-4">
+            <label htmlFor="description" className="block font-medium mb-1">
               Описание услуги
             </label>
             <textarea
@@ -169,22 +152,19 @@ const CreateServicePage: React.FC = () => {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               required
-              data-oid="8see73t"
             />
 
             {errors.description && (
-              <div className="text-red-500 text-xs mt-1" data-oid="u-kme_x">
+              <div className="text-red-500 text-xs mt-1">
                 {errors.description}
               </div>
             )}
           </div>
 
           {/* Category */}
-          <div className="mb-4" data-oid="p_:4t35">
-            <label className="block font-medium mb-1" data-oid="cp-rhxy">
-              Категория
-            </label>
-            <div className="flex flex-wrap gap-2" data-oid="q_k-al5">
+          <div className="mb-4">
+            <label className="block font-medium mb-1">Категория</label>
+            <div className="flex flex-wrap gap-2">
               {categories.map((cat) => (
                 <button
                   key={cat.id}
@@ -195,27 +175,20 @@ const CreateServicePage: React.FC = () => {
                       ? "bg-primary-500 text-white"
                       : "bg-gray-100 text-gray-800"
                   }`}
-                  data-oid="h.3b6z:"
                 >
-                  <span data-oid="rkqn8pe">{cat.emoji}</span>
-                  <span data-oid="h:43r65">{cat.label}</span>
+                  <span>{cat.emoji}</span>
+                  <span>{cat.label}</span>
                 </button>
               ))}
             </div>
             {errors.category && (
-              <div className="text-red-500 text-xs mt-1" data-oid="c28jp8z">
-                {errors.category}
-              </div>
+              <div className="text-red-500 text-xs mt-1">{errors.category}</div>
             )}
           </div>
 
           {/* Price */}
-          <div className="mb-4" data-oid="athm5.7">
-            <label
-              htmlFor="price"
-              className="block font-medium mb-1"
-              data-oid="669gi:c"
-            >
+          <div className="mb-4">
+            <label htmlFor="price" className="block font-medium mb-1">
               Стоимость (в кредитах)
             </label>
             <input
@@ -227,41 +200,34 @@ const CreateServicePage: React.FC = () => {
               value={price}
               onChange={(e) => setPrice(e.target.value)}
               required
-              data-oid="3vsm:5k"
             />
 
             {errors.price && (
-              <div className="text-red-500 text-xs mt-1" data-oid="_63frwf">
-                {errors.price}
-              </div>
+              <div className="text-red-500 text-xs mt-1">{errors.price}</div>
             )}
           </div>
 
           {/* Skills */}
-          <div className="mb-6" data-oid="gallwmn">
-            <label className="block font-medium mb-1" data-oid="ed:ohrx">
-              Навыки
-            </label>
-            <div className="flex flex-wrap gap-2 mb-2" data-oid="wnnjzty">
+          <div className="mb-6">
+            <label className="block font-medium mb-1">Навыки</label>
+            <div className="flex flex-wrap gap-2 mb-2">
               {skills.map((skill, index) => (
                 <div
                   key={index}
                   className="flex items-center bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm"
-                  data-oid="fib3uk0"
                 >
                   {skill}
                   <button
                     type="button"
                     onClick={() => handleRemoveSkill(skill)}
                     className="ml-2 text-gray-500 hover:text-error-500"
-                    data-oid="mju6qks"
                   >
-                    <X size={14} data-oid="a4ste3d" />
+                    <X size={14} />
                   </button>
                 </div>
               ))}
             </div>
-            <div className="flex" data-oid="yrr5ail">
+            <div className="flex">
               <input
                 type="text"
                 placeholder="Добавьте навык (например, JavaScript)"
@@ -271,7 +237,6 @@ const CreateServicePage: React.FC = () => {
                 onKeyPress={(e) =>
                   e.key === "Enter" && (e.preventDefault(), handleAddSkill())
                 }
-                data-oid="c.mbxxu"
               />
 
               <button
@@ -279,15 +244,12 @@ const CreateServicePage: React.FC = () => {
                 onClick={handleAddSkill}
                 className="bg-primary-500 text-white p-3 rounded-r-lg"
                 disabled={!newSkill.trim()}
-                data-oid=".zmaq_x"
               >
-                <Plus size={18} data-oid="t2g-qwa" />
+                <Plus size={18} />
               </button>
             </div>
             {errors.skills && (
-              <div className="text-red-500 text-xs mt-1" data-oid="u7.9wtz">
-                {errors.skills}
-              </div>
+              <div className="text-red-500 text-xs mt-1">{errors.skills}</div>
             )}
           </div>
 
@@ -295,17 +257,13 @@ const CreateServicePage: React.FC = () => {
           <div
             className="sticky bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-200"
             style={{ zIndex: 20 }}
-            data-oid="oyoc.y:"
           >
             <Button
               type="submit"
               variant="primary"
               fullWidth
               disabled={!isFormValid}
-              leftIcon={
-                isFormValid ? <Check size={18} data-oid="ymeh-2l" /> : undefined
-              }
-              data-oid="y-lo3bv"
+              leftIcon={isFormValid ? <Check size={18} /> : undefined}
             >
               Опубликовать услугу
             </Button>

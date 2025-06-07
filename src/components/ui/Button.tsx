@@ -68,7 +68,6 @@ const Button: React.FC<ButtonProps> = ({
       `}
       disabled={disabled || isLoading}
       {...props}
-      data-oid="vf0v8g_"
     >
       {isLoading ? (
         <motion.svg
@@ -79,7 +78,6 @@ const Button: React.FC<ButtonProps> = ({
           initial={{ rotate: 0 }}
           animate={{ rotate: 360 }}
           transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-          data-oid="qlvc46s"
         >
           <circle
             className="opacity-25"
@@ -88,28 +86,18 @@ const Button: React.FC<ButtonProps> = ({
             r="10"
             stroke="currentColor"
             strokeWidth="4"
-            data-oid=":9du3-_"
           ></circle>
           <path
             className="opacity-75"
             fill="currentColor"
             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-            data-oid="387:ybl"
           ></path>
         </motion.svg>
       ) : (
         <>
-          {leftIcon && (
-            <span className="mr-2" data-oid="3e7bw27">
-              {leftIcon}
-            </span>
-          )}
+          {leftIcon && <span className="mr-2">{leftIcon}</span>}
           {children}
-          {rightIcon && (
-            <span className="ml-2" data-oid="15q73:t">
-              {rightIcon}
-            </span>
-          )}
+          {rightIcon && <span className="ml-2">{rightIcon}</span>}
         </>
       )}
     </motion.button>

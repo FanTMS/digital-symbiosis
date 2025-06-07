@@ -53,24 +53,14 @@ const FavoritesPage: React.FC = () => {
   console.log("favorites", favorites);
 
   return (
-    <div
-      className="pb-16 pt-2 flex flex-col items-center justify-center min-h-screen"
-      data-oid="lzcmctg"
-    >
-      <h1
-        className="text-2xl font-bold mb-4 flex items-center gap-2"
-        data-oid="tpl7ew."
-      >
-        <Star className="text-yellow-400" data-oid="x:x_cl_" /> Избранное
+    <div className="pb-16 pt-2 flex flex-col items-center justify-center min-h-screen">
+      <h1 className="text-2xl font-bold mb-4 flex items-center gap-2">
+        <Star className="text-yellow-400" /> Избранное
       </h1>
-      <div className="text-lg text-gray-500 mb-4" data-oid="ubk:xuq">
+      <div className="text-lg text-gray-500 mb-4">
         Функция избранного временно недоступна
       </div>
-      <Button
-        variant="primary"
-        onClick={() => navigate("/services")}
-        data-oid="u8j1hkz"
-      >
+      <Button variant="primary" onClick={() => navigate("/services")}>
         Перейти в каталог
       </Button>
     </div>

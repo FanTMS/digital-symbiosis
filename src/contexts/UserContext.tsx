@@ -155,10 +155,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <UserContext.Provider
-      value={{ user, loading, error, refetch }}
-      data-oid="csix20r"
-    >
+    <UserContext.Provider value={{ user, loading, error, refetch }}>
       {children}
     </UserContext.Provider>
   );

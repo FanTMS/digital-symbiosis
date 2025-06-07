@@ -11,20 +11,14 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
 
   if (loading) {
     return (
-      <div
-        className="flex items-center justify-center min-h-screen"
-        data-oid="3bbe589"
-      >
-        <div
-          className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary-500"
-          data-oid="dzyw5t-"
-        ></div>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary-500"></div>
       </div>
     );
   }
 
   if (!user) {
-    return <Navigate to="/auth" replace data-oid="dj3lldd" />;
+    return <Navigate to="/auth" replace />;
   }
 
   return <>{children}</>;

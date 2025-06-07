@@ -54,7 +54,7 @@ export const TelegramProvider: React.FC<TelegramProviderProps> = ({
   }, []);
 
   return (
-    <TelegramContext.Provider value={{ tg, user, ready }} data-oid="mdiy7id">
+    <TelegramContext.Provider value={{ tg, user, ready }}>
       {children}
     </TelegramContext.Provider>
   );

@@ -24,43 +24,23 @@ import Button from "../components/ui/Button";
 import { Referral, Review } from "../types/models";
 
 const BADGE_ICONS: Record<string, React.ReactNode> = {
-  "Лучший репетитор": (
-    <Award size={32} className="text-yellow-500" data-oid="8bw353g" />
-  ),
+  "Лучший репетитор": <Award size={32} className="text-yellow-500" />,
 
-  "Первые шаги": (
-    <Star size={32} className="text-blue-400" data-oid="rgp.cw3" />
-  ),
+  "Первые шаги": <Star size={32} className="text-blue-400" />,
 
-  "Пять звёзд": (
-    <Star
-      size={32}
-      className="text-yellow-400 fill-yellow-400"
-      data-oid="rhpsp-t"
-    />
-  ),
+  "Пять звёзд": <Star size={32} className="text-yellow-400 fill-yellow-400" />,
 
-  "Постоянный клиент": (
-    <Users size={32} className="text-primary-500" data-oid="q7c09-7" />
-  ),
+  "Постоянный клиент": <Users size={32} className="text-primary-500" />,
 
-  "Пригласил друга": (
-    <Gift size={32} className="text-pink-500" data-oid="xkcp0pu" />
-  ),
+  "Пригласил друга": <Gift size={32} className="text-pink-500" />,
 
-  Профи: <Briefcase size={32} className="text-green-500" data-oid="dia6-6a" />,
-  Отзывчивый: (
-    <MessageCircle size={32} className="text-accent-500" data-oid="vx_-n1_" />
-  ),
+  Профи: <Briefcase size={32} className="text-green-500" />,
+  Отзывчивый: <MessageCircle size={32} className="text-accent-500" />,
 
-  Портфолио: (
-    <Layers size={32} className="text-purple-500" data-oid="u8m4l0f" />
-  ),
+  Портфолио: <Layers size={32} className="text-purple-500" />,
 
-  Мультискилл: <User size={32} className="text-cyan-500" data-oid="6smcr2w" />,
-  "Ранний пташка": (
-    <Sunrise size={32} className="text-orange-400" data-oid="jrieqs1" />
-  ),
+  Мультискилл: <User size={32} className="text-cyan-500" />,
+  "Ранний пташка": <Sunrise size={32} className="text-orange-400" />,
 };
 
 const BADGE_CRITERIA: Record<
@@ -236,14 +216,12 @@ const AchievementsPage: React.FC = () => {
   ];
 
   return (
-    <div className="pb-16 pt-2" data-oid="vjfsk-v">
-      <div className="px-4" data-oid="myg_dyh">
-        <h1 className="text-2xl font-bold mb-4" data-oid="hvy6a8c">
-          Достижения
-        </h1>
+    <div className="pb-16 pt-2">
+      <div className="px-4">
+        <h1 className="text-2xl font-bold mb-4">Достижения</h1>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 gap-4 mb-6" data-oid="j:.rc.d">
+        <div className="grid grid-cols-1 gap-4 mb-6">
           {achievementCategories.map((category, index) => (
             <motion.div
               key={category.title}
@@ -251,22 +229,16 @@ const AchievementsPage: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
               className="bg-white rounded-lg p-4 shadow-card"
-              data-oid="9lxk4dk"
             >
-              <div className="flex items-center" data-oid="t6kco1h">
+              <div className="flex items-center">
                 <div
                   className={`p-3 rounded-lg ${category.bgColor} ${category.color}`}
-                  data-oid="xs8vi4n"
                 >
-                  <category.icon size={24} data-oid="kif7nm9" />
+                  <category.icon size={24} />
                 </div>
-                <div className="ml-4" data-oid="6s8ud8s">
-                  <h3 className="text-sm text-gray-500" data-oid="penli3q">
-                    {category.title}
-                  </h3>
-                  <p className="text-xl font-bold" data-oid="hqe5v30">
-                    {category.value}
-                  </p>
+                <div className="ml-4">
+                  <h3 className="text-sm text-gray-500">{category.title}</h3>
+                  <p className="text-xl font-bold">{category.value}</p>
                 </div>
               </div>
             </motion.div>
@@ -274,51 +246,36 @@ const AchievementsPage: React.FC = () => {
         </div>
 
         {/* Progress to Next Level */}
-        <div className="mb-6" data-oid="1h4g5qg">
-          <h2 className="text-lg font-semibold mb-3" data-oid="knwo:m9">
-            Прогресс уровня
-          </h2>
-          <div
-            className="bg-white rounded-lg p-4 shadow-card"
-            data-oid="0xv5.6k"
-          >
-            <div
-              className="flex justify-between items-center mb-2"
-              data-oid="x5l4:.p"
-            >
-              <span className="text-sm text-gray-500" data-oid="9i0s9ux">
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold mb-3">Прогресс уровня</h2>
+          <div className="bg-white rounded-lg p-4 shadow-card">
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-sm text-gray-500">
                 До следующего уровня
               </span>
-              <span className="text-sm font-medium" data-oid="j2_dsb.">
+              <span className="text-sm font-medium">
                 {Math.round(progress.nextLevelProgress * 100)}%
               </span>
             </div>
-            <div
-              className="w-full bg-gray-200 rounded-full h-2"
-              data-oid="5ru0rrc"
-            >
+            <div className="w-full bg-gray-200 rounded-full h-2">
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${progress.nextLevelProgress * 100}%` }}
                 transition={{ duration: 1, ease: "easeOut" }}
                 className="bg-primary-500 h-2 rounded-full"
-                data-oid="p3impp-"
               />
             </div>
           </div>
         </div>
 
         {/* Badges */}
-        <h2 className="text-lg font-semibold mb-3" data-oid="j0rray.">
-          Полученные награды
-        </h2>
+        <h2 className="text-lg font-semibold mb-3">Полученные награды</h2>
         {loading ? (
-          <div className="space-y-3" data-oid="2ew._ta">
+          <div className="space-y-3">
             {[1, 2, 3].map((i) => (
               <div
                 key={i}
                 className="bg-gray-100 animate-pulse h-20 rounded-lg"
-                data-oid="zmz:o0z"
               />
             ))}
           </div>
@@ -328,7 +285,6 @@ const AchievementsPage: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: "easeOut" }}
             className="space-y-3"
-            data-oid="usibvag"
           >
             {badges.map((badge, index) => {
               const received = userBadgeIds.has(badge.id);
@@ -360,91 +316,50 @@ const AchievementsPage: React.FC = () => {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.1 }}
                   className="bg-white rounded-lg p-4 shadow-card flex items-center"
-                  data-oid="swi0sdp"
                 >
-                  <div
-                    className={`p-2 rounded-lg bg-${badge.color}-100`}
-                    data-oid="klii.:0"
-                  >
-                    {BADGE_ICONS[badge.name] || (
-                      <Award size={32} data-oid="uo8-sms" />
-                    )}
+                  <div className={`p-2 rounded-lg bg-${badge.color}-100`}>
+                    {BADGE_ICONS[badge.name] || <Award size={32} />}
                   </div>
-                  <div className="ml-4 flex-1" data-oid="slnrt2a">
-                    <h3 className="font-medium" data-oid="--96aig">
-                      {badge.name}
-                    </h3>
-                    <p className="text-sm text-gray-500" data-oid=":cv-w3b">
-                      {badge.description}
-                    </p>
+                  <div className="ml-4 flex-1">
+                    <h3 className="font-medium">{badge.name}</h3>
+                    <p className="text-sm text-gray-500">{badge.description}</p>
                     {!received && criteria && (
-                      <div className="mt-2" data-oid="v3akoz3">
-                        <div
-                          className="flex justify-between items-center mb-1"
-                          data-oid="xghdfn5"
-                        >
-                          <span
-                            className="text-xs text-gray-400"
-                            data-oid="j8jsx16"
-                          >
+                      <div className="mt-2">
+                        <div className="flex justify-between items-center mb-1">
+                          <span className="text-xs text-gray-400">
                             Прогресс: {progressLabel}
                           </span>
-                          <span
-                            className="text-xs text-gray-400"
-                            data-oid="axd7iwk"
-                          >
+                          <span className="text-xs text-gray-400">
                             {Math.round(progressValue * 100)}%
                           </span>
                         </div>
-                        <div
-                          className="w-full bg-gray-200 rounded-full h-2"
-                          data-oid="72g0-.i"
-                        >
+                        <div className="w-full bg-gray-200 rounded-full h-2">
                           <motion.div
                             initial={{ width: 0 }}
                             animate={{ width: `${progressValue * 100}%` }}
                             transition={{ duration: 1, ease: "easeOut" }}
                             className="bg-primary-500 h-2 rounded-full"
-                            data-oid="_d0s.vx"
                           />
                         </div>
                       </div>
                     )}
                   </div>
-                  <div
-                    className="text-xs text-gray-400 mb-2 mr-4"
-                    data-oid="unbwd:e"
-                  >
+                  <div className="text-xs text-gray-400 mb-2 mr-4">
                     Награда:{" "}
-                    <span
-                      className="font-bold text-accent-500"
-                      data-oid="s-sl9bc"
-                    >
+                    <span className="font-bold text-accent-500">
                       +{badge.reward_credits} кр.
                     </span>
                   </div>
                   {received ? (
-                    <div
-                      className="flex items-center text-green-600 font-medium mt-2"
-                      data-oid="x0-4kj-"
-                    >
-                      <CheckCircle
-                        size={18}
-                        className="mr-1"
-                        data-oid="yj3zap:"
-                      />{" "}
-                      Получено
+                    <div className="flex items-center text-green-600 font-medium mt-2">
+                      <CheckCircle size={18} className="mr-1" /> Получено
                     </div>
                   ) : (
                     <div
                       className="flex items-center border border-gray-300 text-gray-400 font-medium mt-2 px-3 py-1 rounded-full bg-gray-50"
                       style={{ width: "fit-content" }}
-                      data-oid=".i1uh5y"
                     >
-                      <span className="mr-1" data-oid="4x62y8-">
-                        ⏳
-                      </span>{" "}
-                      Не получено
+                      <span className="mr-1">⏳</span> Не получено
                     </div>
                   )}
                 </motion.div>
@@ -457,15 +372,10 @@ const AchievementsPage: React.FC = () => {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.3 }}
             className="flex flex-col items-center justify-center py-8 text-center"
-            data-oid="ejbuqik"
           >
-            <div className="text-4xl mb-2" data-oid="sb4-v2p">
-              🏆
-            </div>
-            <h3 className="text-lg font-medium mb-1" data-oid="lz.unq3">
-              Нет наград
-            </h3>
-            <p className="text-gray-500 mb-4 max-w-xs" data-oid="lrqs72.">
+            <div className="text-4xl mb-2">🏆</div>
+            <h3 className="text-lg font-medium mb-1">Нет наград</h3>
+            <p className="text-gray-500 mb-4 max-w-xs">
               Вы ещё не получили ни одной награды. Активнее участвуйте в
               платформе!
             </p>

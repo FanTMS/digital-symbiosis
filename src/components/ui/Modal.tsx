@@ -21,14 +21,13 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
   }, [isOpen]);
 
   return (
-    <AnimatePresence data-oid="m03x85r">
+    <AnimatePresence>
       {isOpen && (
         <motion.div
           className="fixed inset-0 z-50 flex items-center justify-center"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          data-oid="ck842o-"
         >
           {/* Затемнение фона с fade и blur */}
           <motion.div
@@ -38,7 +37,6 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
             onClick={onClose}
-            data-oid="7nlodtn"
           />
 
           {/* Контент модалки с анимацией scale, opacity и смещением по Y */}
@@ -48,7 +46,6 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.95, opacity: 0, y: 40 }}
             transition={{ type: "spring", stiffness: 300, damping: 24 }}
-            data-oid="8jnrrgf"
           >
             {children}
             <button
@@ -56,7 +53,6 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
               onClick={onClose}
               aria-label="Закрыть"
               type="button"
-              data-oid=":a-rk45"
             >
               ×
             </button>

@@ -53,12 +53,8 @@ const NavigationBar: React.FC = () => {
       transition={{ type: "spring", stiffness: 260, damping: 20 }}
       className="fixed bottom-0 left-0 right-0 w-full z-50 bg-white backdrop-blur-lg shadow-lg px-0 border-t border-gray-200"
       style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 20px) + 8px)" }}
-      data-oid="mtv2kmo"
     >
-      <div
-        className="flex justify-around items-center max-w-lg mx-auto overflow-x-auto scrollbar-none min-h-[72px] py-2"
-        data-oid="p9xkapt"
-      >
+      <div className="flex justify-around items-center max-w-lg mx-auto overflow-x-auto scrollbar-none min-h-[72px] py-2">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
 
@@ -70,22 +66,17 @@ const NavigationBar: React.FC = () => {
                 isActive ? "text-primary-500" : "text-gray-500"
               } text-base`}
               style={{ flex: "1 0 0", minWidth: 0 }}
-              data-oid="wmer1m-"
             >
               <motion.div
                 whileTap={{ scale: 0.9 }}
                 transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                data-oid="kswmntn"
               >
-                <item.icon size={26} data-oid="_0fj7rd" />
+                <item.icon size={26} />
               </motion.div>
-              <span
-                className="text-[13px] mt-1 leading-tight font-medium"
-                data-oid="y8zz3ut"
-              >
+              <span className="text-[13px] mt-1 leading-tight font-medium">
                 {item.label}
               </span>
-              <AnimatePresence data-oid="5sdrtca">
+              <AnimatePresence>
                 {isActive && (
                   <motion.div
                     layoutId="navigation-indicator"
@@ -94,7 +85,6 @@ const NavigationBar: React.FC = () => {
                     animate={{ scale: 1 }}
                     exit={{ scale: 0 }}
                     transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                    data-oid="01i:24b"
                   />
                 )}
               </AnimatePresence>
