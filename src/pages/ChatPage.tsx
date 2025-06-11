@@ -331,232 +331,75 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-cyan-50 via-blue-50 to-white">
-      {/* Визуальный отладочный блок */}
-      <div style={{background:'#efe',padding:8,border:'1px solid #0a0',marginBottom:8}}>
-        <b>DEBUG: ChatPage render</b>
-        <pre style={{fontSize:12}}>{JSON.stringify({ user, chatId, loading, otherUser, messagesLength: messages.length, pathname: window.location.pathname, href: window.location.href, bodyClass: document.body.className }, null, 2)}</pre>
-      </div>
+    <div className="chat-redesign-root">
       {/* Header */}
-      <div className="sticky top-0 z-20 w-full bg-gradient-to-r from-cyan-100 via-blue-50 to-white shadow flex items-center px-4 py-3 gap-3">
-        <button
-          onClick={() => navigate(-1)}
-          className="mr-2 p-1 rounded hover:bg-gray-100"
-        >
-          <ArrowLeft size={22} />
+      <header className="chat-header">
+        <button className="chat-header-back" onClick={() => navigate(-1)}>
+          <svg width="24" height="24" fill="none" stroke="#06b6d4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
         </button>
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-full border-2 border-blue-200 bg-gradient-to-br from-cyan-100 to-blue-100 flex items-center justify-center overflow-hidden relative">
-            {otherUser?.avatar_url ? (
-              <img
-                src={otherUser.avatar_url}
-                alt={otherUser.name}
-                className="w-full h-full rounded-full object-cover"
-              />
-            ) : (
-              <CircleDot size={32} className="text-blue-200" />
-            )}
-            {isOnline && (
-              <span className="absolute bottom-1 right-1 w-3 h-3 bg-green-400 border-2 border-white rounded-full"></span>
-            )}
-          </div>
-          <div className="flex flex-col">
-            <span className="font-semibold text-base text-gray-900">
-              {otherUser?.name || "Пользователь"}
-            </span>
-            <span
-              className={`text-xs ${isOnline ? "text-green-500" : "text-gray-400"}`}
-            >
-              {status}
-            </span>
-          </div>
+        <div className="chat-header-avatar">
+          {otherUser?.avatar_url ? (
+            <img src={otherUser.avatar_url} alt={otherUser.name} />
+          ) : (
+            <div className="chat-header-avatar-placeholder">{otherUser?.name?.[0] || '?'}</div>
+          )}
         </div>
-        <div className="ml-auto flex items-center gap-2">
-          <button
-            className="flex items-center px-3 py-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 text-xs font-medium border border-red-200"
-            onClick={() => setShowComplaintModal(true)}
-            title="Пожаловаться"
-          >
-            <AlertCircle size={16} className="mr-1" /> Пожаловаться
+        <div className="chat-header-info">
+          <div className="chat-header-name">{otherUser?.name || 'Пользователь'}</div>
+          <div className="chat-header-status">{isOnline ? 'Онлайн' : status}</div>
+        </div>
+        <div className="chat-header-actions">
+          <button className="chat-header-action" onClick={() => setShowComplaintModal(true)} title="Пожаловаться">
+            <svg width="20" height="20" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="10" cy="10" r="9"/><line x1="10" y1="6" x2="10" y2="10"/><circle cx="10" cy="14" r="1"/></svg>
           </button>
         </div>
-      </div>
+      </header>
 
       {/* Сообщения */}
-      <div
-        className="flex-1 overflow-y-auto px-2 py-4"
-        style={{ maxHeight: "calc(100vh - 140px)" }}
-      >
-        <AnimatePresence initial={false}>
-          <div className="flex flex-col gap-3">
-            {messages.map((msg, idx) => {
-              const isOwn = msg.sender_id === user?.id;
-              return (
-                <motion.div
-                  key={msg.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 20 }}
-                  transition={{
-                    duration: 0.25,
-                    delay: 0.01 * (messages.length - idx),
-                  }}
-                  className={`flex ${isOwn ? "justify-end" : "justify-start"}`}
-                >
-                  <div
-                    className={`max-w-[80%] rounded-2xl px-4 py-2 shadow-card relative ${isOwn ? "bg-gradient-to-br from-cyan-400 to-blue-500 text-white rounded-br-md" : "bg-gray-100 text-gray-900 rounded-bl-md"}`}
-                  >
-                    {/* Вложения */}
-                    {msg.attachments && msg.attachments.length > 0 && (
-                      <div className="mb-1">
-                        {msg.attachments[0].type === "image" ? (
-                          <img
-                            src={msg.attachments[0].url}
-                            alt="Фото"
-                            className="rounded-lg max-w-[180px] max-h-[180px] mb-1"
-                          />
-                        ) : (
-                          <a
-                            href={msg.attachments[0].url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center gap-2 text-blue-200 hover:underline"
-                          >
-                            <FileIcon size={18} />
-                            <span className="truncate max-w-[120px]">
-                              {decodeURIComponent(
-                                msg.attachments[0].url
-                                  .split("/")
-                                  .pop()
-                                  ?.split("?")[0] || "Файл",
-                              )}
-                            </span>
-                          </a>
-                        )}
-                      </div>
+      <main className="chat-messages-list" id="chat-messages-list">
+        {messages.map((msg, idx) => {
+          const isOwn = msg.sender_id === user?.id;
+          return (
+            <div key={msg.id} className={`chat-message-row ${isOwn ? 'own' : 'other'}`}> 
+              <div className={`chat-message-bubble ${isOwn ? 'own' : 'other'}`}> 
+                {/* Вложения */}
+                {msg.attachments && msg.attachments.length > 0 && (
+                  <div className="chat-message-attachment">
+                    {msg.attachments[0].type === "image" ? (
+                      <img src={msg.attachments[0].url} alt="Фото" className="chat-message-img" />
+                    ) : (
+                      <a href={msg.attachments[0].url} target="_blank" rel="noopener noreferrer" className="chat-message-file">
+                        <svg width="18" height="18" fill="none" stroke="#06b6d4" strokeWidth="2"><rect x="3" y="3" width="12" height="12" rx="2"/><path d="M7 7h6M7 11h6M7 15h6"/></svg>
+                        <span>{decodeURIComponent(msg.attachments[0].url.split("/").pop()?.split("?")[0] || "Файл")}</span>
+                      </a>
                     )}
-                    {/* Текст сообщения */}
-                    {msg.content && (
-                      <div className="whitespace-pre-line break-words text-base">
-                        {msg.content}
-                      </div>
-                    )}
-                    {/* Время */}
-                    <div
-                      className={`text-xs mt-1 ${isOwn ? "text-cyan-100/80" : "text-gray-400"}`}
-                    >
-                      {new Date(msg.created_at).toLocaleTimeString("ru-RU", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </div>
                   </div>
-                </motion.div>
-              );
-            })}
-            <div ref={messagesEndRef} />
-          </div>
-        </AnimatePresence>
-      </div>
+                )}
+                {/* Текст сообщения */}
+                {msg.content && (
+                  <div className="chat-message-text">{msg.content}</div>
+                )}
+                {/* Время */}
+                <div className="chat-message-time">{new Date(msg.created_at).toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" })}</div>
+              </div>
+            </div>
+          );
+        })}
+        <div ref={messagesEndRef} />
+      </main>
 
-      {/* Современная панель ввода сообщения (по мотивам Figma) */}
+      {/* Панель ввода */}
       <div className="chat-input-bar-container">
-        <form
-          className="chat-input-bar"
-          onSubmit={e => { e.preventDefault(); send(); }}
-        >
-          <button
-            type="button"
-            className="chat-attach-btn"
-            onClick={() => fileInputRef.current?.click()}
-            title="Прикрепить файл"
-            disabled={uploading}
-          >
-            <Paperclip size={22} />
+        <form className="chat-input-bar" onSubmit={e => { e.preventDefault(); send(); }}>
+          <button type="button" className="chat-attach-btn" onClick={() => fileInputRef.current?.click()} title="Прикрепить файл" disabled={uploading}>
+            <svg width="22" height="22" fill="none" stroke="#06b6d4" strokeWidth="2"><circle cx="11" cy="11" r="9"/><path d="M7 13V9a4 4 0 018 0v4a4 4 0 01-8 0V9"/></svg>
           </button>
-          <input
-            type="file"
-            ref={fileInputRef}
-            className="hidden"
-            onChange={handleFileChange}
-            disabled={uploading}
-          />
-          <input
-            className="chat-input"
-            value={input}
-            onChange={e => setInput(e.target.value)}
-            placeholder="Введите сообщение..."
-            autoComplete="off"
-            disabled={uploading}
-            style={{ minHeight: 40, maxHeight: 80, borderRadius: 9999 }}
-          />
-          <button
-            type="submit"
-            className="chat-send-btn"
-            disabled={!input.trim() || uploading}
-            title="Отправить"
-            style={{ minHeight: 40, minWidth: 40, borderRadius: '50%' }}
-          >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M2 21L23 12L2 3V10L17 12L2 14V21Z" fill="currentColor"/>
-            </svg>
+          <input type="file" ref={fileInputRef} className="hidden" onChange={handleFileChange} disabled={uploading} />
+          <input className="chat-input" value={input} onChange={e => setInput(e.target.value)} placeholder="Введите сообщение..." autoComplete="off" disabled={uploading} style={{ minHeight: 40, maxHeight: 80, borderRadius: 9999 }} />
+          <button type="submit" className="chat-send-btn" disabled={!input.trim() || uploading} title="Отправить" style={{ minHeight: 40, minWidth: 40, borderRadius: '50%' }}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 21L23 12L2 3V10L17 12L2 14V21Z" fill="#06b6d4"/></svg>
           </button>
         </form>
-        <style>{`
-          .chat-input-bar-container {
-            position: fixed;
-            left: 0; right: 0; bottom: 0;
-            width: 100vw;
-            background: #fff;
-            z-index: 50;
-            box-shadow: 0 4px 24px 0 rgba(0,160,255,0.07);
-            padding-bottom: env(safe-area-inset-bottom, 0);
-          }
-          .chat-input-bar {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 12px;
-            border-top: 1px solid #e5e7eb;
-            max-width: 600px;
-            margin: 0 auto;
-          }
-          .chat-attach-btn, .chat-send-btn {
-            background: none;
-            border: none;
-            padding: 8px;
-            border-radius: 50%;
-            transition: background 0.2s;
-            color: #06b6d4;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-          }
-          .chat-attach-btn:hover, .chat-send-btn:hover {
-            background: #f0f9ff;
-          }
-          .chat-input {
-            flex: 1;
-            border: none;
-            outline: none;
-            background: #f3f4f6;
-            border-radius: 9999px;
-            padding: 10px 16px;
-            font-size: 16px;
-            min-width: 0;
-          }
-          @media (max-width: 768px) {
-            .chat-input-bar {
-              max-width: 100vw;
-              border-radius: 0 !important;
-            }
-            .chat-input-bar-container {
-              width: 100vw;
-              max-width: 100vw;
-              border-radius: 0 !important;
-            }
-          }
-        `}</style>
       </div>
 
       {/* Модалка для жалобы */}
@@ -732,6 +575,186 @@ export default function ChatPage() {
           </div>
         </div>
       </Modal>
+
+      {/* Стилизация страницы чата */}
+      <style>{`
+        .chat-redesign-root {
+          min-height: 100vh;
+          background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%);
+          display: flex;
+          flex-direction: column;
+          position: relative;
+        }
+        .chat-header {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 16px 16px 12px 16px;
+          background: #fff;
+          box-shadow: 0 2px 12px 0 rgba(0,160,255,0.04);
+          position: sticky;
+          top: 0;
+          z-index: 10;
+        }
+        .chat-header-back {
+          background: none;
+          border: none;
+          padding: 6px;
+          border-radius: 50%;
+          transition: background 0.2s;
+        }
+        .chat-header-back:hover {
+          background: #e0f2fe;
+        }
+        .chat-header-avatar {
+          width: 44px; height: 44px;
+          border-radius: 50%;
+          overflow: hidden;
+          background: #e0f2fe;
+          display: flex; align-items: center; justify-content: center;
+        }
+        .chat-header-avatar img {
+          width: 100%; height: 100%; object-fit: cover;
+        }
+        .chat-header-avatar-placeholder {
+          font-size: 22px; color: #06b6d4; font-weight: bold;
+        }
+        .chat-header-info {
+          flex: 1;
+          display: flex; flex-direction: column;
+        }
+        .chat-header-name {
+          font-weight: 600; font-size: 17px; color: #0f172a;
+        }
+        .chat-header-status {
+          font-size: 13px; color: #38bdf8; font-weight: 500;
+        }
+        .chat-header-actions {
+          display: flex; gap: 8px;
+        }
+        .chat-header-action {
+          background: none; border: none; padding: 6px; border-radius: 50%; transition: background 0.2s;
+        }
+        .chat-header-action:hover {
+          background: #fee2e2;
+        }
+        .chat-messages-list {
+          flex: 1;
+          overflow-y: auto;
+          padding: 16px 0 90px 0;
+          display: flex; flex-direction: column;
+          gap: 10px;
+        }
+        .chat-message-row {
+          display: flex;
+          align-items: flex-end;
+          margin: 0 16px;
+        }
+        .chat-message-row.own {
+          justify-content: flex-end;
+        }
+        .chat-message-row.other {
+          justify-content: flex-start;
+        }
+        .chat-message-bubble {
+          max-width: 75vw;
+          padding: 12px 16px;
+          border-radius: 18px;
+          box-shadow: 0 2px 8px 0 rgba(0,160,255,0.06);
+          font-size: 16px;
+          position: relative;
+          display: flex;
+          flex-direction: column;
+          background: #fff;
+        }
+        .chat-message-bubble.own {
+          background: linear-gradient(135deg, #38bdf8 0%, #06b6d4 100%);
+          color: #fff;
+          border-bottom-right-radius: 6px;
+        }
+        .chat-message-bubble.other {
+          background: #f1f5f9;
+          color: #0f172a;
+          border-bottom-left-radius: 6px;
+        }
+        .chat-message-attachment {
+          margin-bottom: 6px;
+        }
+        .chat-message-img {
+          max-width: 180px; max-height: 180px; border-radius: 10px; display: block;
+        }
+        .chat-message-file {
+          display: flex; align-items: center; gap: 6px; color: #06b6d4; text-decoration: underline;
+        }
+        .chat-message-text {
+          white-space: pre-line; word-break: break-word;
+        }
+        .chat-message-time {
+          font-size: 12px; color: #bae6fd; margin-top: 6px; align-self: flex-end;
+        }
+        .chat-message-bubble.other .chat-message-time {
+          color: #94a3b8;
+        }
+        .chat-input-bar-container {
+          position: fixed;
+          left: 0; right: 0; bottom: 0;
+          width: 100vw;
+          background: #fff;
+          z-index: 50;
+          box-shadow: 0 4px 24px 0 rgba(0,160,255,0.07);
+          padding-bottom: env(safe-area-inset-bottom, 0);
+        }
+        .chat-input-bar {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 12px;
+          border-top: 1px solid #e5e7eb;
+          max-width: 600px;
+          margin: 0 auto;
+        }
+        .chat-attach-btn, .chat-send-btn {
+          background: none;
+          border: none;
+          padding: 8px;
+          border-radius: 50%;
+          transition: background 0.2s;
+          color: #06b6d4;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .chat-attach-btn:hover, .chat-send-btn:hover {
+          background: #f0f9ff;
+        }
+        .chat-input {
+          flex: 1;
+          border: none;
+          outline: none;
+          background: #f3f4f6;
+          border-radius: 9999px;
+          padding: 10px 16px;
+          font-size: 16px;
+          min-width: 0;
+        }
+        @media (max-width: 768px) {
+          .chat-header, .chat-messages-list, .chat-input-bar {
+            padding-left: 6px; padding-right: 6px;
+          }
+          .chat-input-bar {
+            max-width: 100vw;
+            border-radius: 0 !important;
+          }
+          .chat-input-bar-container {
+            width: 100vw;
+            max-width: 100vw;
+            border-radius: 0 !important;
+          }
+          .chat-message-bubble {
+            max-width: 90vw;
+          }
+        }
+      `}</style>
     </div>
   );
 }
