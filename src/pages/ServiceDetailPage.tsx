@@ -17,7 +17,6 @@ import type { Database } from "../types/supabase";
 import { ordersApi } from "../lib/api/orders";
 import { supabase } from "../lib/supabase";
 import { chatApi } from "../lib/api/chat";
-import { useToast } from "../components/ui/ToastProvider";
 import { useUser } from "../contexts/UserContext";
 import {
   useServices,
@@ -33,7 +32,6 @@ const ServiceDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { tg } = useTelegram();
-  const { showToast } = useToast();
   const { user } = useUser();
   const updateService = useUpdateService();
   const deleteService = useDeleteService();
@@ -115,7 +113,7 @@ const ServiceDetailPage: React.FC = () => {
   const handleOrder = async () => {
     if (service && provider?.id && user?.id) {
       if (user.id === provider.id) {
-        showToast("Вы не можете заказать свою собственную услугу", "error");
+        alert("Вы не можете заказать свою собственную услугу");
         return;
       }
       // Проверка на повторный заказ
@@ -126,7 +124,7 @@ const ServiceDetailPage: React.FC = () => {
         .eq("client_id", user.id)
         .in("status", ["pending", "accepted", "in_progress"]);
       if (existingOrders && existingOrders.length > 0) {
-        showToast("Вы уже заказали эту услугу и она ещё не завершена", "error");
+        alert("Вы уже заказали эту услугу и она ещё не завершена");
         return;
       }
 
@@ -221,13 +219,13 @@ const ServiceDetailPage: React.FC = () => {
         .eq("user_id", user.id)
         .eq("service_id", service.id);
       setIsFavorite(false);
-      showToast("Услуга удалена из избранного", "info");
+      alert("Услуга удалена из избранного");
     } else {
       await supabase
         .from("favorites")
         .insert({ user_id: user.id, service_id: service.id });
       setIsFavorite(true);
-      showToast("Услуга добавлена в избранное", "success");
+      alert("Услуга добавлена в избранное");
     }
     setFavoriteLoading(false);
   };
@@ -461,18 +459,17 @@ const ServiceDetailPage: React.FC = () => {
                     is_active: service.is_active === false ? true : false,
                   },
                 });
-                showToast(
+                alert(
                   service.is_active === false
                     ? "Услуга активирована"
-                    : "Услуга приостановлена",
-                  "success",
+                    : "Услуга приостановлена"
                 );
                 setService({
                   ...service,
                   is_active: service.is_active === false ? true : false,
                 });
               } catch (e: any) {
-                showToast("Ошибка: " + e.message, "error");
+                alert("Ошибка: " + e.message);
               }
               setActionLoading(false);
             }}
@@ -495,10 +492,10 @@ const ServiceDetailPage: React.FC = () => {
                   id: service.id,
                   updates: { is_active: false },
                 });
-                showToast("Услуга перемещена в архив", "success");
+                alert("Услуга перемещена в архив");
                 navigate("/services");
               } catch (e: any) {
-                showToast("Ошибка: " + e.message, "error");
+                alert("Ошибка: " + e.message);
               }
               setActionLoading(false);
             }}
@@ -562,9 +559,9 @@ const ServiceDetailPage: React.FC = () => {
                 ]);
                 setReviewText("");
                 setReviewRating(0);
-                showToast("Спасибо за отзыв!", "success");
+                alert("Спасибо за отзыв!");
               } else {
-                showToast("Ошибка при отправке отзыва", "error");
+                alert("Ошибка при отправке отзыва");
               }
             }}
           >
