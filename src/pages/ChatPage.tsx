@@ -459,37 +459,20 @@ export default function ChatPage() {
         </AnimatePresence>
       </div>
 
-      {/* Панель ввода сообщения */}
-      <div className="w-full max-w-2xl mx-auto">
-        <div style={{background:'#eef',padding:4,border:'1px dashed #00f',marginBottom:4}}>
-          <b>DEBUG: chat-input-bar должна быть ниже</b>
-        </div>
+      {/* Современная панель ввода сообщения (по мотивам Figma) */}
+      <div className="chat-input-bar-container">
         <form
-          className="bg-white border-t border-gray-200 p-3 flex items-center gap-2 w-full rounded-2xl z-20 chat-input-bar shadow-lg fixed bottom-0 left-0 right-0 md:static md:rounded-t-2xl md:mx-auto md:mb-4"
-          style={{
-            paddingBottom: "calc(env(safe-area-inset-bottom, 0) + 4px)",
-            borderTopLeftRadius: "1.25rem",
-            borderTopRightRadius: "1.25rem",
-            borderBottomLeftRadius: 0,
-            borderBottomRightRadius: 0,
-            boxShadow: "0 4px 24px 0 rgba(0,160,255,0.07)",
-            background: "#fff",
-            zIndex: 50,
-          }}
-          onSubmit={(e) => {
-            e.preventDefault();
-            send();
-          }}
+          className="chat-input-bar"
+          onSubmit={e => { e.preventDefault(); send(); }}
         >
           <button
             type="button"
-            className="p-2 rounded-full hover:bg-cyan-100 transition"
+            className="chat-attach-btn"
             onClick={() => fileInputRef.current?.click()}
-            disabled={uploading}
             title="Прикрепить файл"
-            tabIndex={0}
+            disabled={uploading}
           >
-            <Paperclip size={22} className="text-cyan-500" />
+            <Paperclip size={22} />
           </button>
           <input
             type="file"
@@ -498,40 +481,82 @@ export default function ChatPage() {
             onChange={handleFileChange}
             disabled={uploading}
           />
-
           <input
-            className="flex-1 border-none outline-none rounded-full px-4 py-2 bg-gray-100 focus:ring-2 focus:ring-cyan-400 text-base shadow-sm transition"
+            className="chat-input"
             value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onFocus={() =>
-              setTimeout(
-                () =>
-                  messagesEndRef.current?.scrollIntoView({
-                    behavior: "smooth",
-                  }),
-                300,
-              )
-            }
-            onKeyDown={(e) =>
-              e.key === "Enter" && !e.shiftKey && (e.preventDefault(), send())
-            }
+            onChange={e => setInput(e.target.value)}
             placeholder="Введите сообщение..."
             autoComplete="off"
-            style={{ minHeight: 40, maxHeight: 80, borderRadius: "9999px" }}
             disabled={uploading}
-            tabIndex={0}
+            style={{ minHeight: 40, maxHeight: 80, borderRadius: 9999 }}
           />
-
           <button
             type="submit"
-            className="ml-2 px-5 py-2 bg-gradient-to-r from-cyan-400 to-blue-500 text-white rounded-full font-semibold shadow hover:from-cyan-500 hover:to-blue-600 transition disabled:opacity-50"
+            className="chat-send-btn"
             disabled={!input.trim() || uploading}
-            style={{ minHeight: 40 }}
-            tabIndex={0}
+            title="Отправить"
+            style={{ minHeight: 40, minWidth: 40, borderRadius: '50%' }}
           >
-            Отправить
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M2 21L23 12L2 3V10L17 12L2 14V21Z" fill="currentColor"/>
+            </svg>
           </button>
         </form>
+        <style>{`
+          .chat-input-bar-container {
+            position: fixed;
+            left: 0; right: 0; bottom: 0;
+            width: 100vw;
+            background: #fff;
+            z-index: 50;
+            box-shadow: 0 4px 24px 0 rgba(0,160,255,0.07);
+            padding-bottom: env(safe-area-inset-bottom, 0);
+          }
+          .chat-input-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px;
+            border-top: 1px solid #e5e7eb;
+            max-width: 600px;
+            margin: 0 auto;
+          }
+          .chat-attach-btn, .chat-send-btn {
+            background: none;
+            border: none;
+            padding: 8px;
+            border-radius: 50%;
+            transition: background 0.2s;
+            color: #06b6d4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+          .chat-attach-btn:hover, .chat-send-btn:hover {
+            background: #f0f9ff;
+          }
+          .chat-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            background: #f3f4f6;
+            border-radius: 9999px;
+            padding: 10px 16px;
+            font-size: 16px;
+            min-width: 0;
+          }
+          @media (max-width: 768px) {
+            .chat-input-bar {
+              max-width: 100vw;
+              border-radius: 0 !important;
+            }
+            .chat-input-bar-container {
+              width: 100vw;
+              max-width: 100vw;
+              border-radius: 0 !important;
+            }
+          }
+        `}</style>
       </div>
 
       {/* Модалка для жалобы */}
