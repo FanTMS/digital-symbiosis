@@ -17,7 +17,6 @@ import { chatApi } from "../lib/api/chat";
 import { formatDate } from "../utils/formatters";
 import Modal from "../components/ui/Modal";
 import { supabase } from "../lib/supabase";
-import { useToast } from "../components/ui/ToastProvider";
 import { useOrders, useUpdateOrderStatus } from "../hooks/useOrders";
 import { useQueryClient } from "@tanstack/react-query";
 import { FixedSizeList as List } from "react-window";
@@ -30,9 +29,6 @@ const OrdersPage: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useUser();
   const { tg } = useTelegram();
-  const { showToast } = useToast();
-  const [activeTab, setActiveTab] = useState<"client" | "provider">("client");
-  const [selectedOrder, setSelectedOrder] = useState<any | null>(null);
   const queryClient = useQueryClient();
   const userId = user?.id;
   const [page, setPage] = useState(0);
@@ -41,9 +37,11 @@ const OrdersPage: React.FC = () => {
     data: userOrders = [],
     isLoading,
     isFetching,
-  } = useOrders(userId ?? 0, activeTab, PAGE_SIZE, page * PAGE_SIZE);
+  } = useOrders(userId ?? 0, "client", PAGE_SIZE, page * PAGE_SIZE);
   const updateOrderStatus = useUpdateOrderStatus();
   const [hasMore, setHasMore] = useState(true);
+  const [activeTab, setActiveTab] = useState<"client" | "provider">("client");
+  const [selectedOrder, setSelectedOrder] = useState<any | null>(null);
 
   useEffect(() => {
     if (tg) {
@@ -73,7 +71,7 @@ const OrdersPage: React.FC = () => {
 
   useEffect(() => {
     setPage(0);
-  }, [activeTab]);
+  }, []);
 
   const getOrderStatusInfo = (status: string) => {
     switch (status) {
@@ -143,7 +141,7 @@ const OrdersPage: React.FC = () => {
     // 2. Инвалидируем кэш заказов для обновления списка
     if (userId) {
       queryClient.invalidateQueries({
-        queryKey: ["orders", userId, activeTab],
+        queryKey: ["orders", userId, "client"],
       });
     }
     // 3. Отправляем системное сообщение в чат для клиента
