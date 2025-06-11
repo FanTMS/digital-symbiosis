@@ -277,6 +277,22 @@ export default function ChatPage() {
     };
   }, [otherUser?.id]);
 
+  // Отладочный вывод состояния
+  console.log('DEBUG ChatPage', { user, chatId, loading, otherUser, messages });
+
+  if (loading) {
+    console.log('DEBUG: return loading', { loading, user, chatId, otherUser });
+    return null;
+  }
+  if (!user) {
+    console.log('DEBUG: return no user', { loading, user, chatId, otherUser });
+    return null;
+  }
+  if (!chatId) {
+    console.log('DEBUG: return no chatId', { loading, user, chatId, otherUser });
+    return null;
+  }
+
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-cyan-50 via-blue-50 to-white">
       {/* Header */}
