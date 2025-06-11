@@ -18,6 +18,13 @@ import { ordersApi } from "../lib/api/orders";
 import Modal from "../components/ui/Modal";
 import { motion, AnimatePresence } from "framer-motion";
 
+// Для TS: расширяем window для отладки
+declare global {
+  interface Window {
+    __DEBUG_CHAT_PAGE?: any;
+  }
+}
+
 export default function ChatPage() {
   const { chatId } = useParams<{ chatId: string }>();
   const { user } = useUser();
@@ -280,21 +287,56 @@ export default function ChatPage() {
   // Отладочный вывод состояния
   console.log('DEBUG ChatPage', { user, chatId, loading, otherUser, messages });
 
+  // Глобальный отладочный лог
+  if (typeof window !== 'undefined') {
+    window.__DEBUG_CHAT_PAGE = {
+      user,
+      chatId,
+      loading,
+      otherUser,
+      messagesLength: messages.length,
+      pathname: window.location.pathname,
+      href: window.location.href,
+      bodyClass: document.body.className,
+    };
+    console.log('DEBUG: ChatPage mount', window.__DEBUG_CHAT_PAGE);
+  }
+
   if (loading) {
-    console.log('DEBUG: return loading', { loading, user, chatId, otherUser });
-    return null;
+    console.log('DEBUG: return loading', { loading, user, chatId, otherUser, pathname: window.location.pathname });
+    return (
+      <div style={{background:'#ffb',padding:8}}>
+        <b>DEBUG: return loading</b>
+        <pre style={{fontSize:12}}>{JSON.stringify({ loading, user, chatId, otherUser, pathname: window.location.pathname }, null, 2)}</pre>
+      </div>
+    );
   }
   if (!user) {
-    console.log('DEBUG: return no user', { loading, user, chatId, otherUser });
-    return null;
+    console.log('DEBUG: return no user', { loading, user, chatId, otherUser, pathname: window.location.pathname });
+    return (
+      <div style={{background:'#fbb',padding:8}}>
+        <b>DEBUG: return no user</b>
+        <pre style={{fontSize:12}}>{JSON.stringify({ loading, user, chatId, otherUser, pathname: window.location.pathname }, null, 2)}</pre>
+      </div>
+    );
   }
   if (!chatId) {
-    console.log('DEBUG: return no chatId', { loading, user, chatId, otherUser });
-    return null;
+    console.log('DEBUG: return no chatId', { loading, user, chatId, otherUser, pathname: window.location.pathname });
+    return (
+      <div style={{background:'#bbf',padding:8}}>
+        <b>DEBUG: return no chatId</b>
+        <pre style={{fontSize:12}}>{JSON.stringify({ loading, user, chatId, otherUser, pathname: window.location.pathname }, null, 2)}</pre>
+      </div>
+    );
   }
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-cyan-50 via-blue-50 to-white">
+      {/* Визуальный отладочный блок */}
+      <div style={{background:'#efe',padding:8,border:'1px solid #0a0',marginBottom:8}}>
+        <b>DEBUG: ChatPage render</b>
+        <pre style={{fontSize:12}}>{JSON.stringify({ user, chatId, loading, otherUser, messagesLength: messages.length, pathname: window.location.pathname, href: window.location.href, bodyClass: document.body.className }, null, 2)}</pre>
+      </div>
       {/* Header */}
       <div className="sticky top-0 z-20 w-full bg-gradient-to-r from-cyan-100 via-blue-50 to-white shadow flex items-center px-4 py-3 gap-3">
         <button
@@ -419,6 +461,9 @@ export default function ChatPage() {
 
       {/* Панель ввода сообщения */}
       <div className="w-full max-w-2xl mx-auto">
+        <div style={{background:'#eef',padding:4,border:'1px dashed #00f',marginBottom:4}}>
+          <b>DEBUG: chat-input-bar должна быть ниже</b>
+        </div>
         <form
           className="bg-white border-t border-gray-200 p-3 flex items-center gap-2 w-full rounded-2xl z-20 chat-input-bar shadow-lg fixed bottom-0 left-0 right-0 md:static md:rounded-t-2xl md:mx-auto md:mb-4"
           style={{
