@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import { supabase } from "../lib/supabase";
 import { useUser } from "../contexts/UserContext";
-import { useToast } from "../components/ui/ToastProvider";
+import { toast } from "react-hot-toast";
 import Button from "../components/ui/Button";
 import { Referral, Review } from "../types/models";
 
@@ -80,7 +80,6 @@ const BADGE_CRITERIA: Record<
 const AchievementsPage: React.FC = () => {
   const navigate = useNavigate();
   const { tg, user } = useTelegram();
-  const { showToast } = useToast();
   const [badges, setBadges] = useState<any[]>([]);
   const [userBadges, setUserBadges] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
