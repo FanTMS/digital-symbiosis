@@ -215,7 +215,7 @@ const AchievementsPage: React.FC = () => {
   ];
 
   return (
-    <div className="pb-16 pt-2">
+    <div className="pb-20 pt-2">
       <div className="px-4">
         <h1 className="text-2xl font-bold mb-4">Достижения</h1>
 
