@@ -6,6 +6,10 @@ body.hide-tabbar .fixed.bottom-0 {
   display: none !important;
 }
 
+body.hide-tabbar .navigation-bar-fixed {
+  display: none !important;
+}
+
 /* Chat input bar фиксированная на мобильных */
 @media (max-width: 768px) {
   .chat-input-bar {

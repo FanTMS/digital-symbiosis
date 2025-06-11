@@ -51,7 +51,7 @@ const NavigationBar: React.FC = () => {
       initial={{ y: 100 }}
       animate={{ y: 0 }}
       transition={{ type: "spring", stiffness: 260, damping: 20 }}
-      className="fixed bottom-0 left-0 right-0 w-full z-50 bg-white backdrop-blur-lg shadow-lg px-0 border-t border-gray-200"
+      className="fixed bottom-0 left-0 right-0 w-full z-50 bg-white backdrop-blur-lg shadow-lg px-0 border-t border-gray-200 navigation-bar-fixed"
       style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 20px) + 8px)" }}
     >
       <div className="flex justify-around items-center max-w-lg mx-auto overflow-x-auto scrollbar-none min-h-[72px] py-2">
