@@ -10,6 +10,7 @@ import type { ServiceWithUser } from "../types/models";
 import BalanceTopupBar from "../components/ui/BalanceTopupBar";
 import PromoBanner from "../components/ui/PromoBanner";
 import Modal from "../components/ui/Modal";
+import Button from "../components/ui/Button";
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
@@ -164,7 +165,7 @@ const HomePage: React.FC = () => {
                 )}
                 <h2 className="text-2xl font-bold mb-2 text-center">{promoBanner.title}</h2>
                 <div className="text-base text-gray-700 mb-4 text-center">{promoBanner.text}</div>
-                <button className="mt-2 px-6 py-2 bg-cyan-500 text-white rounded-full font-semibold mx-auto block" onClick={() => setShowPromoModal(false)}>Закрыть</button>
+                <Button className="mt-2 mx-auto block" variant="primary" onClick={() => setShowPromoModal(false)}>Закрыть</Button>
               </div>
             </Modal>
           </>

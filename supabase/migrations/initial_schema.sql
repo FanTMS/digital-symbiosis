@@ -259,4 +259,16 @@ create trigger update_service_rating_after_review
   after insert or update
   on reviews
   for each row
-  execute function update_service_rating(); 
+  execute function update_service_rating();
+
+create table complaints (
+  id serial primary key,
+  chat_id uuid references chats(id),
+  from_user_id bigint references users(id),
+  to_user_id bigint references users(id),
+  message text not null,
+  attachment_url text,
+  attachment_type text,
+  status text default 'new',
+  created_at timestamp with time zone default now()
+); 

@@ -17,6 +17,7 @@ import { supabase } from "../lib/supabase";
 import { ordersApi } from "../lib/api/orders";
 import Modal from "../components/ui/Modal";
 import { motion, AnimatePresence } from "framer-motion";
+import Button from "../components/ui/Button";
 
 export default function ChatPage() {
   const { chatId } = useParams<{ chatId: string }>();
@@ -243,7 +244,6 @@ export default function ChatPage() {
     setComplaintText("");
     setComplaintFile(null);
     setComplaintFilePreview(null);
-    alert("Жалоба отправлена!");
   };
 
   // Статус онлайн/не в сети
@@ -331,28 +331,13 @@ export default function ChatPage() {
   }, []);
 
   if (loading) {
-    return (
-      <div style={{background:'#ffb',padding:8}}>
-        <b>DEBUG: return loading</b>
-        <pre style={{fontSize:12}}>{JSON.stringify({ loading, user, chatId, otherUser, pathname: window.location.pathname }, null, 2)}</pre>
-      </div>
-    );
+    return null;
   }
   if (!user) {
-    return (
-      <div style={{background:'#fbb',padding:8}}>
-        <b>DEBUG: return no user</b>
-        <pre style={{fontSize:12}}>{JSON.stringify({ loading, user, chatId, otherUser, pathname: window.location.pathname }, null, 2)}</pre>
-      </div>
-    );
+    return null;
   }
   if (!chatId) {
-    return (
-      <div style={{background:'#bbf',padding:8}}>
-        <b>DEBUG: return no chatId</b>
-        <pre style={{fontSize:12}}>{JSON.stringify({ loading, user, chatId, otherUser, pathname: window.location.pathname }, null, 2)}</pre>
-      </div>
-    );
+    return null;
   }
   return (
     <div className="chat-redesign-root">
@@ -446,90 +431,83 @@ export default function ChatPage() {
       </div>
 
       {/* Модалка для жалобы */}
-      {showComplaintModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4 p-6 relative">
-            <button
-              className="absolute top-3 right-3 text-gray-400 hover:text-gray-700 text-xl font-bold"
-              onClick={() => setShowComplaintModal(false)}
-              aria-label="Закрыть"
-            >
-              ×
-            </button>
-            <h2 className="text-xl font-bold mb-4">Пожаловаться на пользователя</h2>
-            <textarea
-              className="w-full border rounded p-2 mb-3 min-h-[80px]"
-              placeholder="Опишите причину жалобы..."
-              value={complaintText}
-              onChange={(e) => setComplaintText(e.target.value)}
-              disabled={complaintLoading}
-              required
-            />
-            <div className="mb-3">
-              <button
-                type="button"
-                className="px-3 py-1 rounded bg-cyan-100 text-cyan-700 hover:bg-cyan-200 mr-2"
-                onClick={() => complaintFileInputRef.current?.click()}
-                disabled={complaintLoading}
-              >
-                {complaintFile ? "Заменить файл" : "Прикрепить файл/скриншот"}
-              </button>
-              <input
-                type="file"
-                ref={complaintFileInputRef}
-                className="hidden"
-                accept="image/*,application/pdf,.doc,.docx,.xls,.xlsx,.txt,.zip,.rar"
-                onChange={e => {
-                  const file = e.target.files?.[0] || null;
-                  setComplaintFile(file);
-                  if (file && file.type.startsWith("image/")) {
-                    const reader = new FileReader();
-                    reader.onload = ev => setComplaintFilePreview(ev.target?.result as string);
-                    reader.readAsDataURL(file);
-                  } else {
-                    setComplaintFilePreview(null);
-                  }
-                }}
-                disabled={complaintLoading}
-              />
-              {complaintFile && (
-                <span className="inline-flex items-center ml-2">
-                  {complaintFile.type.startsWith("image/") && complaintFilePreview ? (
-                    <img src={complaintFilePreview} alt="preview" className="w-16 h-16 object-cover rounded border mr-2" />
-                  ) : (
-                    <span className="text-sm text-gray-700 mr-2">{complaintFile.name}</span>
-                  )}
-                  <button
-                    type="button"
-                    className="ml-1 text-red-500 hover:text-red-700 text-lg"
-                    onClick={() => { setComplaintFile(null); setComplaintFilePreview(null); }}
-                    title="Удалить файл"
-                    disabled={complaintLoading}
-                  >
-                    ×
-                  </button>
-                </span>
+      <Modal isOpen={showComplaintModal} onClose={() => setShowComplaintModal(false)}>
+        <h2 className="text-xl font-bold mb-4">Пожаловаться на пользователя</h2>
+        <textarea
+          className="w-full border rounded p-2 mb-3 min-h-[80px]"
+          placeholder="Опишите причину жалобы..."
+          value={complaintText}
+          onChange={(e) => setComplaintText(e.target.value)}
+          disabled={complaintLoading}
+          required
+        />
+        <div className="mb-3">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => complaintFileInputRef.current?.click()}
+            disabled={complaintLoading}
+          >
+            {complaintFile ? "Заменить файл" : "Прикрепить файл/скриншот"}
+          </Button>
+          <input
+            type="file"
+            ref={complaintFileInputRef}
+            className="hidden"
+            accept="image/*,application/pdf,.doc,.docx,.xls,.xlsx,.txt,.zip,.rar"
+            onChange={e => {
+              const file = e.target.files?.[0] || null;
+              setComplaintFile(file);
+              if (file && file.type.startsWith("image/")) {
+                const reader = new FileReader();
+                reader.onload = ev => setComplaintFilePreview(ev.target?.result as string);
+                reader.readAsDataURL(file);
+              } else {
+                setComplaintFilePreview(null);
+              }
+            }}
+            disabled={complaintLoading}
+          />
+          {complaintFile && (
+            <span className="inline-flex items-center ml-2">
+              {complaintFile.type.startsWith("image/") && complaintFilePreview ? (
+                <img src={complaintFilePreview} alt="preview" className="w-16 h-16 object-cover rounded border mr-2" />
+              ) : (
+                <span className="text-sm text-gray-700 mr-2">{complaintFile.name}</span>
               )}
-            </div>
-            <div className="flex justify-end gap-2">
-              <button
-                className="px-4 py-2 rounded bg-gray-200 text-gray-700"
-                onClick={() => setShowComplaintModal(false)}
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="ml-1 text-red-500 hover:text-red-700 text-lg"
+                onClick={() => { setComplaintFile(null); setComplaintFilePreview(null); }}
+                title="Удалить файл"
                 disabled={complaintLoading}
               >
-                Отмена
-              </button>
-              <button
-                className="px-4 py-2 rounded bg-red-500 text-white font-semibold disabled:opacity-60"
-                onClick={handleSendComplaint}
-                disabled={complaintLoading || !complaintText.trim()}
-              >
-                {complaintLoading ? "Отправка..." : "Отправить"}
-              </button>
-            </div>
-          </div>
+                ×
+              </Button>
+            </span>
+          )}
         </div>
-      )}
+        <div className="flex justify-end gap-2">
+          <Button
+            variant="outline"
+            onClick={() => setShowComplaintModal(false)}
+            disabled={complaintLoading}
+          >
+            Отмена
+          </Button>
+          <Button
+            variant="danger"
+            onClick={handleSendComplaint}
+            disabled={complaintLoading || !complaintText.trim()}
+            isLoading={complaintLoading}
+          >
+            {complaintLoading ? "Отправка..." : "Отправить"}
+          </Button>
+        </div>
+      </Modal>
 
       {/* Модалка для отзыва */}
       <Modal isOpen={showReviewModal} onClose={() => setShowReviewModal(false)}>

@@ -79,6 +79,7 @@ const AdminDashboardPage: React.FC = () => {
   const [complaintsPage, setComplaintsPage] = useState(1);
   const complaintsPerPage = 10;
   const paginatedComplaints = complaints.slice((complaintsPage - 1) * complaintsPerPage, complaintsPage * complaintsPerPage);
+  const [complaintStatus, setComplaintStatus] = useState<string>('all');
 
   useEffect(() => {
     if (!user || user.role !== "admin") return;
@@ -448,19 +449,34 @@ const AdminDashboardPage: React.FC = () => {
           {activeTab === "complaints" && (
             <div>
               <h2 className="text-xl font-semibold mb-4">Жалобы</h2>
+              <div className="mb-4 flex gap-2 items-center">
+                <span className="font-medium">Статус:</span>
+                <select
+                  className="rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  value={complaintStatus}
+                  onChange={e => setComplaintStatus(e.target.value)}
+                >
+                  <option value="all">Все</option>
+                  <option value="new">Новые</option>
+                  <option value="reviewed">Рассмотренные</option>
+                  <option value="rejected">Отклонённые</option>
+                </select>
+              </div>
               {loading ? (
                 <div>Загрузка...</div>
               ) : complaints.length === 0 ? (
                 <div className="text-gray-500">Жалоб нет</div>
               ) : (
                 <div className="space-y-4">
-                  {paginatedComplaints.map((c) => (
+                  {paginatedComplaints
+                    .filter(c => complaintStatus === 'all' || c.status === complaintStatus)
+                    .map((c) => (
                     <div
                       key={c.id}
                       className="border rounded-lg p-4 bg-white shadow"
                     >
                       <div className="mb-2 text-sm text-gray-500">
-                        {new Date(c.created_at).toLocaleString()}
+                        {new Date(c.created_at).toLocaleString()} <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-gray-100 border font-medium capitalize">{c.status === 'new' ? 'Новая' : c.status === 'reviewed' ? 'Рассмотрена' : 'Отклонена'}</span>
                       </div>
                       <div className="mb-2">
                         <span className="font-semibold">От:</span> {c.from_user_id} <span className="ml-2 font-semibold">На:</span> {c.to_user_id}
@@ -477,31 +493,31 @@ const AdminDashboardPage: React.FC = () => {
                       <div className="bg-gray-100 rounded p-2 text-sm mb-2">
                         {c.message}
                       </div>
-                      <Button
-                        size="sm"
-                        variant="danger"
-                        onClick={async () => {
-                          setUserProfileLoading(true);
-                          setUserProfileError("");
-                          const { data: userData, error } = await supabase
-                            .from("users")
-                            .select("*")
-                            .eq("id", c.to_user_id)
-                            .single();
-                          setUserProfileLoading(false);
-                          if (error || !userData) {
-                            setUserProfileError("Пользователь не найден или был удалён.");
-                            setSelectedUser(null);
-                            setShowUserModal(false);
-                            alert("Пользователь не найден или был удалён.");
-                            return;
-                          }
-                          setSelectedUser(userData);
-                          setShowUserModal(true);
-                        }}
-                      >
-                        Действия с пользователем
-                      </Button>
+                      {/* Кнопка отклонить */}
+                      {c.status === 'new' && (
+                        <div className="flex gap-2 mt-2">
+                          <Button
+                            size="sm"
+                            variant="danger"
+                            onClick={async () => {
+                              await supabase.from('complaints').update({ status: 'rejected' }).eq('id', c.id);
+                              setComplaints(complaints.map(item => item.id === c.id ? { ...item, status: 'rejected' } : item));
+                            }}
+                          >
+                            Отклонить
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={async () => {
+                              await supabase.from('complaints').update({ status: 'reviewed' }).eq('id', c.id);
+                              setComplaints(complaints.map(item => item.id === c.id ? { ...item, status: 'reviewed' } : item));
+                            }}
+                          >
+                            Отметить как рассмотренную
+                          </Button>
+                        </div>
+                      )}
                     </div>
                   ))}
                   {complaints.length > complaintsPerPage && (

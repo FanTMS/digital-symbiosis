@@ -611,12 +611,11 @@ const ProfilePage: React.FC = () => {
                 Максимум 10 навыков, каждый до 30 символов
               </div>
             </div>
-            <button
+            <Button
               className="w-full bg-primary-500 text-white rounded py-2 font-medium disabled:opacity-60"
               disabled={saving}
               onClick={async () => {
                 setSaving(true);
-                // Сохраняем изменения (имя, аватар, описание, навыки)
                 await supabase
                   .from("users")
                   .update({
@@ -630,9 +629,11 @@ const ProfilePage: React.FC = () => {
                 setSaving(false);
                 window.location.reload();
               }}
+              variant="primary"
+              isLoading={saving}
             >
               Сохранить
-            </button>
+            </Button>
           </div>
         </Modal>
       )}
