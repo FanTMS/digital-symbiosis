@@ -636,8 +636,79 @@ const ProfilePage: React.FC = () => {
           </div>
         </Modal>
       )}
+      {isOwn && (
+        <PromoCodeActivation user={user} />
+      )}
     </motion.div>
   );
 };
+
+function PromoCodeActivation({ user }: { user: any }) {
+  const [code, setCode] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const handleActivate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setSuccess(null);
+    setError(null);
+    if (!code.trim()) {
+      setError("Введите промокод");
+      setLoading(false);
+      return;
+    }
+    // Проверяем промокод
+    const { data: promo, error: promoError } = await supabase
+      .from("promo_codes")
+      .select("*")
+      .eq("code", code.trim())
+      .single();
+    if (promoError || !promo) {
+      setError("Промокод не найден");
+      setLoading(false);
+      return;
+    }
+    if (!promo.is_active) {
+      setError("Промокод неактивен");
+      setLoading(false);
+      return;
+    }
+    if (promo.activated_by) {
+      setError("Промокод уже был использован");
+      setLoading(false);
+      return;
+    }
+    if (promo.expires_at && new Date(promo.expires_at) < new Date()) {
+      setError("Срок действия промокода истёк");
+      setLoading(false);
+      return;
+    }
+    // Всё ок — начисляем кредиты и отмечаем промокод как использованный
+    await supabase.from("users").update({ credits: (user.credits || 0) + promo.amount }).eq("id", user.id);
+    await supabase.from("promo_codes").update({ is_active: false, activated_by: user.id, activated_at: new Date().toISOString() }).eq("id", promo.id);
+    setSuccess(`Промокод активирован! На ваш баланс начислено ${promo.amount} кредитов.`);
+    setCode("");
+    setLoading(false);
+    setTimeout(() => window.location.reload(), 1500);
+  };
+  return (
+    <form onSubmit={handleActivate} className="mb-6 bg-white rounded-lg shadow-card p-4 flex flex-col sm:flex-row items-center gap-3">
+      <input
+        type="text"
+        className="border rounded px-3 py-2 flex-1"
+        placeholder="Введите промокод"
+        value={code}
+        onChange={e => setCode(e.target.value)}
+        disabled={loading}
+      />
+      <Button type="submit" variant="primary" size="md" disabled={loading}>
+        {loading ? "Проверка..." : "Активировать"}
+      </Button>
+      {error && <div className="text-red-600 text-sm mt-2 w-full">{error}</div>}
+      {success && <div className="text-green-600 text-sm mt-2 w-full">{success}</div>}
+    </form>
+  );
+}
 
 export default ProfilePage;

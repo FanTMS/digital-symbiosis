@@ -9,6 +9,7 @@ import ServiceCard from "../components/ui/ServiceCard";
 import type { ServiceWithUser } from "../types/models";
 import BalanceTopupBar from "../components/ui/BalanceTopupBar";
 import PromoBanner from "../components/ui/PromoBanner";
+import Modal from "../components/ui/Modal";
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
@@ -24,6 +25,8 @@ const HomePage: React.FC = () => {
     categories: 0,
     avgRating: 0,
   });
+  const [promoBanner, setPromoBanner] = useState<any>(null);
+  const [showPromoModal, setShowPromoModal] = useState(false);
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -108,6 +111,20 @@ const HomePage: React.FC = () => {
     fetchStats();
   }, []);
 
+  useEffect(() => {
+    // Загружаем промо-баннер
+    const fetchPromoBanner = async () => {
+      const { data, error } = await supabase
+        .from("promo_banners")
+        .select("*")
+        .order("updated_at", { ascending: false })
+        .limit(1)
+        .single();
+      if (!error && data) setPromoBanner(data);
+    };
+    fetchPromoBanner();
+  }, []);
+
   const handleCreateService = () => {
     navigate("/create-service");
   };
@@ -129,22 +146,29 @@ const HomePage: React.FC = () => {
 
   return (
     <div className="pb-16 pt-2 sm:pb-20 sm:pt-4">
-      {/* Промо-баннеры */}
+      {/* Промо-баннер */}
       <div className="px-2 sm:px-4 mb-4">
-        <PromoBanner
-          title="Весенний бонус!"
-          text="Пополните баланс на 500 кр. и получите +100 кр. в подарок до 30 апреля."
-          image="/promo-spring.png"
-          link="/topup"
-          color="linear-gradient(90deg,#f0fdfa,#bae6fd)"
-        />
-        <PromoBanner
-          title="Обновление платформы"
-          text="Добавлены новые категории услуг и улучшен поиск исполнителей."
-          image="/promo-update.png"
-          link="/news"
-          color="linear-gradient(90deg,#f0fdfa,#e0e7ff)"
-        />
+        {promoBanner && (
+          <>
+            <PromoBanner
+              title={promoBanner.title}
+              text={promoBanner.text}
+              image={promoBanner.image_url}
+              color={promoBanner.color}
+              onClick={() => setShowPromoModal(true)}
+            />
+            <Modal isOpen={showPromoModal} onClose={() => setShowPromoModal(false)}>
+              <div className="p-4" style={{ background: promoBanner.color || undefined }}>
+                {promoBanner.image_url && (
+                  <img src={promoBanner.image_url} alt={promoBanner.title} className="w-32 h-32 object-cover rounded-xl mx-auto mb-4" />
+                )}
+                <h2 className="text-2xl font-bold mb-2 text-center">{promoBanner.title}</h2>
+                <div className="text-base text-gray-700 mb-4 text-center">{promoBanner.text}</div>
+                <button className="mt-2 px-6 py-2 bg-cyan-500 text-white rounded-full font-semibold mx-auto block" onClick={() => setShowPromoModal(false)}>Закрыть</button>
+              </div>
+            </Modal>
+          </>
+        )}
       </div>
 
       {/* Header */}

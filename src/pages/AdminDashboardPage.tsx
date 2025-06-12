@@ -18,6 +18,7 @@ import {
   Archive,
   Coins,
   Award,
+  Gift,
 } from "lucide-react";
 import type { Database } from "../types/supabase";
 import { useQueryClient } from "@tanstack/react-query";
@@ -33,6 +34,8 @@ const TABS = [
   { key: "archive", label: "Архив", icon: Archive },
   { key: "payments", label: "Платежи", icon: Coins },
   { key: "referrals", label: "Рефералы", icon: Award },
+  { key: "promo_banner", label: "Промо-баннер", icon: Gift },
+  { key: "promo_codes", label: "Промокоды", icon: Award },
   // Можно добавить "orders", "settings" и т.д.
 ];
 
@@ -780,6 +783,18 @@ const AdminDashboardPage: React.FC = () => {
           )}
           {activeTab === "payments" && <PaymentsAdminPanel />}
           {activeTab === "referrals" && <ReferralsAdminPanel />}
+          {activeTab === "promo_banner" && (
+            <div className="max-w-xl mx-auto bg-white rounded-xl shadow p-6 mt-6">
+              <h2 className="text-xl font-bold mb-4">Промо-баннер</h2>
+              <PromoBannerAdminForm />
+            </div>
+          )}
+          {activeTab === "promo_codes" && (
+            <div className="max-w-2xl mx-auto bg-white rounded-xl shadow p-6 mt-6">
+              <h2 className="text-xl font-bold mb-4">Промокоды</h2>
+              <PromoCodesAdminPanel />
+            </div>
+          )}
         </motion.div>
       </AnimatePresence>
       {showUserModal && userProfileLoading && (
@@ -793,5 +808,219 @@ const AdminDashboardPage: React.FC = () => {
     </div>
   );
 };
+
+function PromoBannerAdminForm() {
+  const [loading, setLoading] = useState(true);
+  const [banner, setBanner] = useState<any>(null);
+  const [form, setForm] = useState({
+    title: "",
+    text: "",
+    image_url: "",
+    link: "",
+    color: "",
+  });
+  const [saving, setSaving] = useState(false);
+  const [success, setSuccess] = useState(false);
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from("promo_banners")
+        .select("*")
+        .order("updated_at", { ascending: false })
+        .limit(1)
+        .single();
+      if (!error && data) {
+        setBanner(data);
+        setForm({
+          title: data.title || "",
+          text: data.text || "",
+          image_url: data.image_url || "",
+          link: data.link || "",
+          color: data.color || "",
+        });
+      }
+      setLoading(false);
+    })();
+  }, []);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    setSuccess(false);
+    if (banner) {
+      // update
+      await supabase
+        .from("promo_banners")
+        .update({ ...form, updated_at: new Date().toISOString() })
+        .eq("id", banner.id);
+    } else {
+      // insert
+      await supabase
+        .from("promo_banners")
+        .insert({ ...form, updated_at: new Date().toISOString() });
+    }
+    setSaving(false);
+    setSuccess(true);
+    setTimeout(() => setSuccess(false), 2000);
+  };
+  if (loading) return <div>Загрузка...</div>;
+  return (
+    <form onSubmit={handleSave} className="space-y-4">
+      <div>
+        <label className="block font-medium mb-1">Заголовок</label>
+        <input name="title" value={form.title} onChange={handleChange} className="w-full border rounded px-3 py-2" required />
+      </div>
+      <div>
+        <label className="block font-medium mb-1">Текст</label>
+        <textarea name="text" value={form.text} onChange={handleChange} className="w-full border rounded px-3 py-2" required />
+      </div>
+      <div>
+        <label className="block font-medium mb-1">URL картинки (необязательно)</label>
+        <input name="image_url" value={form.image_url} onChange={handleChange} className="w-full border rounded px-3 py-2" />
+      </div>
+      <div>
+        <label className="block font-medium mb-1">Цвет фона (CSS, необязательно)</label>
+        <input name="color" value={form.color} onChange={handleChange} className="w-full border rounded px-3 py-2" placeholder="например, #f0fdfa или linear-gradient(...)" />
+      </div>
+      <div>
+        <label className="block font-medium mb-1">Ссылка (не используется, баннер открывает модалку)</label>
+        <input name="link" value={form.link} onChange={handleChange} className="w-full border rounded px-3 py-2" disabled />
+      </div>
+      <Button type="submit" variant="primary" size="md" disabled={saving}>{saving ? "Сохранение..." : "Сохранить"}</Button>
+      {success && <div className="text-green-600 mt-2">Сохранено!</div>}
+    </form>
+  );
+}
+
+function PromoCodesAdminPanel() {
+  const [codes, setCodes] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [form, setForm] = useState({
+    code: "",
+    amount: 10,
+    expires_at: "",
+    description: "",
+  });
+  const [saving, setSaving] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState("");
+  useEffect(() => {
+    fetchCodes();
+  }, []);
+  async function fetchCodes() {
+    setLoading(true);
+    const { data } = await supabase.from("promo_codes").select("*").order("created_at", { ascending: false });
+    setCodes(data || []);
+    setLoading(false);
+  }
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+  const handleCreate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    setError("");
+    setSuccess(false);
+    if (!form.code.trim() || !form.amount) {
+      setError("Введите код и сумму");
+      setSaving(false);
+      return;
+    }
+    const { error } = await supabase.from("promo_codes").insert({
+      code: form.code.trim(),
+      amount: Number(form.amount),
+      expires_at: form.expires_at ? new Date(form.expires_at).toISOString() : null,
+      description: form.description,
+    });
+    if (error) {
+      setError(error.message);
+      setSaving(false);
+      return;
+    }
+    setForm({ code: "", amount: 10, expires_at: "", description: "" });
+    setSuccess(true);
+    fetchCodes();
+    setSaving(false);
+    setTimeout(() => setSuccess(false), 2000);
+  };
+  const handleDeactivate = async (id: number) => {
+    if (!window.confirm("Деактивировать промокод?")) return;
+    await supabase.from("promo_codes").update({ is_active: false }).eq("id", id);
+    fetchCodes();
+  };
+  return (
+    <>
+      <form onSubmit={handleCreate} className="space-y-4 mb-8">
+        <div className="flex gap-2">
+          <div className="flex-1">
+            <label className="block font-medium mb-1">Код</label>
+            <input name="code" value={form.code} onChange={handleChange} className="w-full border rounded px-3 py-2" required />
+          </div>
+          <div style={{ minWidth: 100 }}>
+            <label className="block font-medium mb-1">Сумма</label>
+            <input name="amount" type="number" min={1} value={form.amount} onChange={handleChange} className="w-full border rounded px-3 py-2" required />
+          </div>
+        </div>
+        <div>
+          <label className="block font-medium mb-1">Срок действия (до)</label>
+          <input name="expires_at" type="date" value={form.expires_at} onChange={handleChange} className="w-full border rounded px-3 py-2" />
+        </div>
+        <div>
+          <label className="block font-medium mb-1">Описание (необязательно)</label>
+          <textarea name="description" value={form.description} onChange={handleChange} className="w-full border rounded px-3 py-2" />
+        </div>
+        <Button type="submit" variant="primary" size="md" disabled={saving}>{saving ? "Создание..." : "Создать промокод"}</Button>
+        {error && <div className="text-red-600 mt-2">{error}</div>}
+        {success && <div className="text-green-600 mt-2">Промокод создан!</div>}
+      </form>
+      <h3 className="text-lg font-semibold mb-2">Все промокоды</h3>
+      {loading ? (
+        <div>Загрузка...</div>
+      ) : codes.length === 0 ? (
+        <div className="text-gray-400">Нет промокодов</div>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="min-w-full text-sm border">
+            <thead>
+              <tr>
+                <th className="p-2 border">Код</th>
+                <th className="p-2 border">Сумма</th>
+                <th className="p-2 border">Статус</th>
+                <th className="p-2 border">Кто активировал</th>
+                <th className="p-2 border">Когда</th>
+                <th className="p-2 border">Срок</th>
+                <th className="p-2 border">Описание</th>
+                <th className="p-2 border">Действия</th>
+              </tr>
+            </thead>
+            <tbody>
+              {codes.map((c) => (
+                <tr key={c.id} className={c.is_active ? "" : "bg-gray-100 text-gray-400"}>
+                  <td className="p-2 border font-mono font-bold">{c.code}</td>
+                  <td className="p-2 border">{c.amount}</td>
+                  <td className="p-2 border">{c.is_active ? (c.activated_by ? "Использован" : "Активен") : "Деактивирован"}</td>
+                  <td className="p-2 border">{c.activated_by || "-"}</td>
+                  <td className="p-2 border">{c.activated_at ? new Date(c.activated_at).toLocaleString() : "-"}</td>
+                  <td className="p-2 border">{c.expires_at ? new Date(c.expires_at).toLocaleDateString() : "-"}</td>
+                  <td className="p-2 border">{c.description || "-"}</td>
+                  <td className="p-2 border">
+                    {c.is_active && !c.activated_by && (
+                      <Button size="sm" variant="danger" onClick={() => handleDeactivate(c.id)}>
+                        Деактивировать
+                      </Button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </>
+  );
+}
 
 export default AdminDashboardPage;

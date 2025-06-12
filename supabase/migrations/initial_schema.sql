@@ -109,6 +109,29 @@ create table topup_history (
   created_at timestamp with time zone default now()
 );
 
+-- Промо-баннеры
+create table promo_banners (
+  id serial primary key,
+  title text not null,
+  text text not null,
+  image_url text,
+  link text,
+  color text,
+  updated_at timestamp with time zone default now()
+);
+
+-- Промокоды
+create table promo_codes (
+  id serial primary key,
+  code text unique not null,
+  amount integer not null,
+  is_active boolean default true,
+  activated_by bigint references users(id),
+  activated_at timestamp with time zone,
+  expires_at timestamp with time zone,
+  description text
+);
+
 -- Create indexes
 create index idx_services_category on services(category);
 create index idx_services_user_id on services(user_id);
