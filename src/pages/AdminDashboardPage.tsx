@@ -25,6 +25,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
 import PaymentsAdminPanel from "../components/admin/PaymentsAdminPanel";
 import ReferralsAdminPanel from "../components/admin/ReferralsAdminPanel";
+import Modal from "../components/ui/Modal";
 
 const TABS = [
   { key: "stats", label: "Статистика", icon: BarChart2 },
@@ -80,6 +81,12 @@ const AdminDashboardPage: React.FC = () => {
   const complaintsPerPage = 10;
   const paginatedComplaints = complaints.slice((complaintsPage - 1) * complaintsPerPage, complaintsPage * complaintsPerPage);
   const [complaintStatus, setComplaintStatus] = useState<string>('all');
+  const [verdictModal, setVerdictModal] = useState<{open: boolean, complaint: any | null}>({open: false, complaint: null});
+  const [verdictBlock, setVerdictBlock] = useState(false);
+  const [verdictBalance, setVerdictBalance] = useState(false);
+  const [verdictRating, setVerdictRating] = useState('none');
+  const [verdictText, setVerdictText] = useState("");
+  const [verdictLoading, setVerdictLoading] = useState(false);
 
   useEffect(() => {
     if (!user || user.role !== "admin") return;
@@ -503,6 +510,14 @@ const AdminDashboardPage: React.FC = () => {
                           value={c.status || 'new'}
                           onChange={async (e) => {
                             const newStatus = e.target.value;
+                            if (newStatus === 'reviewed') {
+                              setVerdictModal({open: true, complaint: c});
+                              setVerdictBlock(false);
+                              setVerdictBalance(false);
+                              setVerdictRating('none');
+                              setVerdictText("");
+                              return;
+                            }
                             await supabase.from('complaints').update({ status: newStatus }).eq('id', c.id);
                             setComplaints(complaints.map(item => item.id === c.id ? { ...item, status: newStatus } : item));
                           }}
@@ -815,6 +830,77 @@ const AdminDashboardPage: React.FC = () => {
           </div>
         </div>
       )}
+      {/* МОДАЛКА ВЕРДИКТА */}
+      <Modal isOpen={verdictModal.open} onClose={() => setVerdictModal({open: false, complaint: null})}>
+        <h2 className="text-xl font-bold mb-4">Вердикт по жалобе</h2>
+        <div className="mb-3 flex flex-col gap-2">
+          <label className="flex items-center gap-2">
+            <input type="checkbox" checked={verdictBlock} onChange={e => setVerdictBlock(e.target.checked)} />
+            Заблокировать пользователя
+          </label>
+          <label className="flex items-center gap-2">
+            <input type="checkbox" checked={verdictBalance} onChange={e => setVerdictBalance(e.target.checked)} />
+            Списать баланс
+          </label>
+          <div className="flex items-center gap-2">
+            <span>Обнулить рейтинг:</span>
+            <label className="flex items-center gap-1">
+              <input type="radio" name="verdictRating" value="1" checked={verdictRating==='1'} onChange={() => setVerdictRating('1')} />1 звезда
+            </label>
+            <label className="flex items-center gap-1">
+              <input type="radio" name="verdictRating" value="2" checked={verdictRating==='2'} onChange={() => setVerdictRating('2')} />2 звезды
+            </label>
+            <label className="flex items-center gap-1">
+              <input type="radio" name="verdictRating" value="none" checked={verdictRating==='none'} onChange={() => setVerdictRating('none')} />Не менять
+            </label>
+          </div>
+          <textarea
+            className="w-full border rounded p-2 min-h-[60px]"
+            placeholder="Ответ на жалобу (будет отправлен пользователю)"
+            value={verdictText}
+            onChange={e => setVerdictText(e.target.value)}
+          />
+        </div>
+        <div className="flex justify-end gap-2 mt-4">
+          <Button variant="outline" onClick={() => setVerdictModal({open: false, complaint: null})}>Отмена</Button>
+          <Button
+            variant="primary"
+            isLoading={verdictLoading}
+            onClick={async () => {
+              if (!verdictModal.complaint) return;
+              setVerdictLoading(true);
+              const c = verdictModal.complaint;
+              // 1. Применяем санкции
+              if (verdictBlock) {
+                await supabase.from('users').update({ blocked: true }).eq('id', c.to_user_id);
+              }
+              if (verdictBalance) {
+                await supabase.from('users').update({ credits: 0 }).eq('id', c.to_user_id);
+              }
+              if (verdictRating === '1' || verdictRating === '2') {
+                await supabase.from('users').update({ rating: parseInt(verdictRating) }).eq('id', c.to_user_id);
+              }
+              // 2. Обновляем статус жалобы
+              await supabase.from('complaints').update({ status: 'reviewed' }).eq('id', c.id);
+              setComplaints(complaints.map(item => item.id === c.id ? { ...item, status: 'reviewed' } : item));
+              // 3. Отправляем системное сообщение в чат
+              if (c.chat_id && c.from_user_id) {
+                await supabase.from('messages').insert({
+                  chat_id: c.chat_id,
+                  sender_id: null, // системное сообщение
+                  content: `Жалоба рассмотрена, вердикт: ${verdictText}`,
+                  meta: { type: 'system', complaintId: c.id, verdict: verdictText },
+                });
+              }
+              setVerdictLoading(false);
+              setVerdictModal({open: false, complaint: null});
+            }}
+            disabled={!verdictText.trim()}
+          >
+            Завершить
+          </Button>
+        </div>
+      </Modal>
     </div>
   );
 };
