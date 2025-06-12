@@ -377,89 +377,28 @@ const AdminDashboardPage: React.FC = () => {
                       <b>Роль:</b> {selectedUser.role || "user"}
                     </div>
                     <div className="mb-2">
-                      <b>Статус:</b>{" "}
-                      {selectedUser.blocked ? "Заблокирован" : "Активен"}
+                      <b>Статус:</b> {selectedUser.blocked ? "Заблокирован" : "Активен"}
                     </div>
-                    {/* Форма для редактирования баланса, уровня и кредитов */}
-                    <form
-                      className="space-y-3 mt-4"
-                      onSubmit={async (e) => {
-                        e.preventDefault();
-                        const form = e.target as typeof e.target & {
-                          credits: { value: string };
-                          level: { value: string };
-                          completed_tasks: { value: string };
-                        };
-                        const updates = {
-                          credits: Number(form.credits.value),
-                          level: form.level.value,
-                          completed_tasks: Number(form.completed_tasks.value),
-                        };
-                        await supabase
-                          .from("users")
-                          .update(updates)
-                          .eq("id", selectedUser.id);
-                        // Обновить данные в таблице пользователей
-                        setUsers(
-                          users.map((u) =>
-                            u.id === selectedUser.id ? { ...u, ...updates } : u,
-                          ),
-                        );
-                        setFilteredUsers(
-                          filteredUsers.map((u) =>
-                            u.id === selectedUser.id ? { ...u, ...updates } : u,
-                          ),
-                        );
-                        setShowUserModal(false);
-                      }}
-                    >
-                      <div>
-                        <label className="block text-sm font-medium mb-1">
-                          Кредиты
-                        </label>
-                        <input
-                          name="credits"
-                          type="number"
-                          defaultValue={selectedUser.credits ?? 0}
-                          className="w-full rounded border border-gray-300 px-3 py-2 bg-gray-50"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium mb-1">
-                          Уровень
-                        </label>
-                        <input
-                          name="level"
-                          type="text"
-                          defaultValue={selectedUser.level ?? ""}
-                          className="w-full rounded border border-gray-300 px-3 py-2 bg-gray-50"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium mb-1">
-                          Выполнено заданий
-                        </label>
-                        <input
-                          name="completed_tasks"
-                          type="number"
-                          defaultValue={selectedUser.completed_tasks ?? 0}
-                          className="w-full rounded border border-gray-300 px-3 py-2 bg-gray-50"
-                        />
-                      </div>
-                      <div className="flex gap-2 mt-4">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          type="button"
-                          onClick={() => setShowUserModal(false)}
-                        >
-                          Закрыть
-                        </Button>
-                        <Button size="sm" variant="primary" type="submit">
-                          Сохранить
-                        </Button>
-                      </div>
-                    </form>
+                    <div className="flex gap-2 mt-4">
+                      <Button
+                        size="sm"
+                        variant={selectedUser.blocked ? "primary" : "danger"}
+                        onClick={async () => {
+                          await supabase
+                            .from("users")
+                            .update({ blocked: !selectedUser.blocked })
+                            .eq("id", selectedUser.id);
+                          setSelectedUser({ ...selectedUser, blocked: !selectedUser.blocked });
+                          setUsers(users.map((u) => u.id === selectedUser.id ? { ...u, blocked: !selectedUser.blocked } : u));
+                          setFilteredUsers(filteredUsers.map((u) => u.id === selectedUser.id ? { ...u, blocked: !selectedUser.blocked } : u));
+                        }}
+                      >
+                        {selectedUser.blocked ? "Разблокировать" : "Заблокировать"}
+                      </Button>
+                      <Button size="sm" variant="outline" onClick={() => setShowUserModal(false)}>
+                        Закрыть
+                      </Button>
+                    </div>
                   </div>
                 </div>
               )}
@@ -483,20 +422,26 @@ const AdminDashboardPage: React.FC = () => {
                         {new Date(c.created_at).toLocaleString()}
                       </div>
                       <div className="mb-2">
-                        <span className="font-semibold">От:</span>{" "}
-                        {c.from_user_id}{" "}
-                        <span className="ml-2 font-semibold">На:</span>{" "}
-                        {c.to_user_id}
+                        <span className="font-semibold">От:</span> {c.from_user_id} <span className="ml-2 font-semibold">На:</span> {c.to_user_id}
                       </div>
                       <div className="mb-2">
                         <span className="font-semibold">Чат:</span> {c.chat_id}
+                        <Button size="sm" variant="outline" className="ml-2" onClick={() => navigate(`/chat/${c.chat_id}`)}>
+                          Открыть чат
+                        </Button>
                       </div>
                       <div className="mb-2">
                         <span className="font-semibold">Текст жалобы:</span>
                       </div>
-                      <div className="bg-gray-100 rounded p-2 text-sm">
+                      <div className="bg-gray-100 rounded p-2 text-sm mb-2">
                         {c.message}
                       </div>
+                      <Button size="sm" variant="danger" onClick={() => {
+                        setSelectedUser({ id: c.to_user_id });
+                        setShowUserModal(true);
+                      }}>
+                        Действия с пользователем
+                      </Button>
                     </div>
                   ))}
                 </div>

@@ -116,6 +116,10 @@ const ServiceDetailPage: React.FC = () => {
         alert("Вы не можете заказать свою собственную услугу");
         return;
       }
+      if ((user.credits || 0) < service.price) {
+        alert("Недостаточно кредитов для заказа услуги. Пожалуйста, пополните баланс.");
+        return;
+      }
       // Проверка на повторный заказ
       const { data: existingOrders, error } = await supabase
         .from("orders")
@@ -397,10 +401,7 @@ const ServiceDetailPage: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="fixed bottom-0 left-0 right-0 bg-white p-5 shadow-2xl border-t border-gray-200 z-20 rounded-t-2xl"
-          style={{
-            paddingBottom: "calc(env(safe-area-inset-bottom, 20px) + 8px)",
-          }}
+          className="bg-white p-5 shadow-2xl border-t border-gray-200 rounded-2xl mb-6"
         >
           <div className="flex items-center justify-between mb-3">
             <div>
@@ -409,28 +410,14 @@ const ServiceDetailPage: React.FC = () => {
                 <span>{service.price}</span>
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
                   <circle cx="12" cy="12" r="10" fill="#FDBA74" />
-
-                  <text
-                    x="12"
-                    y="16"
-                    textAnchor="middle"
-                    fontSize="12"
-                    fill="#fff"
-                    fontWeight="bold"
-                  >
-                    ₽
-                  </text>
+                  <text x="12" y="16" textAnchor="middle" fontSize="12" fill="#fff" fontWeight="bold">₽</text>
                 </svg>
-                <span className="text-base font-bold text-gray-500 ml-1">
-                  кредитов
-                </span>
+                <span className="text-base font-bold text-gray-500 ml-1">кредитов</span>
               </div>
             </div>
             <div className="text-right">
               <span className="text-sm text-gray-500">Выполнено заказов</span>
-              <div className="text-xl font-bold">
-                {provider.completed_tasks ?? 0}
-              </div>
+              <div className="text-xl font-bold">{provider.completed_tasks ?? 0}</div>
             </div>
           </div>
           <Button

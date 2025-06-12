@@ -388,40 +388,44 @@ export default function ChatPage() {
       </div>
 
       {/* Модалка для жалобы */}
-      <Modal
-        isOpen={showComplaintModal}
-        onClose={() => setShowComplaintModal(false)}
-      >
-        <div className="p-4">
-          <h2 className="text-lg font-semibold mb-2">
-            Пожаловаться на пользователя
-          </h2>
-          <textarea
-            className="w-full border rounded p-2 mb-3 min-h-[80px]"
-            placeholder="Опишите причину жалобы..."
-            value={complaintText}
-            onChange={(e) => setComplaintText(e.target.value)}
-            disabled={complaintLoading}
-          />
-
-          <div className="flex justify-end gap-2">
+      {showComplaintModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4 p-6 relative">
             <button
-              className="px-4 py-2 rounded bg-gray-200 text-gray-700"
+              className="absolute top-3 right-3 text-gray-400 hover:text-gray-700 text-xl font-bold"
               onClick={() => setShowComplaintModal(false)}
+              aria-label="Закрыть"
+            >
+              ×
+            </button>
+            <h2 className="text-xl font-bold mb-4">Пожаловаться на пользователя</h2>
+            <textarea
+              className="w-full border rounded p-2 mb-3 min-h-[80px]"
+              placeholder="Опишите причину жалобы..."
+              value={complaintText}
+              onChange={(e) => setComplaintText(e.target.value)}
               disabled={complaintLoading}
-            >
-              Отмена
-            </button>
-            <button
-              className="px-4 py-2 rounded bg-red-500 text-white font-semibold disabled:opacity-60"
-              onClick={handleSendComplaint}
-              disabled={complaintLoading || !complaintText.trim()}
-            >
-              {complaintLoading ? "Отправка..." : "Отправить"}
-            </button>
+              required
+            />
+            <div className="flex justify-end gap-2">
+              <button
+                className="px-4 py-2 rounded bg-gray-200 text-gray-700"
+                onClick={() => setShowComplaintModal(false)}
+                disabled={complaintLoading}
+              >
+                Отмена
+              </button>
+              <button
+                className="px-4 py-2 rounded bg-red-500 text-white font-semibold disabled:opacity-60"
+                onClick={handleSendComplaint}
+                disabled={complaintLoading || !complaintText.trim()}
+              >
+                {complaintLoading ? "Отправка..." : "Отправить"}
+              </button>
+            </div>
           </div>
         </div>
-      </Modal>
+      )}
 
       {/* Модалка для отзыва */}
       <Modal isOpen={showReviewModal} onClose={() => setShowReviewModal(false)}>
@@ -757,6 +761,16 @@ export default function ChatPage() {
             height: 100%;
             object-fit: cover;
             display: block;
+          }
+        }
+        html, body {
+          background: #fff !important;
+          color: #111 !important;
+        }
+        @media (prefers-color-scheme: dark) {
+          html, body {
+            background: #fff !important;
+            color: #111 !important;
           }
         }
       `}</style>
