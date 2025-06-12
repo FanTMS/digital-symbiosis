@@ -239,7 +239,6 @@ const ServiceDetailPage: React.FC = () => {
             onClick={() => navigate("/services")}
             className="mr-2"
           />
-
           <div className="bg-gray-200 h-6 w-48 rounded animate-pulse"></div>
         </div>
         <div className="bg-gray-200 h-40 w-full rounded animate-pulse mb-4"></div>
@@ -256,9 +255,7 @@ const ServiceDetailPage: React.FC = () => {
         <p className="text-gray-600 mb-4 text-center">
           Запрашиваемая услуга не существует или была удалена
         </p>
-        <Button onClick={() => navigate("/services")}>
-          Вернуться к списку услуг
-        </Button>
+        <Button onClick={() => navigate("/services")}>Вернуться к списку услуг</Button>
       </div>
     );
   }
@@ -269,6 +266,7 @@ const ServiceDetailPage: React.FC = () => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
       className="px-4 py-6 min-h-screen"
+      style={{ paddingBottom: '110px' }}
     >
       <div className="flex items-center mb-4">
         <ChevronLeft
