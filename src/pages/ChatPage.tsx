@@ -50,6 +50,12 @@ export default function ChatPage() {
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [readIds, setReadIds] = useState<Set<string>>(new Set());
+  const [complaintFile, setComplaintFile] = useState<File | null>(null);
+  const [complaintFilePreview, setComplaintFilePreview] = useState<string | null>(null);
+  const complaintFileInputRef = useRef<HTMLInputElement>(null);
+  const [chatFile, setChatFile] = useState<File | null>(null);
+  const [chatFilePreview, setChatFilePreview] = useState<string | null>(null);
+  const chatFileInputRef = useRef<HTMLInputElement>(null);
 
   const fetchMessages = async (before?: string) => {
     let query = supabase
@@ -151,25 +157,92 @@ export default function ChatPage() {
   }, [messages, chatId, user?.id]);
 
   const send = async () => {
-    if (input.trim() && chatId && user?.id) {
-      await chatApi.sendMessage(chatId, user.id, input);
+    if ((!input.trim() && !chatFile) || !chatId || !user?.id) return;
+    setUploading(true);
+    let attachmentUrl = null;
+    let attachmentType = null;
+    let messageId = null;
+    try {
+      if (chatFile) {
+        const filePath = `user-${user.id}/${Date.now()}-${chatFile.name}`;
+        const { error: uploadError } = await supabase.storage
+          .from("chat-attachments")
+          .upload(filePath, chatFile);
+        if (uploadError) throw uploadError;
+        const { data: publicUrlData } = supabase.storage
+          .from("chat-attachments")
+          .getPublicUrl(filePath);
+        attachmentUrl = publicUrlData?.publicUrl;
+        attachmentType = chatFile.type.startsWith("image/") ? "image" : "file";
+      }
+      // Создаём сообщение
+      const { data: message, error: msgError } = await supabase
+        .from("messages")
+        .insert({
+          chat_id: chatId,
+          sender_id: user.id,
+          content: input.trim(),
+          meta: attachmentUrl ? { attachment: true } : {},
+        })
+        .select()
+        .single();
+      if (msgError) throw msgError;
+      messageId = message.id;
+      // Если есть вложение — добавляем attachment
+      if (attachmentUrl && messageId) {
+        await supabase.from("attachments").insert({
+          message_id: messageId,
+          url: attachmentUrl,
+          type: attachmentType,
+          size: chatFile?.size,
+        });
+      }
+      fetchMessages().then((msgs) => setMessages(msgs.reverse()));
       setInput("");
-      chatApi.listMessages(chatId).then(setMessages);
+      setChatFile(null);
+      setChatFilePreview(null);
+    } catch (err) {
+      alert("Ошибка отправки сообщения");
     }
+    setUploading(false);
   };
 
   const handleSendComplaint = async () => {
     if (!complaintText.trim() || !chatId || !user?.id || !otherUser?.id) return;
     setComplaintLoading(true);
+    let attachmentUrl = null;
+    let attachmentType = null;
+    if (complaintFile) {
+      try {
+        const filePath = `complaints/user-${user.id}/${Date.now()}-${complaintFile.name}`;
+        const { error: uploadError } = await supabase.storage
+          .from("chat-attachments")
+          .upload(filePath, complaintFile);
+        if (uploadError) throw uploadError;
+        const { data: publicUrlData } = supabase.storage
+          .from("chat-attachments")
+          .getPublicUrl(filePath);
+        attachmentUrl = publicUrlData?.publicUrl;
+        attachmentType = complaintFile.type.startsWith("image/") ? "image" : "file";
+      } catch (err) {
+        alert("Ошибка загрузки файла для жалобы");
+        setComplaintLoading(false);
+        return;
+      }
+    }
     await supabase.from("complaints").insert({
       chat_id: chatId,
       from_user_id: user.id,
       to_user_id: otherUser.id,
       message: complaintText.trim(),
+      attachment_url: attachmentUrl,
+      attachment_type: attachmentType,
     });
     setComplaintLoading(false);
     setShowComplaintModal(false);
     setComplaintText("");
+    setComplaintFile(null);
+    setComplaintFilePreview(null);
     alert("Жалоба отправлена!");
   };
 
@@ -200,43 +273,16 @@ export default function ChatPage() {
   }
 
   // Функция для загрузки вложения
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !chatId || !user?.id) return;
-    setUploading(true);
-    try {
-      const filePath = `user-${user.id}/${Date.now()}-${file.name}`;
-      const { error: uploadError } = await supabase.storage
-        .from("chat-attachments")
-        .upload(filePath, file);
-      if (uploadError) throw uploadError;
-      const { data: publicUrlData } = supabase.storage
-        .from("chat-attachments")
-        .getPublicUrl(filePath);
-      const publicUrl = publicUrlData?.publicUrl;
-      // Создаём сообщение с вложением
-      const { data: message, error: msgError } = await supabase
-        .from("messages")
-        .insert({
-          chat_id: chatId,
-          sender_id: user.id,
-          content: "",
-          meta: { attachment: true },
-        })
-        .select()
-        .single();
-      if (msgError) throw msgError;
-      await supabase.from("attachments").insert({
-        message_id: message.id,
-        url: publicUrl,
-        type: file.type.startsWith("image/") ? "image" : "file",
-        size: file.size,
-      });
-      fetchMessages().then((msgs) => setMessages(msgs.reverse()));
-    } catch (err) {
-      alert("Ошибка загрузки файла");
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    setChatFile(file);
+    if (file && file.type.startsWith("image/")) {
+      const reader = new FileReader();
+      reader.onload = ev => setChatFilePreview(ev.target?.result as string);
+      reader.readAsDataURL(file);
+    } else {
+      setChatFilePreview(null);
     }
-    setUploading(false);
   };
 
   const loadMore = async () => {
@@ -369,12 +415,31 @@ export default function ChatPage() {
       {/* Панель ввода */}
       <div className="chat-input-bar-container">
         <form className="chat-input-bar" onSubmit={e => { e.preventDefault(); send(); }}>
-          <button type="button" className="chat-attach-btn" onClick={() => fileInputRef.current?.click()} title="Прикрепить файл" disabled={uploading}>
+          <button type="button" className="chat-attach-btn" onClick={() => chatFileInputRef.current?.click()} title="Прикрепить файл" disabled={uploading}>
             <svg width="22" height="22" fill="none" stroke="#06b6d4" strokeWidth="2"><circle cx="11" cy="11" r="9"/><path d="M7 13V9a4 4 0 018 0v4a4 4 0 01-8 0V9"/></svg>
           </button>
-          <input type="file" ref={fileInputRef} className="hidden" onChange={handleFileChange} disabled={uploading} />
+          <input type="file" ref={chatFileInputRef} className="hidden" onChange={handleFileChange} disabled={uploading} />
+          {/* Предпросмотр выбранного файла */}
+          {chatFile && (
+            <span className="inline-flex items-center ml-2">
+              {chatFile.type.startsWith("image/") && chatFilePreview ? (
+                <img src={chatFilePreview} alt="preview" className="w-12 h-12 object-cover rounded border mr-2" />
+              ) : (
+                <span className="text-sm text-gray-700 mr-2">{chatFile.name}</span>
+              )}
+              <button
+                type="button"
+                className="ml-1 text-red-500 hover:text-red-700 text-lg"
+                onClick={() => { setChatFile(null); setChatFilePreview(null); }}
+                title="Удалить файл"
+                disabled={uploading}
+              >
+                ×
+              </button>
+            </span>
+          )}
           <input className="chat-input" value={input} onChange={e => setInput(e.target.value)} placeholder="Введите сообщение..." autoComplete="off" disabled={uploading} style={{ minHeight: 40, maxHeight: 80, borderRadius: 9999 }} />
-          <button type="submit" className="chat-send-btn" disabled={!input.trim() || uploading} title="Отправить" style={{ minHeight: 40, minWidth: 40, borderRadius: '50%' }}>
+          <button type="submit" className="chat-send-btn" disabled={(!input.trim() && !chatFile) || uploading} title="Отправить" style={{ minHeight: 40, minWidth: 40, borderRadius: '50%' }}>
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 21L23 12L2 3V10L17 12L2 14V21Z" fill="#06b6d4"/></svg>
           </button>
         </form>
@@ -400,6 +465,52 @@ export default function ChatPage() {
               disabled={complaintLoading}
               required
             />
+            <div className="mb-3">
+              <button
+                type="button"
+                className="px-3 py-1 rounded bg-cyan-100 text-cyan-700 hover:bg-cyan-200 mr-2"
+                onClick={() => complaintFileInputRef.current?.click()}
+                disabled={complaintLoading}
+              >
+                {complaintFile ? "Заменить файл" : "Прикрепить файл/скриншот"}
+              </button>
+              <input
+                type="file"
+                ref={complaintFileInputRef}
+                className="hidden"
+                accept="image/*,application/pdf,.doc,.docx,.xls,.xlsx,.txt,.zip,.rar"
+                onChange={e => {
+                  const file = e.target.files?.[0] || null;
+                  setComplaintFile(file);
+                  if (file && file.type.startsWith("image/")) {
+                    const reader = new FileReader();
+                    reader.onload = ev => setComplaintFilePreview(ev.target?.result as string);
+                    reader.readAsDataURL(file);
+                  } else {
+                    setComplaintFilePreview(null);
+                  }
+                }}
+                disabled={complaintLoading}
+              />
+              {complaintFile && (
+                <span className="inline-flex items-center ml-2">
+                  {complaintFile.type.startsWith("image/") && complaintFilePreview ? (
+                    <img src={complaintFilePreview} alt="preview" className="w-16 h-16 object-cover rounded border mr-2" />
+                  ) : (
+                    <span className="text-sm text-gray-700 mr-2">{complaintFile.name}</span>
+                  )}
+                  <button
+                    type="button"
+                    className="ml-1 text-red-500 hover:text-red-700 text-lg"
+                    onClick={() => { setComplaintFile(null); setComplaintFilePreview(null); }}
+                    title="Удалить файл"
+                    disabled={complaintLoading}
+                  >
+                    ×
+                  </button>
+                </span>
+              )}
+            </div>
             <div className="flex justify-end gap-2">
               <button
                 className="px-4 py-2 rounded bg-gray-200 text-gray-700"
@@ -495,6 +606,11 @@ export default function ChatPage() {
                   .eq("id", reviewOrderId)
                   .single();
                 if (!order) {
+                  setReviewLoading(false);
+                  return;
+                }
+                if (order.status !== "completed") {
+                  alert("Оставлять отзыв можно только после завершения заказа.");
                   setReviewLoading(false);
                   return;
                 }

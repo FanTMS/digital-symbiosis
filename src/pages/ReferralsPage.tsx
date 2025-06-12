@@ -180,6 +180,11 @@ const ReferralsPage: React.FC = () => {
     window.location.reload();
   };
 
+  // --- СЧИТАЕМ СУММУ БОНУСОВ ---
+  const totalBonuses = userReferrals.filter(r => r.bonus_received).length * 20; // например, 20 кр. за каждого активного
+  const totalInvited = userReferrals.length;
+  const totalActive = userReferrals.filter(r => r.status === 'active').length;
+
   return (
     <div className="pb-16 pt-2">
       <div className="px-4">
@@ -293,6 +298,18 @@ const ReferralsPage: React.FC = () => {
           </div>
         </motion.div>
 
+        {/* --- ДОБАВЛЯЕМ БЛОК ВИЗУАЛИЗАЦИИ --- */}
+        <div className="mb-6">
+          <div className="flex items-center gap-4 mb-2">
+            <Gift size={28} className="text-green-500" />
+            <div className="text-lg font-bold">Реферальные бонусы: <span className="text-green-600">{totalBonuses} кр.</span></div>
+          </div>
+          <div className="w-full bg-gray-200 rounded-full h-3 mb-2">
+            <div className="bg-green-400 h-3 rounded-full" style={{ width: `${totalActive / (totalInvited || 1) * 100}%` }} />
+          </div>
+          <div className="text-xs text-gray-500 mb-2">{totalActive} из {totalInvited} приглашённых получили бонус</div>
+        </div>
+
         {/* Referrals list */}
         <h2 className="font-semibold mb-3">Приглашённые по вашему промокоду</h2>
         {loading ? (
@@ -377,6 +394,34 @@ const ReferralsPage: React.FC = () => {
             </p>
           </motion.div>
         )}
+
+        {/* Список приглашённых */}
+        <div className="bg-white rounded-lg shadow-card overflow-hidden mb-6">
+          <div className="p-5">
+            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2"><Users size={20}/> Приглашённые</h2>
+            {userReferrals.length === 0 ? (
+              <div className="text-gray-400">Пока нет приглашённых</div>
+            ) : (
+              <ul className="space-y-3">
+                {userReferrals.map((r) => (
+                  <li key={r.id} className="flex items-center gap-3 p-2 rounded-lg border border-gray-100">
+                    <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+                      <Award size={22} className={r.bonus_received ? "text-green-500" : "text-gray-300"} />
+                    </div>
+                    <div className="flex-1">
+                      <div className="font-medium">{r.referred?.name || `ID ${r.referred_id}`}</div>
+                      <div className="text-xs text-gray-500">{formatDate(r.created_at)}</div>
+                    </div>
+                    <div className={`text-xs font-bold px-2 py-1 rounded ${getReferralStatusInfo(r.status).bgColor} ${getReferralStatusInfo(r.status).color}`}>
+                      {getReferralStatusInfo(r.status).label}
+                    </div>
+                    {r.bonus_received && <Gift size={18} className="text-green-500 ml-2" title="Бонус получен" />}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

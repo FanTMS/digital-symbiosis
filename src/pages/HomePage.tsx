@@ -8,6 +8,7 @@ import { supabase } from "../lib/supabase";
 import ServiceCard from "../components/ui/ServiceCard";
 import type { ServiceWithUser } from "../types/models";
 import BalanceTopupBar from "../components/ui/BalanceTopupBar";
+import PromoBanner from "../components/ui/PromoBanner";
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
@@ -128,6 +129,24 @@ const HomePage: React.FC = () => {
 
   return (
     <div className="pb-16 pt-2 sm:pb-20 sm:pt-4">
+      {/* Промо-баннеры */}
+      <div className="px-2 sm:px-4 mb-4">
+        <PromoBanner
+          title="Весенний бонус!"
+          text="Пополните баланс на 500 кр. и получите +100 кр. в подарок до 30 апреля."
+          image="/promo-spring.png"
+          link="/topup"
+          color="linear-gradient(90deg,#f0fdfa,#bae6fd)"
+        />
+        <PromoBanner
+          title="Обновление платформы"
+          text="Добавлены новые категории услуг и улучшен поиск исполнителей."
+          image="/promo-update.png"
+          link="/news"
+          color="linear-gradient(90deg,#f0fdfa,#e0e7ff)"
+        />
+      </div>
+
       {/* Header */}
       <div className="px-2 sm:px-4 mb-4 sm:mb-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 sm:mb-4 gap-2 sm:gap-0">

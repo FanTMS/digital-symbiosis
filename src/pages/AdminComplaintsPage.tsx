@@ -54,9 +54,31 @@ const AdminComplaintsPage: React.FC = () => {
               <div className="mb-2">
                 <span className="font-semibold">Текст жалобы:</span>
               </div>
-              <div className="bg-gray-100 dark:bg-gray-700 rounded p-2 text-sm">
+              <div className="bg-gray-100 dark:bg-gray-700 rounded p-2 text-sm mb-2">
                 {c.message}
               </div>
+              {/* Вложение к жалобе */}
+              {c.attachment_url && (
+                <div className="mb-2">
+                  <span className="font-semibold">Вложение:</span>{' '}
+                  {c.attachment_type === 'image' ? (
+                    <img
+                      src={c.attachment_url}
+                      alt="Вложение"
+                      className="mt-2 max-w-xs max-h-48 rounded border"
+                    />
+                  ) : (
+                    <a
+                      href={c.attachment_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 underline ml-2"
+                    >
+                      Скачать файл
+                    </a>
+                  )}
+                </div>
+              )}
             </div>
           ))}
         </div>
