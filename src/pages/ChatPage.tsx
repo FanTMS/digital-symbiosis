@@ -310,6 +310,13 @@ export default function ChatPage() {
     </div>
   );
 
+  useEffect(() => {
+    document.body.classList.add('hide-tabbar');
+    return () => {
+      document.body.classList.remove('hide-tabbar');
+    };
+  }, []);
+
   if (loading) {
     return (
       <>
