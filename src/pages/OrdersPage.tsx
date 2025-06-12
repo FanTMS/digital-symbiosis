@@ -171,7 +171,7 @@ const OrdersPage: React.FC = () => {
   }
 
   return (
-    <div className="pb-16 pt-2">
+    <div className="pb-20 sm:pb-24 pt-2">
       <div className="px-4">
         <h1 className="text-2xl font-bold mb-4">Мои заказы</h1>
 

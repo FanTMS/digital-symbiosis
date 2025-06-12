@@ -269,8 +269,7 @@ const ServiceDetailPage: React.FC = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
-      className="px-4 py-6 min-h-screen"
-      style={{ paddingBottom: '120px' }}
+      className="px-4 py-6 min-h-screen pb-20 sm:pb-24"
     >
       <style>{`
         @media (max-width: 600px) {

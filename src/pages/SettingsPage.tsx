@@ -182,7 +182,7 @@ const SettingsPage: React.FC = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
-      className="pb-16 pt-2"
+      className="pb-20 sm:pb-24 pt-2"
     >
       <div className="px-4">
         <h1 className="text-2xl font-bold mb-6">Настройки</h1>

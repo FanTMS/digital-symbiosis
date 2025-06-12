@@ -210,7 +210,7 @@ const AdminDashboardPage: React.FC = () => {
   }
 
   return (
-    <div className="p-2 md:p-6 max-w-6xl mx-auto">
+    <div className="p-2 md:p-6 max-w-6xl mx-auto pb-20 sm:pb-24">
       {/* Шапка */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
         <h1 className="text-3xl font-bold flex items-center gap-2">
@@ -469,14 +469,17 @@ const AdminDashboardPage: React.FC = () => {
               ) : (
                 <div className="space-y-4">
                   {paginatedComplaints
-                    .filter(c => complaintStatus === 'all' || c.status === complaintStatus)
+                    .filter(c => complaintStatus === 'all' || (c.status || 'new') === complaintStatus)
                     .map((c) => (
                     <div
                       key={c.id}
                       className="border rounded-lg p-4 bg-white shadow"
                     >
                       <div className="mb-2 text-sm text-gray-500">
-                        {new Date(c.created_at).toLocaleString()} <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-gray-100 border font-medium capitalize">{c.status === 'new' ? 'Новая' : c.status === 'reviewed' ? 'Рассмотрена' : 'Отклонена'}</span>
+                        {new Date(c.created_at).toLocaleString()} 
+                        <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-gray-100 border font-medium capitalize">
+                          {((c.status || 'new') === 'new') ? 'Новая' : (c.status === 'reviewed' ? 'Рассмотрена' : 'Отклонена')}
+                        </span>
                       </div>
                       <div className="mb-2">
                         <span className="font-semibold">От:</span> {c.from_user_id} <span className="ml-2 font-semibold">На:</span> {c.to_user_id}
@@ -493,31 +496,22 @@ const AdminDashboardPage: React.FC = () => {
                       <div className="bg-gray-100 rounded p-2 text-sm mb-2">
                         {c.message}
                       </div>
-                      {/* Кнопка отклонить */}
-                      {c.status === 'new' && (
-                        <div className="flex gap-2 mt-2">
-                          <Button
-                            size="sm"
-                            variant="danger"
-                            onClick={async () => {
-                              await supabase.from('complaints').update({ status: 'rejected' }).eq('id', c.id);
-                              setComplaints(complaints.map(item => item.id === c.id ? { ...item, status: 'rejected' } : item));
-                            }}
-                          >
-                            Отклонить
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={async () => {
-                              await supabase.from('complaints').update({ status: 'reviewed' }).eq('id', c.id);
-                              setComplaints(complaints.map(item => item.id === c.id ? { ...item, status: 'reviewed' } : item));
-                            }}
-                          >
-                            Отметить как рассмотренную
-                          </Button>
-                        </div>
-                      )}
+                      <div className="flex gap-2 mt-2 items-center">
+                        <span className="text-sm">Статус:</span>
+                        <select
+                          className="rounded border px-2 py-1 text-sm"
+                          value={c.status || 'new'}
+                          onChange={async (e) => {
+                            const newStatus = e.target.value;
+                            await supabase.from('complaints').update({ status: newStatus }).eq('id', c.id);
+                            setComplaints(complaints.map(item => item.id === c.id ? { ...item, status: newStatus } : item));
+                          }}
+                        >
+                          <option value="new">Новая</option>
+                          <option value="reviewed">Рассмотрена</option>
+                          <option value="rejected">Отклонена</option>
+                        </select>
+                      </div>
                     </div>
                   ))}
                   {complaints.length > complaintsPerPage && (

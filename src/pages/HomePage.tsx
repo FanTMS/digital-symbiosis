@@ -146,7 +146,7 @@ const HomePage: React.FC = () => {
   };
 
   return (
-    <div className="pb-16 pt-2 sm:pb-20 sm:pt-4">
+    <div className="pb-20 sm:pb-24 pt-2">
       {/* Промо-баннер */}
       <div className="px-2 sm:px-4 mb-4">
         {promoBanner && (

@@ -365,7 +365,7 @@ export default function ChatPage() {
       </header>
 
       {/* Сообщения */}
-      <main className="chat-messages-list" id="chat-messages-list">
+      <main className="chat-messages-list pb-20 sm:pb-24" id="chat-messages-list">
         {messages.map((msg, idx) => {
           const isOwn = msg.sender_id === user?.id;
           return (
