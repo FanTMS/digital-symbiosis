@@ -379,7 +379,7 @@ const AdminDashboardPage: React.FC = () => {
                     <div className="mb-2">
                       <b>Статус:</b> {selectedUser.blocked ? "Заблокирован" : "Активен"}
                     </div>
-                    <div className="flex gap-2 mt-4">
+                    <div className="flex flex-col gap-2 mt-4">
                       <Button
                         size="sm"
                         variant={selectedUser.blocked ? "primary" : "danger"}
@@ -394,6 +394,34 @@ const AdminDashboardPage: React.FC = () => {
                         }}
                       >
                         {selectedUser.blocked ? "Разблокировать" : "Заблокировать"}
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={async () => {
+                          if (window.confirm("Сбросить рейтинг пользователя?")) {
+                            await supabase.from("users").update({ rating: 0 }).eq("id", selectedUser.id);
+                            setSelectedUser({ ...selectedUser, rating: 0 });
+                            setUsers(users.map((u) => u.id === selectedUser.id ? { ...u, rating: 0 } : u));
+                            setFilteredUsers(filteredUsers.map((u) => u.id === selectedUser.id ? { ...u, rating: 0 } : u));
+                          }
+                        }}
+                      >
+                        Сбросить рейтинг
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="danger"
+                        onClick={async () => {
+                          if (window.confirm("Удалить профиль пользователя? Это действие необратимо!")) {
+                            await supabase.from("users").delete().eq("id", selectedUser.id);
+                            setShowUserModal(false);
+                            setUsers(users.filter((u) => u.id !== selectedUser.id));
+                            setFilteredUsers(filteredUsers.filter((u) => u.id !== selectedUser.id));
+                          }
+                        }}
+                      >
+                        Удалить профиль
                       </Button>
                       <Button size="sm" variant="outline" onClick={() => setShowUserModal(false)}>
                         Закрыть
