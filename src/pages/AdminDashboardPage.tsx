@@ -464,10 +464,19 @@ const AdminDashboardPage: React.FC = () => {
                       <div className="bg-gray-100 rounded p-2 text-sm mb-2">
                         {c.message}
                       </div>
-                      <Button size="sm" variant="danger" onClick={() => {
-                        setSelectedUser({ id: c.to_user_id });
-                        setShowUserModal(true);
-                      }}>
+                      <Button
+                        size="sm"
+                        variant="danger"
+                        onClick={async () => {
+                          const { data: userData } = await supabase
+                            .from("users")
+                            .select("*")
+                            .eq("id", c.to_user_id)
+                            .single();
+                          setSelectedUser(userData);
+                          setShowUserModal(true);
+                        }}
+                      >
                         Действия с пользователем
                       </Button>
                     </div>
