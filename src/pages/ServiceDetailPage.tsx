@@ -282,12 +282,7 @@ const ServiceDetailPage: React.FC = () => {
             onClick={() => navigate("/services")}
             className="mr-2"
           />
-
-          <div className="bg-gray-200 h-6 w-48 rounded animate-pulse"></div>
         </div>
-        <div className="bg-gray-200 h-40 w-full rounded animate-pulse mb-4"></div>
-        <div className="bg-gray-200 h-20 w-full rounded animate-pulse mb-4"></div>
-        <div className="bg-gray-200 h-40 w-full rounded animate-pulse"></div>
         <div className="flex items-center mb-4">
           <span className="inline-flex items-center text-xs font-semibold bg-blue-100 text-blue-800 py-1 px-3 rounded-full shadow-sm">
             <Award size={14} className="mr-1" />
