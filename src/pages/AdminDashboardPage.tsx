@@ -71,6 +71,11 @@ const AdminDashboardPage: React.FC = () => {
   const [serviceLoading, setServiceLoading] = useState(false);
   const [archivedServices, setArchivedServices] = useState<any[]>([]);
   const [archivedLoading, setArchivedLoading] = useState(false);
+  const [userProfileLoading, setUserProfileLoading] = useState(false);
+  const [userProfileError, setUserProfileError] = useState("");
+  const [complaintsPage, setComplaintsPage] = useState(1);
+  const complaintsPerPage = 10;
+  const paginatedComplaints = complaints.slice((complaintsPage - 1) * complaintsPerPage, complaintsPage * complaintsPerPage);
 
   useEffect(() => {
     if (!user || user.role !== "admin") return;
@@ -180,6 +185,10 @@ const AdminDashboardPage: React.FC = () => {
         });
     }
   }, [activeTab, user]);
+
+  useEffect(() => {
+    setComplaintsPage(1);
+  }, [complaints]);
 
   const handleDeleteService = async (id: string) => {
     if (!window.confirm("Удалить услугу?")) return;
@@ -418,6 +427,7 @@ const AdminDashboardPage: React.FC = () => {
                             setShowUserModal(false);
                             setUsers(users.filter((u) => u.id !== selectedUser.id));
                             setFilteredUsers(filteredUsers.filter((u) => u.id !== selectedUser.id));
+                            setComplaints(complaints.filter((c) => c.to_user_id !== selectedUser.id));
                           }
                         }}
                       >
@@ -441,7 +451,7 @@ const AdminDashboardPage: React.FC = () => {
                 <div className="text-gray-500">Жалоб нет</div>
               ) : (
                 <div className="space-y-4">
-                  {complaints.map((c) => (
+                  {paginatedComplaints.map((c) => (
                     <div
                       key={c.id}
                       className="border rounded-lg p-4 bg-white shadow"
@@ -468,11 +478,21 @@ const AdminDashboardPage: React.FC = () => {
                         size="sm"
                         variant="danger"
                         onClick={async () => {
-                          const { data: userData } = await supabase
+                          setUserProfileLoading(true);
+                          setUserProfileError("");
+                          const { data: userData, error } = await supabase
                             .from("users")
                             .select("*")
                             .eq("id", c.to_user_id)
                             .single();
+                          setUserProfileLoading(false);
+                          if (error || !userData) {
+                            setUserProfileError("Пользователь не найден или был удалён.");
+                            setSelectedUser(null);
+                            setShowUserModal(false);
+                            alert("Пользователь не найден или был удалён.");
+                            return;
+                          }
                           setSelectedUser(userData);
                           setShowUserModal(true);
                         }}
@@ -481,6 +501,17 @@ const AdminDashboardPage: React.FC = () => {
                       </Button>
                     </div>
                   ))}
+                  {complaints.length > complaintsPerPage && (
+                    <div className="flex justify-center gap-4 mt-6">
+                      <Button size="sm" variant="outline" disabled={complaintsPage === 1} onClick={() => setComplaintsPage(complaintsPage - 1)}>
+                        Назад
+                      </Button>
+                      <span className="px-2 py-1 text-sm">Страница {complaintsPage} из {Math.ceil(complaints.length / complaintsPerPage)}</span>
+                      <Button size="sm" variant="outline" disabled={complaintsPage === Math.ceil(complaints.length / complaintsPerPage)} onClick={() => setComplaintsPage(complaintsPage + 1)}>
+                        Вперёд
+                      </Button>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -751,6 +782,14 @@ const AdminDashboardPage: React.FC = () => {
           {activeTab === "referrals" && <ReferralsAdminPanel />}
         </motion.div>
       </AnimatePresence>
+      {showUserModal && userProfileLoading && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4 p-6 relative text-center">
+            <div className="text-lg font-semibold mb-2">Загрузка профиля...</div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500 mx-auto"></div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

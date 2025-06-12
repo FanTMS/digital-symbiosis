@@ -18,13 +18,6 @@ import { ordersApi } from "../lib/api/orders";
 import Modal from "../components/ui/Modal";
 import { motion, AnimatePresence } from "framer-motion";
 
-// Для TS: расширяем window для отладки
-declare global {
-  interface Window {
-    __DEBUG_CHAT_PAGE?: any;
-  }
-}
-
 export default function ChatPage() {
   const { chatId } = useParams<{ chatId: string }>();
   const { user } = useUser();
