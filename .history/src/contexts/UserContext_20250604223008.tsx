@@ -14,7 +14,7 @@ const UserContext = createContext<UserContextType>({
   user: null,
   loading: true,
   error: null,
-  refetch: async () => { },
+  refetch: async () => {},
 });
 
 // Выносим хук useUser в именованный экспорт
@@ -32,25 +32,6 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   const [error, setError] = useState<Error | null>(null);
   const { user: telegramUser, error: telegramError } = useTelegram();
 
-  // Функция для загрузки Telegram-аватарки в Supabase Storage
-  const uploadTelegramAvatarToSupabase = async (photoUrl: string, userId: number): Promise<string | null> => {
-    try {
-      const response = await fetch(photoUrl);
-      const blob = await response.blob();
-      const fileExt = photoUrl.split('.').pop()?.split('?')[0] || 'jpg';
-      const fileName = `avatars/${userId}_${Date.now()}.${fileExt}`;
-      const { error: uploadError } = await supabase.storage
-        .from('avatars')
-        .upload(fileName, blob, { upsert: true });
-      if (uploadError) throw uploadError;
-      const { data: publicUrlData } = supabase.storage.from('avatars').getPublicUrl(fileName);
-      return publicUrlData?.publicUrl || null;
-    } catch (err) {
-      console.error('Ошибка загрузки аватарки:', err);
-      return null;
-    }
-  };
-
   useEffect(() => {
     // Если есть ошибка в Telegram авторизации, прокидываем её
     if (telegramError) {
@@ -62,7 +43,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     if (telegramUser?.id) {
       const fetchUser = async () => {
         try {
-          let { data, error: userError } = await supabase
+          const { data, error: userError } = await supabase
             .from("users")
             .select("*")
             .eq("id", telegramUser.id)
@@ -70,12 +51,6 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
 
           // Если пользователь не найден, создаём его
           if (userError && userError.code === "PGRST116") {
-            let avatarUrl = telegramUser.photo_url || null;
-            // Если есть фото Telegram, загружаем в Supabase Storage
-            if (telegramUser.photo_url) {
-              const uploadedUrl = await uploadTelegramAvatarToSupabase(telegramUser.photo_url, telegramUser.id);
-              if (uploadedUrl) avatarUrl = uploadedUrl;
-            }
             const { error: createError } = await supabase.from("users").insert({
               id: telegramUser.id,
               name: [telegramUser.first_name, telegramUser.last_name]
@@ -84,7 +59,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
               username: telegramUser.username || `user_${telegramUser.id}`,
               joined_at: new Date().toISOString(),
               updated_at: new Date().toISOString(),
-              avatar_url: avatarUrl,
+              avatar_url: telegramUser.photo_url,
             });
             if (createError) throw createError;
             // После создания повторяем запрос
@@ -102,16 +77,6 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
 
           if (userError) throw userError;
           if (!data) throw new Error("User not found");
-
-          // Если у пользователя есть Telegram photo_url, а avatar_url отсутствует или это ссылка на Telegram
-          if (telegramUser.photo_url && (!data.avatar_url || data.avatar_url.includes('t.me/i/userpic'))) {
-            const uploadedUrl = await uploadTelegramAvatarToSupabase(telegramUser.photo_url, telegramUser.id);
-            if (uploadedUrl && uploadedUrl !== data.avatar_url) {
-              // Обновляем профиль пользователя
-              await supabase.from('users').update({ avatar_url: uploadedUrl }).eq('id', telegramUser.id);
-              data.avatar_url = uploadedUrl;
-            }
-          }
 
           setUser(data);
           setError(null);
