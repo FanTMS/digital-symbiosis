@@ -344,7 +344,7 @@ export default function ChatPage() {
       {/* Header */}
       <header className="chat-header">
         <button className="chat-header-back" onClick={() => navigate(-1)}>
-          <svg width="24" height="24" fill="none" stroke="#06b6d4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
+          <svg width="24" height="24" fill="none" stroke="#06b6d4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
         </button>
         <div className="chat-header-avatar">
           {otherUser?.avatar_url ? (
@@ -359,7 +359,7 @@ export default function ChatPage() {
         </div>
         <div className="chat-header-actions">
           <button className="chat-header-action" onClick={() => setShowComplaintModal(true)} title="Пожаловаться">
-            <svg width="20" height="20" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="10" cy="10" r="9" /><line x1="10" y1="6" x2="10" y2="10" /><circle cx="10" cy="14" r="1" /></svg>
+            <svg width="20" height="20" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="10" cy="10" r="9"/><line x1="10" y1="6" x2="10" y2="10"/><circle cx="10" cy="14" r="1"/></svg>
           </button>
         </div>
       </header>
@@ -369,8 +369,8 @@ export default function ChatPage() {
         {messages.map((msg, idx) => {
           const isOwn = msg.sender_id === user?.id;
           return (
-            <div key={msg.id} className={`chat-message-row ${isOwn ? 'own' : 'other'}`}>
-              <div className={`chat-message-bubble ${isOwn ? 'own' : 'other'}`}>
+            <div key={msg.id} className={`chat-message-row ${isOwn ? 'own' : 'other'}`}> 
+              <div className={`chat-message-bubble ${isOwn ? 'own' : 'other'}`}> 
                 {/* Вложения */}
                 {msg.attachments && msg.attachments.length > 0 && (
                   <div className="chat-message-attachment">
@@ -378,7 +378,7 @@ export default function ChatPage() {
                       <img src={msg.attachments[0].url} alt="Фото" className="chat-message-img" />
                     ) : (
                       <a href={msg.attachments[0].url} target="_blank" rel="noopener noreferrer" className="chat-message-file">
-                        <svg width="18" height="18" fill="none" stroke="#06b6d4" strokeWidth="2"><rect x="3" y="3" width="12" height="12" rx="2" /><path d="M7 7h6M7 11h6M7 15h6" /></svg>
+                        <svg width="18" height="18" fill="none" stroke="#06b6d4" strokeWidth="2"><rect x="3" y="3" width="12" height="12" rx="2"/><path d="M7 7h6M7 11h6M7 15h6"/></svg>
                         <span>{decodeURIComponent(msg.attachments[0].url.split("/").pop()?.split("?")[0] || "Файл")}</span>
                       </a>
                     )}
@@ -401,7 +401,7 @@ export default function ChatPage() {
       <div className="chat-input-bar-container">
         <form className="chat-input-bar" onSubmit={e => { e.preventDefault(); send(); }}>
           <button type="button" className="chat-attach-btn" onClick={() => chatFileInputRef.current?.click()} title="Прикрепить файл" disabled={uploading}>
-            <svg width="22" height="22" fill="none" stroke="#06b6d4" strokeWidth="2"><circle cx="11" cy="11" r="9" /><path d="M7 13V9a4 4 0 018 0v4a4 4 0 01-8 0V9" /></svg>
+            <svg width="22" height="22" fill="none" stroke="#06b6d4" strokeWidth="2"><circle cx="11" cy="11" r="9"/><path d="M7 13V9a4 4 0 018 0v4a4 4 0 01-8 0V9"/></svg>
           </button>
           <input type="file" ref={chatFileInputRef} className="hidden" onChange={handleFileChange} disabled={uploading} />
           {/* Предпросмотр выбранного файла */}
@@ -425,7 +425,7 @@ export default function ChatPage() {
           )}
           <input className="chat-input" value={input} onChange={e => setInput(e.target.value)} placeholder="Введите сообщение..." autoComplete="off" disabled={uploading} style={{ minHeight: 40, maxHeight: 80, borderRadius: 9999 }} />
           <button type="submit" className="chat-send-btn" disabled={(!input.trim() && !chatFile) || uploading} title="Отправить" style={{ minHeight: 40, minWidth: 40, borderRadius: '50%' }}>
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 21L23 12L2 3V10L17 12L2 14V21Z" fill="#06b6d4" /></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 21L23 12L2 3V10L17 12L2 14V21Z" fill="#06b6d4"/></svg>
           </button>
         </form>
       </div>
@@ -780,15 +780,13 @@ export default function ChatPage() {
         }
         .chat-input-bar-container {
           position: fixed;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: rgba(255, 255, 255, 0.7);
-          backdrop-filter: blur(10px);
-          border-top: 1px solid rgba(0, 0, 0, 0.05);
+          left: 0; right: 0; bottom: 0;
+          width: 100vw;
+          background: #fff !important;
+          opacity: 1 !important;
           z-index: 50;
-          padding: 12px 16px;
-          padding-bottom: calc(32px + env(safe-area-inset-bottom, 0));
+          box-shadow: 0 4px 24px 0 rgba(0,160,255,0.07);
+          padding-bottom: env(safe-area-inset-bottom, 0);
         }
         .chat-input-bar {
           display: flex;
