@@ -154,14 +154,14 @@ const ServicesPage: React.FC = () => {
     label: string;
     emoji: string;
   }[] = [
-      { id: "all", label: "Все", emoji: "🔍" },
-      { id: "education", label: "Образование", emoji: "🎓" },
-      { id: "it", label: "IT", emoji: "💻" },
-      { id: "design", label: "Дизайн", emoji: "🎨" },
-      { id: "languages", label: "Языки", emoji: "🌐" },
-      { id: "business", label: "Бизнес", emoji: "💼" },
-      { id: "lifestyle", label: "Лайфстайл", emoji: "🌿" },
-    ];
+    { id: "all", label: "Все", emoji: "🔍" },
+    { id: "education", label: "Образование", emoji: "🎓" },
+    { id: "it", label: "IT", emoji: "💻" },
+    { id: "design", label: "Дизайн", emoji: "🎨" },
+    { id: "languages", label: "Языки", emoji: "🌐" },
+    { id: "business", label: "Бизнес", emoji: "💼" },
+    { id: "lifestyle", label: "Лайфстайл", emoji: "🌿" },
+  ];
 
   const container = {
     hidden: { opacity: 0 },
@@ -347,11 +347,31 @@ const ServicesPage: React.FC = () => {
         ) : activeTab === "all" ? (
           filteredServices.length > 0 ? (
             <>
-              <div className="grid grid-cols-2 gap-4">
-                {filteredServices.map((service: any) => (
-                  <ServiceCard key={service.id} service={service} />
-                ))}
-              </div>
+              <List
+                height={
+                  CARD_HEIGHT * Math.min(filteredServices.length, VISIBLE_COUNT)
+                }
+                itemCount={filteredServices.length}
+                itemSize={CARD_HEIGHT}
+                width={"100%"}
+                style={{
+                  minHeight:
+                    CARD_HEIGHT *
+                    Math.min(filteredServices.length, VISIBLE_COUNT),
+                }}
+              >
+                {({
+                  index,
+                  style,
+                }: {
+                  index: number;
+                  style: React.CSSProperties;
+                }) => (
+                  <div style={style} key={filteredServices[index].id}>
+                    <ServiceCard service={filteredServices[index]} />
+                  </div>
+                )}
+              </List>
               {hasMore && (
                 <div className="flex justify-center mt-4">
                   <Button
@@ -386,37 +406,37 @@ const ServicesPage: React.FC = () => {
             </motion.div>
           )
         ) : // Вкладка избранное
-          favoriteServices.length > 0 ? (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.25, ease: "easeOut" }}
-              className="space-y-3"
-            >
-              {favoriteServices.map((service) => (
-                <ServiceCard
-                  key={service.id}
-                  service={service}
-                  onFavoriteChange={() => {
-                    if ((window as any).refetchFavorites)
-                      (window as any).refetchFavorites();
-                  }}
-                />
-              ))}
-            </motion.div>
-          ) : (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="flex flex-col items-center justify-center py-8 text-center"
-            >
-              <div className="text-4xl mb-2">⭐</div>
-              <h3 className="text-lg font-medium mb-1">Нет избранных услуг</h3>
-              <p className="text-gray-500 mb-4 max-w-xs">
-                Добавьте услуги в избранное, чтобы быстро находить их позже
-              </p>
-            </motion.div>
-          )}
+        favoriteServices.length > 0 ? (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+            className="space-y-3"
+          >
+            {favoriteServices.map((service) => (
+              <ServiceCard
+                key={service.id}
+                service={service}
+                onFavoriteChange={() => {
+                  if ((window as any).refetchFavorites)
+                    (window as any).refetchFavorites();
+                }}
+              />
+            ))}
+          </motion.div>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex flex-col items-center justify-center py-8 text-center"
+          >
+            <div className="text-4xl mb-2">⭐</div>
+            <h3 className="text-lg font-medium mb-1">Нет избранных услуг</h3>
+            <p className="text-gray-500 mb-4 max-w-xs">
+              Добавьте услуги в избранное, чтобы быстро находить их позже
+            </p>
+          </motion.div>
+        )}
       </div>
       {/* Модалка сортировки */}
       <Modal isOpen={showSortModal} onClose={() => setShowSortModal(false)}>

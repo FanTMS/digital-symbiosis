@@ -125,15 +125,6 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
       className="bg-white rounded-lg shadow-card hover:shadow-card-hover transition-all duration-300 overflow-hidden relative"
       onClick={handleClick}
     >
-      {/* Фото услуги */}
-      {service.image_url && (
-        <img
-          src={service.image_url}
-          alt={service.title}
-          className="w-full h-36 object-cover"
-          style={{ borderTopLeftRadius: 12, borderTopRightRadius: 12 }}
-        />
-      )}
       {/* Сердце избранного */}
       <button
         className={`absolute top-3 right-3 z-20 p-2 rounded-full bg-white/90 shadow transition ${isFavorite ? "text-red-500" : "text-gray-300"} hover:bg-red-50`}
@@ -147,12 +138,6 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
         <Heart size={20} fill={isFavorite ? "#ef4444" : "none"} />
       </button>
       <div className="p-4">
-        {/* Проверенный пользователь */}
-        {user && user.completed_tasks > 30 && user.rating > 4.8 && (
-          <div className="mb-2 text-xs font-bold text-green-600 bg-green-100 rounded-full px-2 py-1 inline-block">
-            Проверенный пользователь
-          </div>
-        )}
         <div className="flex items-center mb-3">
           <span className="text-lg mr-2">
             {getCategoryIcon(service.category)}

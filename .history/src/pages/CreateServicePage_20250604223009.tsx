@@ -6,7 +6,6 @@ import { X, Plus, Check } from "lucide-react";
 import Button from "../components/ui/Button";
 import { useCreateService } from "../hooks/useServices";
 import { useUser } from "../contexts/UserContext";
-import { supabase } from "../lib/supabase";
 
 type ServiceCategory =
   | "education"
@@ -32,9 +31,6 @@ const CreateServicePage: React.FC = () => {
   const [newSkill, setNewSkill] = useState("");
   const [isFormValid, setIsFormValid] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [uploading, setUploading] = useState(false);
 
   const createService = useCreateService();
 
@@ -83,35 +79,10 @@ const CreateServicePage: React.FC = () => {
     setSkills(skills.filter((skill) => skill !== skillToRemove));
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null;
-    setImageFile(file);
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (ev) => setImagePreview(ev.target?.result as string);
-      reader.readAsDataURL(file);
-    } else {
-      setImagePreview(null);
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
-    let imageUrl = null;
     try {
-      setUploading(true);
-      if (imageFile) {
-        const filePath = `services/${user.id}/${Date.now()}-${imageFile.name}`;
-        const { error: uploadError } = await supabase.storage
-          .from("service-images")
-          .upload(filePath, imageFile);
-        if (uploadError) throw uploadError;
-        const { data: publicUrlData } = supabase.storage
-          .from("service-images")
-          .getPublicUrl(filePath);
-        imageUrl = publicUrlData?.publicUrl;
-      }
       await createService.mutateAsync({
         title,
         description,
@@ -120,13 +91,11 @@ const CreateServicePage: React.FC = () => {
         user_id: user.id,
         skills,
         is_active: true,
-        image_url: imageUrl,
       });
       navigate("/services?tab=all");
     } catch (err: any) {
       alert("Ошибка при создании услуги: " + err.message);
     }
-    setUploading(false);
   };
 
   const categories: { id: ServiceCategory; label: string; emoji: string }[] = [
@@ -201,10 +170,11 @@ const CreateServicePage: React.FC = () => {
                   key={cat.id}
                   type="button"
                   onClick={() => setCategory(cat.id)}
-                  className={`flex items-center space-x-1 px-3 py-2 rounded-lg text-sm ${category === cat.id
+                  className={`flex items-center space-x-1 px-3 py-2 rounded-lg text-sm ${
+                    category === cat.id
                       ? "bg-primary-500 text-white"
                       : "bg-gray-100 text-gray-800"
-                    }`}
+                  }`}
                 >
                   <span>{cat.emoji}</span>
                   <span>{cat.label}</span>
@@ -280,30 +250,6 @@ const CreateServicePage: React.FC = () => {
             </div>
             {errors.skills && (
               <div className="text-red-500 text-xs mt-1">{errors.skills}</div>
-            )}
-          </div>
-
-          {/* Фото услуги */}
-          <div className="mb-4">
-            <label className="block font-medium mb-1">Фото услуги</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-              disabled={uploading}
-            />
-            {imagePreview && (
-              <div className="mt-2">
-                <img src={imagePreview} alt="preview" className="w-40 h-40 object-cover rounded-lg border" />
-                <button
-                  type="button"
-                  className="ml-2 text-red-500 hover:text-red-700 text-lg"
-                  onClick={() => { setImageFile(null); setImagePreview(null); }}
-                  disabled={uploading}
-                >
-                  ×
-                </button>
-              </div>
             )}
           </div>
 
