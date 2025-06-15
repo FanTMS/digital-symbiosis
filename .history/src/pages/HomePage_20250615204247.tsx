@@ -380,9 +380,9 @@ const HomePage: React.FC = () => {
         <div className="bg-white rounded-lg shadow-card p-4">
           <div className="grid grid-cols-2 gap-4">
             {stats.users === 0 &&
-              stats.completedOrders === 0 &&
-              stats.categories === 0 &&
-              stats.avgRating === 0 ? (
+            stats.completedOrders === 0 &&
+            stats.categories === 0 &&
+            stats.avgRating === 0 ? (
               // Skeleton
               <>
                 {[1, 2, 3, 4].map((i) => (

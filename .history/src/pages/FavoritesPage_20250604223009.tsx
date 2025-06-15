@@ -30,29 +30,22 @@ const FavoritesPage: React.FC = () => {
     if (!user?.id) return;
     setLoading(true);
     (async () => {
-      try {
-        // Получаем id избранных услуг
-        const { data: favs, error: favsError } = await supabase
-          .from("favorites")
-          .select("service_id")
-          .eq("user_id", user.id);
-        if (favsError) throw favsError;
-        const ids = favs?.map((f: any) => f.service_id) || [];
-        let services = [];
-        if (ids.length > 0) {
-          const { data: servicesData, error: servicesError } = await supabase
-            .from("services")
-            .select("*, user:users(*)")
-            .in("id", ids);
-          if (servicesError) throw servicesError;
-          services = servicesData || [];
-        }
-        setFavorites(services);
-      } catch (e) {
-        alert("Ошибка загрузки избранного: " + (e.message || e));
-      } finally {
-        setLoading(false);
+      // Получаем id избранных услуг
+      const { data: favs, error: favsError } = await supabase
+        .from("favorites")
+        .select("service_id")
+        .eq("user_id", user.id);
+      const ids = favs?.map((f: any) => f.service_id) || [];
+      let services = [];
+      if (ids.length > 0) {
+        const { data: servicesData, error: servicesError } = await supabase
+          .from("services")
+          .select("*, user:users(*)")
+          .in("id", ids);
+        services = servicesData || [];
       }
+      setFavorites(services);
+      setLoading(false);
     })();
   }, [user?.id]);
 

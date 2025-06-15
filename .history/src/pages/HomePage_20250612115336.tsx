@@ -115,18 +115,13 @@ const HomePage: React.FC = () => {
   useEffect(() => {
     // Загружаем промо-баннер
     const fetchPromoBanner = async () => {
-      try {
-        const { data, error } = await supabase
-          .from("promo_banners")
-          .select("*")
-          .order("updated_at", { ascending: false })
-          .limit(1)
-          .single();
-        if (error) throw error;
-        if (data) setPromoBanner(data);
-      } catch (e) {
-        alert("Ошибка загрузки промо-баннера: " + (e.message || e));
-      }
+      const { data, error } = await supabase
+        .from("promo_banners")
+        .select("*")
+        .order("updated_at", { ascending: false })
+        .limit(1)
+        .single();
+      if (!error && data) setPromoBanner(data);
     };
     fetchPromoBanner();
   }, []);
@@ -380,9 +375,9 @@ const HomePage: React.FC = () => {
         <div className="bg-white rounded-lg shadow-card p-4">
           <div className="grid grid-cols-2 gap-4">
             {stats.users === 0 &&
-              stats.completedOrders === 0 &&
-              stats.categories === 0 &&
-              stats.avgRating === 0 ? (
+            stats.completedOrders === 0 &&
+            stats.categories === 0 &&
+            stats.avgRating === 0 ? (
               // Skeleton
               <>
                 {[1, 2, 3, 4].map((i) => (
