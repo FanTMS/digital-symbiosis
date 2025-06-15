@@ -409,28 +409,13 @@ export default function ChatPage() {
       {/* Панель ввода */}
       <div className="chat-input-bar-container">
         <form className="chat-input-bar" onSubmit={e => { e.preventDefault(); send(); }}>
-          <div className="chat-input-row">
-            <button type="button" className="chat-attach-btn" onClick={() => chatFileInputRef.current?.click()} title="Прикрепить файл" disabled={uploading}>
-              <svg width="22" height="22" fill="none" stroke="#06b6d4" strokeWidth="2"><circle cx="11" cy="11" r="9" /><path d="M7 13V9a4 4 0 018 0v4a4 4 0 01-8 0V9" /></svg>
-            </button>
-            <input type="file" ref={chatFileInputRef} className="hidden" onChange={handleFileChange} disabled={uploading} />
-            <textarea
-              ref={chatInputRef}
-              className="chat-input"
-              value={input}
-              onChange={handleInputChange}
-              placeholder="Введите сообщение..."
-              autoComplete="off"
-              disabled={uploading}
-              rows={1}
-              style={{ minHeight: 40, maxHeight: 120, resize: 'none', borderRadius: 9999 }}
-            />
-            <button type="submit" className="chat-send-btn" disabled={(!input.trim() && !chatFile) || uploading} title="Отправить" style={{ minHeight: 40, minWidth: 40, borderRadius: '50%' }}>
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 21L23 12L2 3V10L17 12L2 14V21Z" fill="#06b6d4" /></svg>
-            </button>
-          </div>
+          <button type="button" className="chat-attach-btn" onClick={() => chatFileInputRef.current?.click()} title="Прикрепить файл" disabled={uploading}>
+            <svg width="22" height="22" fill="none" stroke="#06b6d4" strokeWidth="2"><circle cx="11" cy="11" r="9" /><path d="M7 13V9a4 4 0 018 0v4a4 4 0 01-8 0V9" /></svg>
+          </button>
+          <input type="file" ref={chatFileInputRef} className="hidden" onChange={handleFileChange} disabled={uploading} />
+          {/* Предпросмотр выбранного файла */}
           {chatFile && (
-            <div className="chat-file-preview">
+            <span className="inline-flex items-center ml-2">
               {chatFile.type.startsWith("image/") && chatFilePreview ? (
                 <img src={chatFilePreview} alt="preview" className="w-12 h-12 object-cover rounded border mr-2" />
               ) : (
@@ -445,8 +430,22 @@ export default function ChatPage() {
               >
                 ×
               </button>
-            </div>
+            </span>
           )}
+          <textarea
+            ref={chatInputRef}
+            className="chat-input"
+            value={input}
+            onChange={handleInputChange}
+            placeholder="Введите сообщение..."
+            autoComplete="off"
+            disabled={uploading}
+            rows={1}
+            style={{ minHeight: 40, maxHeight: 120, resize: 'none', borderRadius: 9999 }}
+          />
+          <button type="submit" className="chat-send-btn" disabled={(!input.trim() && !chatFile) || uploading} title="Отправить" style={{ minHeight: 40, minWidth: 40, borderRadius: '50%' }}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 21L23 12L2 3V10L17 12L2 14V21Z" fill="#06b6d4" /></svg>
+          </button>
         </form>
       </div>
 
@@ -885,22 +884,6 @@ export default function ChatPage() {
             background: #fff !important;
             color: #111 !important;
           }
-        }
-        .chat-input-row {
-          display: flex;
-          flex-direction: row;
-          align-items: center;
-          gap: 8px;
-        }
-        .chat-input-row .chat-input {
-          flex: 1 1 auto;
-          min-width: 0;
-        }
-        .chat-file-preview {
-          margin-top: 4px;
-          display: flex;
-          align-items: center;
-          gap: 8px;
         }
       `}</style>
     </div>

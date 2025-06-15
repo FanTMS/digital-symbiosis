@@ -408,33 +408,18 @@ export default function ChatPage() {
 
       {/* Панель ввода */}
       <div className="chat-input-bar-container">
-        <form className="chat-input-bar" onSubmit={e => { e.preventDefault(); send(); }}>
-          <div className="chat-input-row">
-            <button type="button" className="chat-attach-btn" onClick={() => chatFileInputRef.current?.click()} title="Прикрепить файл" disabled={uploading}>
-              <svg width="22" height="22" fill="none" stroke="#06b6d4" strokeWidth="2"><circle cx="11" cy="11" r="9" /><path d="M7 13V9a4 4 0 018 0v4a4 4 0 01-8 0V9" /></svg>
-            </button>
-            <input type="file" ref={chatFileInputRef} className="hidden" onChange={handleFileChange} disabled={uploading} />
-            <textarea
-              ref={chatInputRef}
-              className="chat-input"
-              value={input}
-              onChange={handleInputChange}
-              placeholder="Введите сообщение..."
-              autoComplete="off"
-              disabled={uploading}
-              rows={1}
-              style={{ minHeight: 40, maxHeight: 120, resize: 'none', borderRadius: 9999 }}
-            />
-            <button type="submit" className="chat-send-btn" disabled={(!input.trim() && !chatFile) || uploading} title="Отправить" style={{ minHeight: 40, minWidth: 40, borderRadius: '50%' }}>
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 21L23 12L2 3V10L17 12L2 14V21Z" fill="#06b6d4" /></svg>
-            </button>
-          </div>
+        <form className="chat-input-bar" style={{ display: 'flex', alignItems: 'center', gap: 8 }} onSubmit={e => { e.preventDefault(); send(); }}>
+          <button type="button" className="chat-attach-btn" onClick={() => chatFileInputRef.current?.click()} title="Прикрепить файл" disabled={uploading}>
+            <svg width="22" height="22" fill="none" stroke="#06b6d4" strokeWidth="2"><circle cx="11" cy="11" r="9" /><path d="M7 13V9a4 4 0 018 0v4a4 4 0 01-8 0V9" /></svg>
+          </button>
+          <input type="file" ref={chatFileInputRef} className="hidden" onChange={handleFileChange} disabled={uploading} />
+          {/* Предпросмотр выбранного файла */}
           {chatFile && (
-            <div className="chat-file-preview">
+            <span className="inline-flex items-center ml-2" style={{ maxWidth: 100, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {chatFile.type.startsWith("image/") && chatFilePreview ? (
-                <img src={chatFilePreview} alt="preview" className="w-12 h-12 object-cover rounded border mr-2" />
+                <img src={chatFilePreview} alt="preview" className="w-10 h-10 object-cover rounded border mr-2" style={{ minWidth: 40, minHeight: 40 }} />
               ) : (
-                <span className="text-sm text-gray-700 mr-2">{chatFile.name}</span>
+                <span className="text-sm text-gray-700 mr-2" style={{ maxWidth: 60, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{chatFile.name}</span>
               )}
               <button
                 type="button"
@@ -442,11 +427,26 @@ export default function ChatPage() {
                 onClick={() => { setChatFile(null); setChatFilePreview(null); }}
                 title="Удалить файл"
                 disabled={uploading}
+                style={{ minWidth: 24 }}
               >
                 ×
               </button>
-            </div>
+            </span>
           )}
+          <textarea
+            ref={chatInputRef}
+            className="chat-input"
+            value={input}
+            onChange={handleInputChange}
+            placeholder="Введите сообщение..."
+            autoComplete="off"
+            disabled={uploading}
+            rows={1}
+            style={{ minHeight: 40, maxHeight: 120, resize: 'none', borderRadius: 9999, flex: 1, marginLeft: 8, marginRight: 8 }}
+          />
+          <button type="submit" className="chat-send-btn" disabled={(!input.trim() && !chatFile) || uploading} title="Отправить" style={{ minHeight: 40, minWidth: 40, borderRadius: '50%' }}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 21L23 12L2 3V10L17 12L2 14V21Z" fill="#06b6d4" /></svg>
+          </button>
         </form>
       </div>
 
@@ -811,10 +811,20 @@ export default function ChatPage() {
           box-shadow: 0 4px 24px 0 rgba(0,160,255,0.07);
         }
         .chat-input-bar {
-          background: #fff;
-          border-radius: 24px;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-          padding: 4px 8px;
+          display: flex !important;
+          align-items: center !important;
+          gap: 8px !important;
+        }
+        .chat-input-bar .inline-flex {
+          max-width: 100px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+        .chat-input-bar .chat-input {
+          flex: 1 1 0%;
+          margin-left: 8px;
+          margin-right: 8px;
         }
         .chat-attach-btn, .chat-send-btn {
           background: none;
@@ -852,8 +862,10 @@ export default function ChatPage() {
             padding-left: 6px; padding-right: 6px;
           }
           .chat-input-bar {
-            max-width: 100vw;
-            border-radius: 0 !important;
+            gap: 4px !important;
+          }
+          .chat-input-bar .inline-flex {
+            max-width: 60px;
           }
           .chat-input-bar-container {
             width: 100vw;
@@ -885,22 +897,6 @@ export default function ChatPage() {
             background: #fff !important;
             color: #111 !important;
           }
-        }
-        .chat-input-row {
-          display: flex;
-          flex-direction: row;
-          align-items: center;
-          gap: 8px;
-        }
-        .chat-input-row .chat-input {
-          flex: 1 1 auto;
-          min-width: 0;
-        }
-        .chat-file-preview {
-          margin-top: 4px;
-          display: flex;
-          align-items: center;
-          gap: 8px;
         }
       `}</style>
     </div>
