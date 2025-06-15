@@ -12,7 +12,6 @@ import {
   Check,
   CheckCheck,
   File as FileIcon,
-  MoreVertical,
 } from "lucide-react";
 import { supabase } from "../lib/supabase";
 import { ordersApi } from "../lib/api/orders";
@@ -59,8 +58,6 @@ export default function ChatPage() {
   const [chatFilePreview, setChatFilePreview] = useState<string | null>(null);
   const chatFileInputRef = useRef<HTMLInputElement>(null);
   const chatInputRef = useRef<HTMLTextAreaElement>(null);
-  const [imageModal, setImageModal] = useState<{ url: string, name?: string } | null>(null);
-  const [showImageMenu, setShowImageMenu] = useState(false);
 
   const fetchMessages = async (before?: string) => {
     let query = supabase
@@ -387,12 +384,7 @@ export default function ChatPage() {
                 {msg.attachments && msg.attachments.length > 0 && (
                   <div className="chat-message-attachment">
                     {msg.attachments[0].type === "image" ? (
-                      <img
-                        src={msg.attachments[0].url}
-                        alt="Фото"
-                        className="chat-message-img cursor-pointer"
-                        onClick={() => setImageModal({ url: msg.attachments[0].url, name: decodeURIComponent(msg.attachments[0].url.split("/").pop()?.split("?")[0] || "Фото") })}
-                      />
+                      <img src={msg.attachments[0].url} alt="Фото" className="chat-message-img" />
                     ) : (
                       <a href={msg.attachments[0].url} target="_blank" rel="noopener noreferrer" className="chat-message-file">
                         <svg width="18" height="18" fill="none" stroke="#06b6d4" strokeWidth="2"><rect x="3" y="3" width="12" height="12" rx="2" /><path d="M7 7h6M7 11h6M7 15h6" /></svg>
@@ -678,35 +670,6 @@ export default function ChatPage() {
             </button>
           </div>
         </div>
-      </Modal>
-
-      {/* Модалка просмотра изображения */}
-      <Modal isOpen={!!imageModal} onClose={() => { setImageModal(null); setShowImageMenu(false); }}>
-        {imageModal && (
-          <div className="relative flex flex-col items-center">
-            <img src={imageModal.url} alt="Фото" style={{ maxWidth: '90vw', maxHeight: '70vh', borderRadius: 12 }} />
-            <button
-              className="absolute top-2 right-2 bg-white/80 rounded-full p-2 shadow"
-              onClick={() => setShowImageMenu((v) => !v)}
-              style={{ zIndex: 2 }}
-            >
-              <MoreVertical size={24} />
-            </button>
-            {showImageMenu && (
-              <div className="absolute top-12 right-2 bg-white rounded-lg shadow-lg py-2 px-3 flex flex-col min-w-[120px] z-10">
-                <a
-                  href={imageModal.url}
-                  download={imageModal.name || 'image.jpg'}
-                  className="text-gray-800 py-1 px-2 hover:bg-gray-100 rounded cursor-pointer"
-                  style={{ textDecoration: 'none' }}
-                  onClick={() => setShowImageMenu(false)}
-                >
-                  Сохранить
-                </a>
-              </div>
-            )}
-          </div>
-        )}
       </Modal>
 
       {/* Стилизация страницы чата */}

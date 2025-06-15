@@ -12,7 +12,6 @@ import {
   Check,
   CheckCheck,
   File as FileIcon,
-  MoreVertical,
 } from "lucide-react";
 import { supabase } from "../lib/supabase";
 import { ordersApi } from "../lib/api/orders";
@@ -59,8 +58,6 @@ export default function ChatPage() {
   const [chatFilePreview, setChatFilePreview] = useState<string | null>(null);
   const chatFileInputRef = useRef<HTMLInputElement>(null);
   const chatInputRef = useRef<HTMLTextAreaElement>(null);
-  const [imageModal, setImageModal] = useState<{ url: string, name?: string } | null>(null);
-  const [showImageMenu, setShowImageMenu] = useState(false);
 
   const fetchMessages = async (before?: string) => {
     let query = supabase
@@ -387,12 +384,7 @@ export default function ChatPage() {
                 {msg.attachments && msg.attachments.length > 0 && (
                   <div className="chat-message-attachment">
                     {msg.attachments[0].type === "image" ? (
-                      <img
-                        src={msg.attachments[0].url}
-                        alt="Фото"
-                        className="chat-message-img cursor-pointer"
-                        onClick={() => setImageModal({ url: msg.attachments[0].url, name: decodeURIComponent(msg.attachments[0].url.split("/").pop()?.split("?")[0] || "Фото") })}
-                      />
+                      <img src={msg.attachments[0].url} alt="Фото" className="chat-message-img" />
                     ) : (
                       <a href={msg.attachments[0].url} target="_blank" rel="noopener noreferrer" className="chat-message-file">
                         <svg width="18" height="18" fill="none" stroke="#06b6d4" strokeWidth="2"><rect x="3" y="3" width="12" height="12" rx="2" /><path d="M7 7h6M7 11h6M7 15h6" /></svg>
@@ -417,24 +409,6 @@ export default function ChatPage() {
       {/* Панель ввода */}
       <div className="chat-input-bar-container">
         <form className="chat-input-bar" onSubmit={e => { e.preventDefault(); send(); }}>
-          {chatFile && (
-            <div className="chat-file-preview">
-              {chatFile.type.startsWith("image/") && chatFilePreview ? (
-                <img src={chatFilePreview} alt="preview" className="w-12 h-12 object-cover rounded border mr-2" />
-              ) : (
-                <span className="text-sm text-gray-700 mr-2">{chatFile.name}</span>
-              )}
-              <button
-                type="button"
-                className="ml-1 text-red-500 hover:text-red-700 text-lg"
-                onClick={() => { setChatFile(null); setChatFilePreview(null); }}
-                title="Удалить файл"
-                disabled={uploading}
-              >
-                ×
-              </button>
-            </div>
-          )}
           <div className="chat-input-row">
             <button type="button" className="chat-attach-btn" onClick={() => chatFileInputRef.current?.click()} title="Прикрепить файл" disabled={uploading}>
               <svg width="22" height="22" fill="none" stroke="#06b6d4" strokeWidth="2"><circle cx="11" cy="11" r="9" /><path d="M7 13V9a4 4 0 018 0v4a4 4 0 01-8 0V9" /></svg>
@@ -455,6 +429,24 @@ export default function ChatPage() {
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 21L23 12L2 3V10L17 12L2 14V21Z" fill="#06b6d4" /></svg>
             </button>
           </div>
+          {chatFile && (
+            <div className="chat-file-preview">
+              {chatFile.type.startsWith("image/") && chatFilePreview ? (
+                <img src={chatFilePreview} alt="preview" className="w-12 h-12 object-cover rounded border mr-2" />
+              ) : (
+                <span className="text-sm text-gray-700 mr-2">{chatFile.name}</span>
+              )}
+              <button
+                type="button"
+                className="ml-1 text-red-500 hover:text-red-700 text-lg"
+                onClick={() => { setChatFile(null); setChatFilePreview(null); }}
+                title="Удалить файл"
+                disabled={uploading}
+              >
+                ×
+              </button>
+            </div>
+          )}
         </form>
       </div>
 
@@ -680,35 +672,6 @@ export default function ChatPage() {
         </div>
       </Modal>
 
-      {/* Модалка просмотра изображения */}
-      <Modal isOpen={!!imageModal} onClose={() => { setImageModal(null); setShowImageMenu(false); }}>
-        {imageModal && (
-          <div className="relative flex flex-col items-center">
-            <img src={imageModal.url} alt="Фото" style={{ maxWidth: '90vw', maxHeight: '70vh', borderRadius: 12 }} />
-            <button
-              className="absolute top-2 right-2 bg-white/80 rounded-full p-2 shadow"
-              onClick={() => setShowImageMenu((v) => !v)}
-              style={{ zIndex: 2 }}
-            >
-              <MoreVertical size={24} />
-            </button>
-            {showImageMenu && (
-              <div className="absolute top-12 right-2 bg-white rounded-lg shadow-lg py-2 px-3 flex flex-col min-w-[120px] z-10">
-                <a
-                  href={imageModal.url}
-                  download={imageModal.name || 'image.jpg'}
-                  className="text-gray-800 py-1 px-2 hover:bg-gray-100 rounded cursor-pointer"
-                  style={{ textDecoration: 'none' }}
-                  onClick={() => setShowImageMenu(false)}
-                >
-                  Сохранить
-                </a>
-              </div>
-            )}
-          </div>
-        )}
-      </Modal>
-
       {/* Стилизация страницы чата */}
       <style>{`
         .chat-redesign-root {
@@ -839,7 +802,7 @@ export default function ChatPage() {
           position: fixed;
           left: 0;
           right: 0;
-          bottom: 32px;
+          bottom: 0;
           background: #fff;
           border-top: 1px solid #e5e7eb;
           z-index: 50;
