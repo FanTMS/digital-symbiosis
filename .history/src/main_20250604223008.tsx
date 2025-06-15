@@ -7,20 +7,17 @@ import "./index.css";
 import { TelegramProvider } from "./contexts/TelegramContext";
 import { UserProvider } from "./contexts/UserContext";
 import { BrowserRouter as Router } from "react-router-dom";
-import { ErrorBoundary } from "./components/ErrorBoundary";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <ErrorBoundary>
-      <QueryClientProvider client={queryClient}>
-        <Router>
-          <TelegramProvider>
-            <UserProvider>
-              <App />
-            </UserProvider>
-          </TelegramProvider>
-        </Router>
-      </QueryClientProvider>
-    </ErrorBoundary>
+    <QueryClientProvider client={queryClient}>
+      <Router>
+        <TelegramProvider>
+          <UserProvider>
+            <App />
+          </UserProvider>
+        </TelegramProvider>
+      </Router>
+    </QueryClientProvider>
   </React.StrictMode>,
 );

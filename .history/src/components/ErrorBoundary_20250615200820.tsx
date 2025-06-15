@@ -1,0 +1,35 @@
+import React from "react";
+
+export class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean, error: any }> {
+    constructor(props: any) {
+        super(props);
+        this.state = { hasError: false, error: null };
+    }
+
+    static getDerivedStateFromError(error: any) {
+        return { hasError: true, error };
+    }
+
+    componentDidCatch(error: any, errorInfo: any) {
+        // Можно отправить ошибку в сервис логирования
+        console.error("ErrorBoundary caught an error", error, errorInfo);
+    }
+
+    render() {
+        if (this.state.hasError) {
+            return (
+                <div className="flex flex-col items-center justify-center min-h-screen p-4">
+                    <h1 className="text-2xl font-bold mb-4 text-red-500">Произошла ошибка</h1>
+                    <p className="text-gray-600 mb-8">{this.state.error?.message || "Неизвестная ошибка"}</p>
+                    <button
+                        onClick={() => window.location.reload()}
+                        className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors"
+                    >
+                        Перезагрузить страницу
+                    </button>
+                </div>
+            );
+        }
+        return this.props.children;
+    }
+} 
