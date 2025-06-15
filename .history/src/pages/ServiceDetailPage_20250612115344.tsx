@@ -10,7 +10,6 @@ import {
   Award,
   ChevronLeft,
   X,
-  Loader2,
 } from "lucide-react";
 import Button from "../components/ui/Button";
 import { servicesApi } from "../lib/api/services";
@@ -25,10 +24,9 @@ import {
   useDeleteService,
 } from "../hooks/useServices";
 import { Star as StarIcon, StarOff } from "lucide-react";
-import { formatDate } from "../utils/formatters";
-
 type Service = Database["public"]["Tables"]["services"]["Row"];
 type UserType = Database["public"]["Tables"]["users"]["Row"];
+import { formatDate } from "../utils/formatters";
 
 const ServiceDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -271,28 +269,31 @@ const ServiceDetailPage: React.FC = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
-      className="min-h-screen bg-gradient-to-br from-cyan-50 via-blue-50 to-white flex justify-center items-start pb-20"
+      className="px-4 py-6 min-h-screen pb-20 sm:pb-24"
     >
-      <div className="w-full max-w-md mx-auto px-2 sm:px-0 mt-2">
-        {/* Фото услуги */}
-        {service.image_url && (
-          <div className="mb-4 rounded-2xl overflow-hidden shadow-lg">
-            <img
-              src={service.image_url}
-              alt={service.title}
-              className="w-full h-56 object-cover"
-              style={{ borderRadius: 18 }}
-            />
-          </div>
-        )}
-        {/* Категория, рейтинг, избранное */}
-        <div className="flex items-center mb-3">
+      <style>{`
+        @media (max-width: 600px) {
+          .service-detail-main {
+            padding-bottom: 140px !important;
+          }
+        }
+      `}</style>
+      <div className="service-detail-main">
+        <div className="flex items-center mb-4">
+          <ChevronLeft
+            size={20}
+            onClick={() => navigate("/services")}
+            className="mr-2"
+          />
+        </div>
+        <div className="flex items-center mb-4">
           <span className="inline-flex items-center text-xs font-semibold bg-blue-100 text-blue-800 py-1 px-3 rounded-full shadow-sm">
             <Award size={14} className="mr-1" />
             {getCategoryName(service.category)}
           </span>
           <div className="ml-auto flex items-center">
             <Star size={16} className="text-yellow-500 fill-yellow-500" />
+
             <span className="ml-1 text-sm font-medium">
               {service.rating?.toFixed(1) || "—"}
             </span>
@@ -301,50 +302,63 @@ const ServiceDetailPage: React.FC = () => {
                 ({service.reviews_count})
               </span>
             )}
-            {user && user.id !== provider.id && (
-              <button
-                onClick={handleToggleFavorite}
-                disabled={favoriteLoading}
-                className={`ml-3 p-1 rounded-full hover:bg-yellow-100 transition ${isFavorite ? "text-yellow-400" : "text-gray-300"}`}
-                aria-label={
-                  isFavorite ? "Удалить из избранного" : "Добавить в избранное"
-                }
-              >
-                <StarIcon fill={isFavorite ? "#facc15" : "none"} />
-              </button>
-            )}
           </div>
         </div>
-        {/* Название услуги */}
-        <h1 className="text-2xl font-extrabold mb-2 flex items-center gap-2 text-blue-900">
+        <h1 className="text-3xl font-extrabold mb-2 flex items-center gap-2 animate-fade-in">
           {service.title}
+          {user && user.id !== provider.id && (
+            <button
+              onClick={handleToggleFavorite}
+              disabled={favoriteLoading}
+              className={`ml-2 p-1 rounded-full hover:bg-yellow-100 transition ${isFavorite ? "text-yellow-400" : "text-gray-300"}`}
+              aria-label={
+                isFavorite ? "Удалить из избранного" : "Добавить в избранное"
+              }
+            >
+              <StarIcon fill={isFavorite ? "#facc15" : "none"} />
+            </button>
+          )}
         </h1>
-        <div className="flex items-center text-sm text-gray-500 mb-4">
+        <div className="flex items-center text-sm text-gray-500">
           <Clock size={14} className="mr-1" />
           <span>Опубликовано {formatDate(new Date(service.created_at))}</span>
         </div>
-        {/* Провайдер */}
-        <div className="bg-white p-4 rounded-2xl shadow flex items-center gap-4 mb-5">
-          <img
-            src={provider.avatar_url || "https://images.pexels.com/photos/4926674/pexels-photo-4926674.jpeg?auto=compress&cs=tinysrgb&w=150"}
-            alt={provider.name}
-            className="w-14 h-14 rounded-full object-cover border-2 border-blue-200 shadow"
-          />
+
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="bg-white p-5 rounded-2xl shadow-xl mb-6 flex items-center gap-4"
+        >
+          <div className="relative">
+            <img
+              src={
+                provider.avatar_url ||
+                "https://images.pexels.com/photos/4926674/pexels-photo-4926674.jpeg?auto=compress&cs=tinysrgb&w=150"
+              }
+              alt={provider.name}
+              className="w-16 h-16 rounded-full object-cover border-2 border-blue-200 shadow"
+            />
+          </div>
           <div className="flex-1">
-            <div className="flex items-center gap-2 mb-1">
-              <span className="font-bold text-base text-gray-900">{provider.name}</span>
+            <h3 className="font-bold text-lg text-gray-900 flex items-center gap-2">
+              {provider.name}
               {provider.role === "admin" && (
-                <span className="ml-1 text-xs bg-yellow-100 px-2 py-0.5 rounded-full">админ</span>
+                <span className="ml-1 text-xs bg-yellow-100 px-2 py-0.5 rounded-full">
+                  админ
+                </span>
               )}
-              {provider.completed_tasks > 30 && provider.rating > 4.8 && (
-                <span className="ml-1 text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-bold">Проверенный пользователь</span>
-              )}
-            </div>
-            <div className="flex items-center text-xs text-gray-500 gap-2">
-              <Star size={13} className="text-yellow-400 fill-yellow-400" />
-              <span>{provider.rating !== null ? provider.rating.toFixed(1) : "—"}</span>
-              <span className="mx-1">•</span>
-              <span>{provider.completed_tasks ?? 0} заказов</span>
+            </h3>
+            <div className="flex items-center text-sm mt-1">
+              <Star size={14} className="text-yellow-500 fill-yellow-500 mr-1" />
+
+              <span>
+                {provider.rating !== null ? provider.rating.toFixed(1) : "—"}
+              </span>
+              <span className="mx-1 text-gray-400">•</span>
+              <span className="text-gray-500">
+                {provider.completed_tasks ?? 0} заданий
+              </span>
             </div>
           </div>
           <Button
@@ -355,10 +369,15 @@ const ServiceDetailPage: React.FC = () => {
           >
             Связаться
           </Button>
-        </div>
-        {/* Описание и навыки */}
-        <div className="mb-5 bg-white p-4 rounded-2xl shadow">
-          <h2 className="text-lg font-semibold mb-2 text-blue-800">Описание услуги</h2>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="mb-6 bg-white p-5 rounded-2xl shadow"
+        >
+          <h2 className="text-lg font-semibold mb-2">Описание услуги</h2>
           <p className="text-gray-700 leading-relaxed mb-4 text-base">
             {service.description}
           </p>
@@ -375,9 +394,14 @@ const ServiceDetailPage: React.FC = () => {
               ))}
             </div>
           </div>
-        </div>
-        {/* Стоимость и заказы */}
-        <div className="bg-white p-4 shadow-2xl border-t border-gray-200 rounded-2xl mb-6">
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="bg-white p-5 shadow-2xl border-t border-gray-200 rounded-2xl mb-6"
+        >
           <div className="flex items-center justify-between mb-3">
             <div>
               <span className="text-sm text-gray-500">Стоимость</span>
@@ -404,8 +428,8 @@ const ServiceDetailPage: React.FC = () => {
           >
             Заказать услугу
           </Button>
-        </div>
-        {/* Кнопки управления для владельца */}
+        </motion.div>
+
         {user?.id === service.user_id && (
           <div className="flex gap-2 mt-4">
             <Button
@@ -467,9 +491,9 @@ const ServiceDetailPage: React.FC = () => {
             </Button>
           </div>
         )}
-        {/* Оставить отзыв */}
+
         {user && user.id !== provider.id && canReview && !hasLeftReview && (
-          <div className="bg-white rounded-lg shadow-card p-4 mb-6 mt-6">
+          <div className="bg-white rounded-lg shadow-card p-4 mb-6">
             <h3 className="font-semibold mb-2">Оставить отзыв</h3>
             <div className="flex items-center gap-2 mb-2">
               {[1, 2, 3, 4, 5].map((i) => (
@@ -492,6 +516,7 @@ const ServiceDetailPage: React.FC = () => {
               onChange={(e) => setReviewText(e.target.value)}
               maxLength={300}
             />
+
             <Button
               variant="primary"
               disabled={
