@@ -19,6 +19,7 @@ import Modal from "../components/ui/Modal";
 import { supabase } from "../lib/supabase";
 import { useOrders, useUpdateOrderStatus } from "../hooks/useOrders";
 import { useQueryClient } from "@tanstack/react-query";
+import { FixedSizeList as List } from "react-window";
 
 const PAGE_SIZE = 20;
 const CARD_HEIGHT = 120; // px, высота одной карточки заказа
@@ -177,19 +178,21 @@ const OrdersPage: React.FC = () => {
         {/* Tabs */}
         <div className="flex mb-4 bg-gray-100 rounded-lg p-1">
           <button
-            className={`flex-1 py-2 rounded-md text-center ${activeTab === "client"
+            className={`flex-1 py-2 rounded-md text-center ${
+              activeTab === "client"
                 ? "bg-white text-primary-500 shadow-sm"
                 : "text-gray-600"
-              }`}
+            }`}
             onClick={() => setActiveTab("client")}
           >
             Я заказчик
           </button>
           <button
-            className={`flex-1 py-2 rounded-md text-center ${activeTab === "provider"
+            className={`flex-1 py-2 rounded-md text-center ${
+              activeTab === "provider"
                 ? "bg-white text-primary-500 shadow-sm"
                 : "text-gray-600"
-              }`}
+            }`}
             onClick={() => setActiveTab("provider")}
           >
             Я исполнитель
@@ -223,58 +226,68 @@ const OrdersPage: React.FC = () => {
               </div>
             ) : allOrders.length > 0 ? (
               <>
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  {allOrders.map((order) => {
+                <List
+                  height={
+                    CARD_HEIGHT * Math.min(allOrders.length, VISIBLE_COUNT)
+                  }
+                  itemCount={allOrders.length}
+                  itemSize={CARD_HEIGHT}
+                  width={"100%"}
+                  style={{
+                    minHeight:
+                      CARD_HEIGHT * Math.min(allOrders.length, VISIBLE_COUNT),
+                  }}
+                >
+                  {({
+                    index,
+                    style,
+                  }: {
+                    index: number;
+                    style: React.CSSProperties;
+                  }) => {
+                    const order = allOrders[index];
                     const statusInfo = getOrderStatusInfo(order.status);
                     const service = order.service;
                     const otherUser =
                       activeTab === "client" ? order.provider : order.client;
                     const StatusIcon = statusInfo.icon;
                     return (
-                      <motion.div
-                        key={order.id}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.4, ease: "easeOut" }}
-                        className="bg-white rounded-2xl shadow-xl border border-blue-100 overflow-hidden flex flex-col"
-                      >
-                        {/* Фото услуги */}
-                        {service?.image_url && (
-                          <img
-                            src={service.image_url}
-                            alt={service.title}
-                            className="w-full h-32 object-cover"
-                          />
-                        )}
-                        <div className="p-4 flex-1 flex flex-col justify-between">
-                          <div>
+                      <div style={style} key={order.id}>
+                        <motion.div
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.4, ease: "easeOut" }}
+                          className="bg-white rounded-lg shadow mb-4"
+                        >
+                          <div className="p-4">
                             <div className="flex justify-between items-start mb-2">
-                              <h3 className="font-semibold text-blue-900 text-base line-clamp-2">
+                              <h3 className="font-medium text-gray-900">
                                 {service?.title}
                               </h3>
                               <div
-                                className={`flex items-center px-2 py-1 rounded-full text-xs font-bold ${statusInfo.bgColor} ${statusInfo.color}`}
+                                className={`flex items-center px-2 py-1 rounded-full text-xs ${statusInfo.bgColor} ${statusInfo.color}`}
                               >
-                                <StatusIcon size={13} className="mr-1" />
+                                <StatusIcon size={12} className="mr-1" />
+
                                 {statusInfo.label}
                               </div>
                             </div>
-                            <div className="flex items-center text-xs text-gray-500 mb-2">
-                              <Clock size={13} className="mr-1" />
-                              <span>{formatDate(new Date(order.created_at))}</span>
+                            <div className="flex items-center text-sm text-gray-500 mb-3">
+                              <Clock size={14} className="mr-1" />
+
+                              <span>
+                                {formatDate(new Date(order.created_at))}
+                              </span>
                             </div>
-                            <div className="flex items-center gap-2 mb-2">
-                              <img
-                                src={otherUser?.avatar_url || 'https://images.pexels.com/photos/4926674/pexels-photo-4926674.jpeg?auto=compress&cs=tinysrgb&w=150'}
-                                alt={otherUser?.name}
-                                className="w-7 h-7 rounded-full object-cover border"
-                              />
+                            <div className="flex justify-between items-center mb-3">
                               <div>
-                                <div className="text-xs text-gray-500">
-                                  {activeTab === "client" ? "Исполнитель" : "Заказчик"}
+                                <div className="text-xs text-gray-500 mb-1">
+                                  {activeTab === "client"
+                                    ? "Исполнитель"
+                                    : "Заказчик"}
                                 </div>
                                 <div
-                                  className="font-medium cursor-pointer text-primary-600 hover:underline text-sm"
+                                  className="font-medium cursor-pointer text-primary-600 hover:underline"
                                   onClick={() =>
                                     otherUser?.id &&
                                     navigate(`/profile/${otherUser.id}`)
@@ -283,50 +296,56 @@ const OrdersPage: React.FC = () => {
                                   {otherUser?.name}
                                 </div>
                               </div>
-                              <div className="ml-auto text-right">
-                                <div className="text-xs text-gray-500">Стоимость</div>
-                                <div className="font-bold text-orange-500 text-base">{order.price} кр.</div>
+                              <div className="text-right">
+                                <div className="text-xs text-gray-500">
+                                  Стоимость
+                                </div>
+                                <div className="font-medium text-accent-500">
+                                  {order.price} кр.
+                                </div>
                               </div>
                             </div>
+                            <div className="flex gap-2">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                leftIcon={<ExternalLink size={14} />}
+                                onClick={() => handleViewDetails(order)}
+                                className="flex-1"
+                              >
+                                Подробнее
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                leftIcon={<MessageCircle size={14} />}
+                                onClick={() => handleContact(otherUser?.id)}
+                                className="flex-1"
+                              >
+                                Связаться
+                              </Button>
+                              {/* Кнопка Завершить для исполнителя */}
+                              {activeTab === "provider" &&
+                                (order.status === "accepted" ||
+                                  order.status === "in_progress") && (
+                                  <Button
+                                    variant="success"
+                                    size="sm"
+                                    onClick={() =>
+                                      handleCompleteOrder(order.id)
+                                    }
+                                    className="flex-1"
+                                  >
+                                    Завершить
+                                  </Button>
+                                )}
+                            </div>
                           </div>
-                          <div className="flex gap-2 mt-2">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              leftIcon={<ExternalLink size={14} />}
-                              onClick={() => handleViewDetails(order)}
-                              className="flex-1"
-                            >
-                              Подробнее
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              leftIcon={<MessageCircle size={14} />}
-                              onClick={() => handleContact(otherUser?.id)}
-                              className="flex-1"
-                            >
-                              Связаться
-                            </Button>
-                            {/* Кнопка Завершить для исполнителя */}
-                            {activeTab === "provider" &&
-                              (order.status === "accepted" ||
-                                order.status === "in_progress") && (
-                                <Button
-                                  variant="success"
-                                  size="sm"
-                                  onClick={() => handleCompleteOrder(order.id)}
-                                  className="flex-1"
-                                >
-                                  Завершить
-                                </Button>
-                              )}
-                          </div>
-                        </div>
-                      </motion.div>
+                        </motion.div>
+                      </div>
                     );
-                  })}
-                </div>
+                  }}
+                </List>
                 {hasMore && (
                   <div className="flex justify-center mt-4">
                     <Button
