@@ -20,7 +20,7 @@ export const ordersApi = {
         provider:users!orders_provider_id_fkey(*),
         review:reviews(*)
       `)
-      .eq(role === 'client' ? 'client_id' : 'provider_id', userId)
+      .or(`client_id.eq.${userId},provider_id.eq.${userId}`)
       .range(offset, offset + limit - 1);
 
     if (error) throw error;

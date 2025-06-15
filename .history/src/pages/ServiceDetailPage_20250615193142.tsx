@@ -405,6 +405,68 @@ const ServiceDetailPage: React.FC = () => {
             Заказать услугу
           </Button>
         </div>
+        {/* Кнопки управления для владельца */}
+        {user?.id === service.user_id && (
+          <div className="flex gap-2 mt-4">
+            <Button
+              variant={service.is_active === false ? "outline" : "secondary"}
+              size="sm"
+              leftIcon={<X size={14} />}
+              isLoading={actionLoading && service.is_active !== false}
+              onClick={async () => {
+                setActionLoading(true);
+                try {
+                  await updateService.mutateAsync({
+                    id: service.id,
+                    updates: {
+                      is_active: service.is_active === false ? true : false,
+                    },
+                  });
+                  alert(
+                    service.is_active === false
+                      ? "Услуга активирована"
+                      : "Услуга приостановлена"
+                  );
+                  setService({
+                    ...service,
+                    is_active: service.is_active === false ? true : false,
+                  });
+                } catch (e: any) {
+                  alert("Ошибка: " + e.message);
+                }
+                setActionLoading(false);
+              }}
+            >
+              {service.is_active === false
+                ? "Включить услугу"
+                : "Приостановить услугу"}
+            </Button>
+            <Button
+              variant="danger"
+              size="sm"
+              leftIcon={<X size={14} />}
+              isLoading={actionLoading && service.is_active !== false}
+              onClick={async () => {
+                if (!window.confirm("Удалить услугу?")) return;
+                setActionLoading(true);
+                try {
+                  // Мягкое удаление: делаем услугу неактивной
+                  await updateService.mutateAsync({
+                    id: service.id,
+                    updates: { is_active: false },
+                  });
+                  alert("Услуга перемещена в архив");
+                  navigate("/services");
+                } catch (e: any) {
+                  alert("Ошибка: " + e.message);
+                }
+                setActionLoading(false);
+              }}
+            >
+              Удалить услугу
+            </Button>
+          </div>
+        )}
         {/* Оставить отзыв */}
         {user && user.id !== provider.id && canReview && !hasLeftReview && (
           <div className="bg-white rounded-lg shadow-card p-4 mb-6 mt-6">
@@ -467,35 +529,6 @@ const ServiceDetailPage: React.FC = () => {
             >
               Оставить отзыв
             </Button>
-          </div>
-        )}
-        {/* Блок отзывов */}
-        {reviews && reviews.length > 0 && (
-          <div className="bg-white rounded-2xl shadow p-4 mb-6">
-            <h3 className="text-lg font-bold mb-4 text-blue-800">Отзывы об услуге</h3>
-            <div className="flex flex-col gap-4">
-              {reviews.map((review, idx) => (
-                <div key={idx} className="flex gap-3 items-start bg-blue-50/40 rounded-xl p-3">
-                  <img
-                    src={review.user_avatar_url || 'https://images.pexels.com/photos/4926674/pexels-photo-4926674.jpeg?auto=compress&cs=tinysrgb&w=150'}
-                    alt={review.user_name || 'Пользователь'}
-                    className="w-10 h-10 rounded-full object-cover border"
-                  />
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="font-semibold text-gray-900 text-sm">{review.user_name || 'Пользователь'}</span>
-                      <span className="flex items-center gap-0.5">
-                        {[1, 2, 3, 4, 5].map(i => (
-                          <StarIcon key={i} size={14} className={review.rating >= i ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'} fill={review.rating >= i ? '#facc15' : 'none'} />
-                        ))}
-                      </span>
-                      <span className="text-xs text-gray-400 ml-2">{review.created_at ? formatDate(new Date(review.created_at)) : ''}</span>
-                    </div>
-                    <div className="text-gray-700 text-sm leading-snug">{review.comment}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
           </div>
         )}
       </div>
