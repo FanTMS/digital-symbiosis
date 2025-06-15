@@ -928,7 +928,6 @@ export default function ChatPage() {
           flex-direction: row;
           align-items: center;
           gap: 8px;
-          margin-bottom: 32px;
         }
         .chat-input-row .chat-input {
           flex: 1 1 auto;
