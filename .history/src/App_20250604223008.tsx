@@ -22,7 +22,6 @@ const AchievementsPage = lazy(() => import("./pages/AchievementsPage"));
 const AdminDashboardPage = lazy(() => import("./pages/AdminDashboardPage"));
 const SettingsPage = lazy(() => import("./pages/SettingsPage"));
 const FavoritesPage = lazy(() => import("./pages/FavoritesPage"));
-const EditOrderPage = lazy(() => import("./pages/EditOrderPage"));
 
 // Components
 import NavigationBar from "./components/ui/NavigationBar";
@@ -236,17 +235,6 @@ function App() {
                   <ProtectedRoute>
                     <PageWrapper>
                       <FavoritesPage />
-                    </PageWrapper>
-                  </ProtectedRoute>
-                }
-              />
-
-              <Route
-                path="/edit-order/:orderId"
-                element={
-                  <ProtectedRoute>
-                    <PageWrapper>
-                      <EditOrderPage />
                     </PageWrapper>
                   </ProtectedRoute>
                 }
