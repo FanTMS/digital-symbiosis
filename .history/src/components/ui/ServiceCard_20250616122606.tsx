@@ -195,9 +195,9 @@ export default ServiceCard;
 
 /* CSS (в index.css или tailwind.config.js) */
 @keyframes marquee {
-  0 % { transform: translateX(0); }
-  100 % { transform: translateX(-50 %); }
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
-.animate - marquee {
+.animate-marquee {
   animation: marquee 4s linear infinite;
 }

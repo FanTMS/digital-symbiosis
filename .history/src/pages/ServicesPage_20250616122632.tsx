@@ -413,30 +413,12 @@ const ServicesPage: React.FC = () => {
       <Modal isOpen={showSortModal} onClose={() => setShowSortModal(false)}>
         <div className="p-4 w-[90vw] max-w-xs">
           <h2 className="text-lg font-bold mb-4">Сортировка</h2>
-          <div className="flex flex-col gap-2 mb-4">
+          <div className="flex flex-col gap-2">
             <Button variant={sortBy === 'date_desc' ? 'primary' : 'outline'} onClick={() => { setSortBy('date_desc'); setShowSortModal(false); }}>Сначала новые</Button>
             <Button variant={sortBy === 'date_asc' ? 'primary' : 'outline'} onClick={() => { setSortBy('date_asc'); setShowSortModal(false); }}>Сначала старые</Button>
             <Button variant={sortBy === 'price_asc' ? 'primary' : 'outline'} onClick={() => { setSortBy('price_asc'); setShowSortModal(false); }}>Дешевле</Button>
             <Button variant={sortBy === 'price_desc' ? 'primary' : 'outline'} onClick={() => { setSortBy('price_desc'); setShowSortModal(false); }}>Дороже</Button>
             <Button variant={sortBy === 'rating_desc' ? 'primary' : 'outline'} onClick={() => { setSortBy('rating_desc'); setShowSortModal(false); }}>По рейтингу</Button>
-          </div>
-          <div className="mb-2">
-            <label className="block text-sm font-medium mb-1">Категория услуги</label>
-            <select
-              className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary-400"
-              value={selectedCategory}
-              onChange={e => setSelectedCategory(e.target.value as ServiceCategory | 'all')}
-            >
-              <option value="all">Все категории</option>
-              <option value="education">🎓 Образование</option>
-              <option value="it">💻 IT и разработка</option>
-              <option value="design">🎨 Дизайн</option>
-              <option value="languages">🌐 Языки</option>
-              <option value="business">💼 Бизнес</option>
-              <option value="lifestyle">🌿 Лайфстайл</option>
-              <option value="writing">✍️ Копирайтинг</option>
-              <option value="music">🎵 Музыка</option>
-            </select>
           </div>
         </div>
       </Modal>

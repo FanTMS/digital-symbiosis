@@ -425,7 +425,7 @@ const ServicesPage: React.FC = () => {
             <select
               className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary-400"
               value={selectedCategory}
-              onChange={e => setSelectedCategory(e.target.value as ServiceCategory | 'all')}
+              onChange={e => setSelectedCategory(e.target.value)}
             >
               <option value="all">Все категории</option>
               <option value="education">🎓 Образование</option>
