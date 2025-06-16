@@ -22,35 +22,28 @@ body.hide-tabbar .navigation-bar-fixed {
     border-radius: 0 !important;
     z-index: 100;
   }
-
   .chat-input-bar input[type="text"] {
     max-width: 100vw;
   }
-
   /* Контейнер сообщений — больше отступ снизу */
   .chat-messages-container {
     padding-bottom: 110px !important;
   }
 }
 
-html,
-body {
+html, body {
   background: #fff !important;
   color: #111 !important;
 }
 
 @media (prefers-color-scheme: dark) {
-
-  html,
-  body {
+  html, body {
     background: #fff !important;
     color: #111 !important;
   }
 }
 
-input,
-textarea,
-select {
+input, textarea, select {
   background: #fff !important;
   color: #111 !important;
   border: 1px solid #e5e7eb !important;
@@ -58,36 +51,15 @@ select {
   box-shadow: none !important;
 }
 
-input:focus,
-textarea:focus,
-select:focus {
+input:focus, textarea:focus, select:focus {
   outline: 2px solid #0BBBEF !important;
   background: #f0f9ff !important;
 }
 
-.bg-white,
-.bg-gray-100,
-.bg-gray-50,
-.bg-gray-200,
-.bg-primary-50,
-.bg-primary-100 {
+.bg-white, .bg-gray-100, .bg-gray-50, .bg-gray-200, .bg-primary-50, .bg-primary-100 {
   background: #fff !important;
 }
 
 .text-white {
   color: #111 !important;
-}
-
-@keyframes marquee {
-  0% {
-    transform: translateX(0);
-  }
-
-  100% {
-    transform: translateX(-50%);
-  }
-}
-
-.animate-marquee {
-  animation: marquee 4s linear infinite;
 }
