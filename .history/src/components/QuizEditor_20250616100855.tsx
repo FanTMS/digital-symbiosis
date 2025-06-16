@@ -161,18 +161,9 @@ export default function QuizEditor({ quiz, questions: initialQuestions, onSave }
             </div>
             <Button variant="outline" className="mb-6 w-full py-2 rounded-xl" onClick={addQuestion}>Добавить вопрос</Button>
             {error && <div className="text-red-500 mb-4">{error}</div>}
-            {/* Кнопка для десктопа */}
-            <div className="hidden md:block">
-                <Button variant="primary" onClick={handleSave} loading={saving} disabled={saving} fullWidth className="py-3 text-base rounded-xl">
-                    Сохранить квиз
-                </Button>
-            </div>
-            {/* Фиксированная кнопка для мобильных */}
-            <div className="md:hidden fixed left-0 right-0 bottom-0 z-40 px-2 pb-3 animate-fade-in">
-                <Button variant="primary" onClick={handleSave} loading={saving} disabled={saving} fullWidth className="py-4 text-base rounded-2xl shadow-xl">
-                    Сохранить квиз
-                </Button>
-            </div>
+            <Button variant="primary" onClick={handleSave} loading={saving} disabled={saving} fullWidth className="py-3 text-base rounded-xl">
+                Сохранить квиз
+            </Button>
         </div>
     );
 } 

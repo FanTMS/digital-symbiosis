@@ -52,19 +52,16 @@ const QuizzesPage: React.FC = () => {
             ) : (
                 <div className="flex flex-col gap-4 w-full">
                     {quizzes.map(quiz => (
-                        <div
-                            key={quiz.id}
-                            className="bg-gradient-to-br from-blue-50 to-cyan-100 rounded-3xl shadow-lg p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 transition-all duration-300 hover:shadow-2xl hover:scale-[1.025] active:scale-95 group"
-                        >
+                        <div key={quiz.id} className="bg-gradient-to-br from-blue-50 to-cyan-100 rounded-2xl shadow-lg p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 hover:shadow-2xl transition-all">
                             <div className="flex-1 min-w-0">
-                                <div className="font-semibold text-lg sm:text-xl text-blue-900 truncate mb-1 group-hover:underline transition-all">{quiz.title}</div>
+                                <div className="font-semibold text-lg sm:text-xl text-blue-900 truncate mb-1">{quiz.title}</div>
                                 <div className="text-gray-500 text-sm truncate">{quiz.description}</div>
                             </div>
                             <div className="flex gap-2 w-full sm:w-auto">
-                                <Button size="lg" variant="outline" className="w-full sm:w-auto flex items-center gap-2 transition-all duration-200 hover:scale-105 active:scale-95 rounded-2xl" onClick={() => navigate(`/quizzes/${quiz.id}/edit`)}>
+                                <Button size="lg" variant="outline" className="w-full sm:w-auto flex items-center gap-2" onClick={() => navigate(`/quizzes/${quiz.id}/edit`)}>
                                     <Edit3 size={18} /> <span className="hidden xs:inline">Редактировать</span>
                                 </Button>
-                                <Button size="lg" variant="danger" className="w-full sm:w-auto flex items-center gap-2 transition-all duration-200 hover:scale-105 active:scale-95 rounded-2xl" onClick={() => setQuizToDelete(quiz.id)}>
+                                <Button size="lg" variant="danger" className="w-full sm:w-auto flex items-center gap-2" onClick={() => setQuizToDelete(quiz.id)}>
                                     <Trash2 size={18} /> <span className="hidden xs:inline">Удалить</span>
                                 </Button>
                             </div>
