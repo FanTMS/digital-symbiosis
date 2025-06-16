@@ -26,7 +26,7 @@ const CARD_HEIGHT = 120; // px, высота одной карточки зак�
 const VISIBLE_COUNT = 8;
 
 // Функция для отправки уведомления в бота
-async function notifyBot(userId: number, text: string) {
+async function notifyBot(userId, text) {
   try {
     await fetch('https://digital-symbiosis.onrender.com/api/notify', {
       method: 'POST',
@@ -139,14 +139,14 @@ const OrdersPage: React.FC = () => {
 
   const handleCloseModal = () => setSelectedOrder(null);
 
-  const handleContact = async (userId?: number) => {
+  const handleContact = async (userId: number) => {
     if (!user?.id || !userId) return;
     const chat = await chatApi.getOrCreateChat(user.id, userId);
     navigate(`/chat/${chat.id}`);
   };
 
   // Принять заказ
-  const handleAcceptOrder = async (order: any) => {
+  const handleAcceptOrder = async (order) => {
     await updateOrderStatus.mutateAsync({ id: order.id, status: 'accepted' });
     // Инвалидируем кэш
     if (userId) {
@@ -165,7 +165,7 @@ const OrdersPage: React.FC = () => {
   };
 
   // Отклонить заказ
-  const handleDeclineOrder = async (order: any) => {
+  const handleDeclineOrder = async (order) => {
     await updateOrderStatus.mutateAsync({ id: order.id, status: 'cancelled' });
     if (userId) {
       queryClient.invalidateQueries({ queryKey: ["orders", userId, "provider"] });
@@ -181,7 +181,7 @@ const OrdersPage: React.FC = () => {
   };
 
   // Модифицирую handleCompleteOrder для уведомления в бота
-  const handleCompleteOrder = async (orderId: number) => {
+  const handleCompleteOrder = async (orderId) => {
     await updateOrderStatus.mutateAsync({ id: orderId, status: "completed_by_provider" });
     if (userId) {
       queryClient.invalidateQueries({ queryKey: ["orders", userId, "client"] });

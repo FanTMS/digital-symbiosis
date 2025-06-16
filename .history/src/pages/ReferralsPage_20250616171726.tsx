@@ -341,7 +341,7 @@ const ReferralsPage: React.FC = () => {
                 >
                   <div className="flex items-center">
                     <div className="w-10 h-10 rounded-full overflow-hidden">
-                      <Avatar src={referredUser?.avatar_url ?? ''} name={referredUser?.name ?? ''} size={40} />
+                      <Avatar src={referredUser?.avatar_url} name={referredUser?.name} size={40} />
                     </div>
                     <div className="ml-3">
                       <div className="font-medium">

@@ -10,7 +10,6 @@ import {
 import Button from "../components/ui/Button";
 import { motion } from "framer-motion";
 import { BadgeCheck, Circle } from "lucide-react";
-import { Avatar } from "../components/ui/Avatar";
 
 // Типы для чата и пользователя
 import type { Database } from "../types/supabase";
@@ -115,7 +114,17 @@ const ChatsPage: React.FC = () => {
                 onClick={() => navigate(`/chat/${chat.id}`)}
               >
                 <div className="flex-shrink-0 w-14 h-14 rounded-full bg-gradient-to-br from-cyan-100 to-blue-100 border-2 border-blue-200 flex items-center justify-center mr-4 overflow-hidden relative">
-                  <Avatar src={chat.otherUser?.avatar_url ?? ''} name={chat.otherUser?.name ?? ''} size={56} />
+                  {chat.otherUser?.avatar_url ? (
+                    <img
+                      src={chat.otherUser.avatar_url}
+                      alt={chat.otherUser.name}
+                      className="w-full h-full rounded-full object-cover"
+                    />
+                  ) : (
+                    <MessageCircle size={32} className="text-blue-300" />
+                  )}
+                  {/* Индикатор онлайн (пример, если появится поле online) */}
+                  {/* {chat.otherUser?.online && <span className="absolute bottom-1 right-1 w-3 h-3 bg-green-400 border-2 border-white rounded-full"></span>} */}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
@@ -132,8 +141,8 @@ const ChatsPage: React.FC = () => {
                   <div className="flex items-center gap-1 text-sm text-gray-500 truncate max-w-[220px]">
                     {/* Иконка типа сообщения */}
                     {lastMsg &&
-                      lastMsg.attachments &&
-                      lastMsg.attachments.length > 0 ? (
+                    lastMsg.attachments &&
+                    lastMsg.attachments.length > 0 ? (
                       lastMsg.attachments[0].type === "image" ? (
                         <ImageIcon size={16} className="text-blue-400 mr-1" />
                       ) : (
@@ -142,8 +151,8 @@ const ChatsPage: React.FC = () => {
                     ) : null}
                     <span className="truncate">
                       {lastMsg &&
-                        lastMsg.attachments &&
-                        lastMsg.attachments.length > 0
+                      lastMsg.attachments &&
+                      lastMsg.attachments.length > 0
                         ? lastMsg.attachments[0].type === "image"
                           ? "Фото"
                           : "Файл"

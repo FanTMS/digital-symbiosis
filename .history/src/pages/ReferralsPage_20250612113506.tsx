@@ -8,7 +8,6 @@ import type { User, Referral } from "../types/models";
 import { formatDate } from "../utils/formatters";
 import { supabase } from "../lib/supabase";
 import { toast } from "react-hot-toast";
-import { Avatar } from "../components/ui/Avatar";
 
 const ReferralsPage: React.FC = () => {
   const navigate = useNavigate();
@@ -329,8 +328,8 @@ const ReferralsPage: React.FC = () => {
             transition={{ duration: 0.4, ease: "easeOut" }}
             className="space-y-3"
           >
-            {userReferrals.map((referral: any, idx: number) => {
-              const referredUser = referral.referred_user || {};
+            {userReferrals.map((referral, idx) => {
+              const referredUser = invitedUsers[idx];
               const statusInfo = getReferralStatusInfo(referral.status);
               return (
                 <motion.div
@@ -340,8 +339,18 @@ const ReferralsPage: React.FC = () => {
                   className="bg-white rounded-lg shadow-card p-3 flex items-center justify-between"
                 >
                   <div className="flex items-center">
-                    <div className="w-10 h-10 rounded-full overflow-hidden">
-                      <Avatar src={referredUser?.avatar_url ?? ''} name={referredUser?.name ?? ''} size={40} />
+                    <div className="w-10 h-10 bg-gray-200 rounded-full overflow-hidden">
+                      {referredUser?.avatar_url ? (
+                        <img
+                          src={referredUser.avatar_url}
+                          alt={referredUser.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-gray-500">
+                          <Users size={18} />
+                        </div>
+                      )}
                     </div>
                     <div className="ml-3">
                       <div className="font-medium">
@@ -389,7 +398,7 @@ const ReferralsPage: React.FC = () => {
         {/* Список приглашённых */}
         <div className="bg-white rounded-lg shadow-card overflow-hidden mb-6">
           <div className="p-5">
-            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2"><Users size={20} /> Приглашённые</h2>
+            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2"><Users size={20}/> Приглашённые</h2>
             {userReferrals.length === 0 ? (
               <div className="text-gray-400">Пока нет приглашённых</div>
             ) : (

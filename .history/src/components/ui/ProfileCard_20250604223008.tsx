@@ -2,7 +2,6 @@ import React from "react";
 import { Star, Award, Check } from "lucide-react";
 import { User } from "../../types";
 import { motion } from "framer-motion";
-import { Avatar } from "./Avatar";
 
 interface ProfileCardProps {
   user: User;
@@ -38,7 +37,15 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
       <div className="bg-gradient-to-r from-primary-500 to-primary-600 p-4">
         <div className="flex items-center">
           <div className="relative">
-            <Avatar src={user.avatarUrl} name={user.name} size={64} />
+            <img
+              src={
+                user.avatarUrl ||
+                "https://images.pexels.com/photos/4926674/pexels-photo-4926674.jpeg?auto=compress&cs=tinysrgb&w=150"
+              }
+              alt={user.name}
+              className="w-16 h-16 rounded-full object-cover border-2 border-white"
+            />
+
             <div
               className={`absolute -bottom-1 -right-1 rounded-full p-1 bg-white`}
             >

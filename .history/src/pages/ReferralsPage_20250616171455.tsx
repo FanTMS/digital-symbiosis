@@ -329,8 +329,8 @@ const ReferralsPage: React.FC = () => {
             transition={{ duration: 0.4, ease: "easeOut" }}
             className="space-y-3"
           >
-            {userReferrals.map((referral: any, idx: number) => {
-              const referredUser = referral.referred_user || {};
+            {userReferrals.map((referral, idx) => {
+              const referredUser = invitedUsers[idx];
               const statusInfo = getReferralStatusInfo(referral.status);
               return (
                 <motion.div
@@ -341,7 +341,7 @@ const ReferralsPage: React.FC = () => {
                 >
                   <div className="flex items-center">
                     <div className="w-10 h-10 rounded-full overflow-hidden">
-                      <Avatar src={referredUser?.avatar_url ?? ''} name={referredUser?.name ?? ''} size={40} />
+                      <Avatar src={referredUser?.avatar_url} name={referredUser?.name} size={40} />
                     </div>
                     <div className="ml-3">
                       <div className="font-medium">

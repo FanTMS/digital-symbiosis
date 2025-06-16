@@ -115,7 +115,7 @@ const ChatsPage: React.FC = () => {
                 onClick={() => navigate(`/chat/${chat.id}`)}
               >
                 <div className="flex-shrink-0 w-14 h-14 rounded-full bg-gradient-to-br from-cyan-100 to-blue-100 border-2 border-blue-200 flex items-center justify-center mr-4 overflow-hidden relative">
-                  <Avatar src={chat.otherUser?.avatar_url ?? ''} name={chat.otherUser?.name ?? ''} size={56} />
+                  <Avatar src={chat.otherUser?.avatar_url} name={chat.otherUser?.name} size={56} />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
