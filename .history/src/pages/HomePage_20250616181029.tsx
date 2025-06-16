@@ -327,6 +327,11 @@ const HomePage: React.FC = () => {
         </div>
       </motion.div>
 
+      {/* How it works */}
+      <div className="px-4 mb-6">
+        <HowItWorksGame />
+      </div>
+
       {/* Recommended services */}
       <div className="px-4 mb-6">
         <div className="flex justify-between items-center mb-3">
