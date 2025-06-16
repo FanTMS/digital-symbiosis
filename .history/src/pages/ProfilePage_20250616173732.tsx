@@ -124,8 +124,9 @@ const ProfilePage: React.FC = () => {
       .select('*')
       .eq('user_id', user.id)
       .order('created_at', { ascending: false })
-      .then(({ data }) => setQuizzes(data || []));
-    setQuizLoading(false);
+      .then(({ data }) => setQuizzes(data || []))
+      .catch(() => { })
+      .finally(() => setQuizLoading(false));
   }, [user?.id]);
 
   const handleDeleteQuiz = async () => {

@@ -124,8 +124,8 @@ const ProfilePage: React.FC = () => {
       .select('*')
       .eq('user_id', user.id)
       .order('created_at', { ascending: false })
-      .then(({ data }) => setQuizzes(data || []));
-    setQuizLoading(false);
+      .then(({ data }) => setQuizzes(data || []))
+      .finally(() => setQuizLoading(false));
   }, [user?.id]);
 
   const handleDeleteQuiz = async () => {
@@ -262,7 +262,7 @@ const ProfilePage: React.FC = () => {
 
         <div className="flex items-center gap-4 mb-6">
           <div className="relative">
-            <Avatar src={user.avatar_url} name={user.name} size={80} className="cursor-pointer border-2 border-primary-500" />
+            <Avatar src={user.avatar_url} name={user.name} size={80} className="cursor-pointer border-2 border-primary-500" onClick={() => setShowEditModal(true)} />
           </div>
           <div className="flex-1">
             <div className="flex items-center gap-2">
@@ -558,14 +558,7 @@ const ProfilePage: React.FC = () => {
                     <p className="mb-4 text-gray-600">Это действие необратимо. Все вопросы квиза также будут удалены.</p>
                     <div className="flex gap-2">
                       <Button variant="outline" onClick={() => setQuizToDelete(null)} disabled={deletingQuiz}>Отмена</Button>
-                      <Button
-                        variant="danger"
-                        onClick={handleDeleteQuiz}
-                        isLoading={deletingQuiz}
-                        disabled={deletingQuiz}
-                      >
-                        Удалить
-                      </Button>
+                      <Button variant="danger" onClick={handleDeleteQuiz} loading={deletingQuiz} disabled={deletingQuiz}>Удалить</Button>
                     </div>
                   </div>
                 </Modal>
