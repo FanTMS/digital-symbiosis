@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import WebApp from '@twa-dev/sdk';
 import { supabase } from '../lib/supabase';
-import { logErrorToTelegram } from '../utils/logError';
 
 declare global {
   interface Window {
@@ -21,22 +20,22 @@ const DEV_USER = {
 };
 
 const DEV_TG = {
-  ready: () => { },
-  expand: () => { },
-  close: () => { },
-  enableClosingConfirmation: () => { },
+  ready: () => {},
+  expand: () => {},
+  close: () => {},
+  enableClosingConfirmation: () => {},
   MainButton: {
-    show: () => { },
-    hide: () => { },
-    onClick: () => { }
+    show: () => {},
+    hide: () => {},
+    onClick: () => {}
   },
   BackButton: {
-    show: () => { },
-    hide: () => { },
-    onClick: () => { },
-    offClick: () => { }
+    show: () => {},
+    hide: () => {},
+    onClick: () => {},
+    offClick: () => {}
   },
-  setHeaderColor: () => { },
+  setHeaderColor: () => {},
   showAlert: (message: string) => alert(message),
   initData: 'mock_init_data',
   initDataUnsafe: {
@@ -133,7 +132,6 @@ export function useTelegram() {
     } catch (err) {
       const error = err instanceof Error ? err : new Error('Authentication failed');
       setError(error);
-      logErrorToTelegram(error, 'useTelegram: handleAuth');
     }
   };
 
