@@ -3,12 +3,12 @@ import { motion } from "framer-motion";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?:
-  | "primary"
-  | "secondary"
-  | "outline"
-  | "ghost"
-  | "danger"
-  | "success";
+    | "primary"
+    | "secondary"
+    | "outline"
+    | "ghost"
+    | "danger"
+    | "success";
   size?: "sm" | "md" | "lg";
   fullWidth?: boolean;
   isLoading?: boolean;
@@ -29,26 +29,26 @@ const Button: React.FC<ButtonProps> = ({
   ...props
 }) => {
   const baseStyles =
-    "inline-flex items-center justify-center rounded-xl font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-primary-400/50 focus:ring-offset-2 shadow-sm";
+    "inline-flex items-center justify-center rounded-lg font-medium transition-all focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2";
 
   const variantStyles = {
     primary:
-      "bg-gradient-to-r from-primary-500 via-sky-500 to-primary-600 text-white hover:shadow-xl hover:from-primary-400 hover:to-sky-500 active:scale-95 focus:ring-4 focus:ring-primary-300/40 focus:ring-offset-2 duration-150",
+      "bg-gradient-to-r from-primary-500 to-primary-600 text-white hover:shadow-lg hover:shadow-primary-500/25 active:shadow-none disabled:from-primary-300 disabled:to-primary-400",
     secondary:
-      "bg-gradient-to-r from-secondary-500 via-pink-400 to-secondary-600 text-white hover:shadow-xl hover:from-secondary-400 hover:to-pink-400 active:scale-95 focus:ring-4 focus:ring-secondary-300/40 focus:ring-offset-2 duration-150",
+      "bg-gradient-to-r from-secondary-500 to-secondary-600 text-white hover:shadow-lg hover:shadow-secondary-500/25 active:shadow-none disabled:from-secondary-300 disabled:to-secondary-400",
     outline:
       "border border-gray-300 bg-white text-gray-800 hover:bg-gray-50 active:bg-gray-100",
     ghost: "bg-transparent text-gray-800 hover:bg-gray-100 active:bg-gray-200",
     danger:
-      "bg-gradient-to-r from-error-500 to-error-600 text-white hover:shadow-lg hover:shadow-error-500/25 active:scale-95",
+      "bg-gradient-to-r from-error-500 to-error-600 text-white hover:shadow-lg hover:shadow-error-500/25 active:shadow-none disabled:from-error-300 disabled:to-error-400",
     success:
-      "bg-gradient-to-r from-green-400 to-green-600 text-white hover:shadow-lg hover:shadow-green-500/25 active:scale-95",
+      "bg-gradient-to-r from-success-500 to-success-600 text-white hover:shadow-lg hover:shadow-success-500/25 active:shadow-none disabled:from-success-300 disabled:to-success-400",
   };
 
   const sizeStyles = {
-    sm: "text-xs px-4 py-2",
-    md: "text-sm px-5 py-2.5",
-    lg: "text-base px-6 py-3",
+    sm: "text-xs px-3 py-1.5",
+    md: "text-sm px-4 py-2",
+    lg: "text-base px-5 py-2.5",
   };
 
   const widthStyles = fullWidth ? "w-full" : "";
