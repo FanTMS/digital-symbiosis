@@ -153,7 +153,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
             style={{ minWidth: 0 }}
             onClick={e => { e.stopPropagation(); navigate(`/services/${service.id}?edit=1`); }}
           >
-            <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d='M4 21h17M12.5 8.5l3 3M7 20l-3-3 9-9a2.121 2.121 0 013 3l-9 9z' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round' /></svg>
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d='M4 21h17M12.5 8.5l3 3M7 20l-3-3 9-9a2.121 2.121 0 013 3l-9 9z' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round'/></svg>
           </button>
         )}
       </div>
@@ -165,7 +165,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
           </span>
           <span className="flex items-center gap-1 text-sm font-bold text-orange-500 bg-orange-50 px-2 py-0.5 rounded shadow-sm">
             {service.price}
-            <svg width='14' height='14' viewBox='0 0 24 24' fill='none'><circle cx='12' cy='12' r='10' fill='#FDBA74' /><text x='12' y='16' textAnchor='middle' fontSize='10' fill='#fff' fontWeight='bold'>₽</text></svg>
+            <svg width='14' height='14' viewBox='0 0 24 24' fill='none'><circle cx='12' cy='12' r='10' fill='#FDBA74'/><text x='12' y='16' textAnchor='middle' fontSize='10' fill='#fff' fontWeight='bold'>₽</text></svg>
           </span>
         </div>
         <h3 className="font-semibold text-gray-900 text-base line-clamp-2 group-hover:underline transition-all duration-200">
