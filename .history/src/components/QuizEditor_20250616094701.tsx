@@ -161,7 +161,7 @@ export default function QuizEditor({ quiz, questions: initialQuestions, onSave }
             </div>
             <Button variant="outline" className="mb-6 w-full py-2 rounded-xl" onClick={addQuestion}>Добавить вопрос</Button>
             {error && <div className="text-red-500 mb-4">{error}</div>}
-            <Button variant="primary" onClick={handleSave} loading={saving} disabled={saving} fullWidth className="py-3 text-base rounded-xl">
+            <Button variant="primary" onClick={handleSave} loading={saving} disabled={saving} fullWidth>
                 Сохранить квиз
             </Button>
         </div>
