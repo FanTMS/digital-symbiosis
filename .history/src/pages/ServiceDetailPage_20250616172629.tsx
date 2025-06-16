@@ -27,7 +27,6 @@ import { Star as StarIcon, StarOff } from "lucide-react";
 import { formatDate } from "../utils/formatters";
 import QuizRunner from '../components/QuizRunner';
 import { Avatar } from "../components/ui/Avatar";
-import type { QuizQuestion, QuizAnswers } from '../types/models';
 
 const ServiceDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
