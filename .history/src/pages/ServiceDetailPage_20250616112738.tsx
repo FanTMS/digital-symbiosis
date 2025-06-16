@@ -124,10 +124,11 @@ const ServiceDetailPage: React.FC = () => {
   useEffect(() => {
     if (service?.quiz_id) {
       setQuizLoading(true);
-      getQuizQuestions(service.quiz_id)
-        .then((qs: QuizQuestion[]) => setQuizQuestions(qs))
-        .catch(() => setQuizError('Ошибка загрузки квиза'))
-        .finally(() => setQuizLoading(false));
+      // Placeholder: replace with actual API call when quizApi is available
+      setTimeout(() => {
+        setQuizQuestions([]);
+        setQuizLoading(false);
+      }, 500);
     } else {
       setQuizQuestions(null);
     }

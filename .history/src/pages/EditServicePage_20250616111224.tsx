@@ -155,7 +155,7 @@ const EditServicePage: React.FC = () => {
                     </Button>
                 </div>
                 {/* Фиксированная кнопка для мобильных */}
-                <div className="md:hidden fixed left-0 right-0 bottom-0 z-40 px-2 pb-[90px] animate-fade-in flex flex-col gap-2">
+                <div className="md:hidden fixed left-0 right-0 bottom-0 z-40 px-2 pb-3 animate-fade-in flex flex-col gap-2">
                     <Button variant="primary" onClick={handleSave} loading={saving} disabled={saving} fullWidth className="py-4 text-base rounded-2xl shadow-xl">
                         Сохранить изменения
                     </Button>

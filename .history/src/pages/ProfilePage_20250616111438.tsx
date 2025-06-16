@@ -366,8 +366,8 @@ const ProfilePage: React.FC = () => {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.05 }}
                   className={`flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50 ${index !== menuItems.length - 1
-                    ? "border-b border-gray-100"
-                    : ""
+                      ? "border-b border-gray-100"
+                      : ""
                     }`}
                   onClick={item.onClick}
                 >
@@ -802,19 +802,6 @@ const ProfilePage: React.FC = () => {
       )}
       {isOwn && (
         <PromoCodeActivation user={user} />
-      )}
-      {isOwn && (
-        <div className="mb-6 flex justify-center">
-          <Button
-            variant="primary"
-            size="lg"
-            className="w-full max-w-xs py-4 rounded-2xl text-lg flex items-center gap-3 shadow-lg hover:scale-[1.03] active:scale-95 transition"
-            onClick={() => setActiveTab('quizzes')}
-            leftIcon={<ListChecks size={24} />}
-          >
-            Мои квизы
-          </Button>
-        </div>
       )}
     </motion.div>
   );

@@ -302,7 +302,7 @@ const ProfilePage: React.FC = () => {
             <div className="flex items-center gap-2 mt-2">
               {/* Бейджи */}
               {Array.isArray((user as any).badges) &&
-                (user as any).badges.length > 0 ? (
+              (user as any).badges.length > 0 ? (
                 (user as any).badges.map((b: any) => (
                   <span
                     key={b.badge_id}
@@ -365,10 +365,11 @@ const ProfilePage: React.FC = () => {
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.05 }}
-                  className={`flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50 ${index !== menuItems.length - 1
-                    ? "border-b border-gray-100"
-                    : ""
-                    }`}
+                  className={`flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50 ${
+                    index !== menuItems.length - 1
+                      ? "border-b border-gray-100"
+                      : ""
+                  }`}
                   onClick={item.onClick}
                 >
                   <div className="flex items-center">
@@ -622,8 +623,7 @@ const ProfilePage: React.FC = () => {
                   </div>
                 )}
               </div>
-            )}
-            {activeTab === 'orders' && (
+              {/* Выполненные заказы */}
               <div>
                 <h3 className="font-semibold text-lg mb-2">
                   Выполненные заказы
@@ -653,7 +653,67 @@ const ProfilePage: React.FC = () => {
                   </div>
                 )}
               </div>
-            )}
+              {/* Услуги пользователя */}
+              <div className="md:col-span-2">
+                <h3 className="font-semibold text-lg mb-2">
+                  Услуги пользователя
+                </h3>
+                {services.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-6 text-center text-gray-400">
+                    <div className="text-3xl mb-2">🛠️</div>
+                    <div className="font-medium mb-1">Нет активных услуг</div>
+                    <div className="text-xs mb-2">
+                      {isOwn
+                        ? "Вы ещё не добавили ни одной услуги"
+                        : "Пользователь ещё не добавил ни одной услуги"}
+                    </div>
+                    {isOwn && (
+                      <Button
+                        size="sm"
+                        variant="primary"
+                        onClick={() => navigate("/create-service")}
+                      >
+                        Добавить услугу
+                      </Button>
+                    )}
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {services.map((s) => (
+                      <div
+                        key={s.id}
+                        className="bg-white rounded-lg shadow p-3 flex flex-col"
+                      >
+                        <div className="font-medium mb-1">{s.title}</div>
+                        <div className="text-xs text-gray-500 mb-1">
+                          {s.category}
+                        </div>
+                        <div className="text-xs text-gray-500 mb-1">
+                          {s.price} кр.
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => navigate(`/services/${s.id}`)}
+                        >
+                          Подробнее
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Logout button */}
+            <Button
+              variant="outline"
+              fullWidth
+              leftIcon={<LogOut size={16} />}
+              onClick={() => alert("Выход из системы")}
+            >
+              Выйти из аккаунта
+            </Button>
           </>
         )}
       </div>
@@ -802,19 +862,6 @@ const ProfilePage: React.FC = () => {
       )}
       {isOwn && (
         <PromoCodeActivation user={user} />
-      )}
-      {isOwn && (
-        <div className="mb-6 flex justify-center">
-          <Button
-            variant="primary"
-            size="lg"
-            className="w-full max-w-xs py-4 rounded-2xl text-lg flex items-center gap-3 shadow-lg hover:scale-[1.03] active:scale-95 transition"
-            onClick={() => setActiveTab('quizzes')}
-            leftIcon={<ListChecks size={24} />}
-          >
-            Мои квизы
-          </Button>
-        </div>
       )}
     </motion.div>
   );

@@ -14,24 +14,12 @@ import {
   MessageCircle,
   Pencil,
   X,
-  Edit3,
-  Plus,
-  Trash2,
-  ListChecks,
-  MessageSquare,
 } from "lucide-react";
 import ProfileCard from "../components/ui/ProfileCard";
 import Button from "../components/ui/Button";
 import { User } from "../types/models";
 import { supabase } from "../lib/supabase";
 import Modal from "../components/ui/Modal";
-
-const TABS = [
-  { id: 'services', label: 'Услуги', icon: FileText },
-  { id: 'quizzes', label: 'Квизы', icon: ListChecks },
-  { id: 'reviews', label: 'Отзывы', icon: MessageSquare },
-  { id: 'orders', label: 'Заказы', icon: FileText },
-];
 
 const ProfilePage: React.FC = () => {
   const { id: paramId } = useParams<{ id: string }>();
@@ -53,11 +41,6 @@ const ProfilePage: React.FC = () => {
   const [editSkills, setEditSkills] = useState<string[]>(user?.skills || []);
   const [skillInput, setSkillInput] = useState("");
   const [saving, setSaving] = useState(false);
-  const [activeTab, setActiveTab] = useState<'services' | 'quizzes' | 'reviews' | 'orders'>('services');
-  const [quizzes, setQuizzes] = useState<any[]>([]);
-  const [quizLoading, setQuizLoading] = useState(false);
-  const [quizToDelete, setQuizToDelete] = useState<string | null>(null);
-  const [deletingQuiz, setDeletingQuiz] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -114,28 +97,6 @@ const ProfilePage: React.FC = () => {
       tg.MainButton.hide();
     }
   }, [tg]);
-
-  useEffect(() => {
-    if (!user?.id) return;
-    setQuizLoading(true);
-    supabase
-      .from('quizzes')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false })
-      .then(({ data }) => setQuizzes(data || []))
-      .finally(() => setQuizLoading(false));
-  }, [user?.id]);
-
-  const handleDeleteQuiz = async () => {
-    if (!quizToDelete) return;
-    setDeletingQuiz(true);
-    await supabase.from('quiz_questions').delete().eq('quiz_id', quizToDelete);
-    await supabase.from('quizzes').delete().eq('id', quizToDelete);
-    setQuizzes(qs => qs.filter(q => q.id !== quizToDelete));
-    setDeletingQuiz(false);
-    setQuizToDelete(null);
-  };
 
   const menuItems = [
     {
@@ -302,7 +263,7 @@ const ProfilePage: React.FC = () => {
             <div className="flex items-center gap-2 mt-2">
               {/* Бейджи */}
               {Array.isArray((user as any).badges) &&
-                (user as any).badges.length > 0 ? (
+              (user as any).badges.length > 0 ? (
                 (user as any).badges.map((b: any) => (
                   <span
                     key={b.badge_id}
@@ -365,10 +326,11 @@ const ProfilePage: React.FC = () => {
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.05 }}
-                  className={`flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50 ${index !== menuItems.length - 1
-                    ? "border-b border-gray-100"
-                    : ""
-                    }`}
+                  className={`flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50 ${
+                    index !== menuItems.length - 1
+                      ? "border-b border-gray-100"
+                      : ""
+                  }`}
                   onClick={item.onClick}
                 >
                   <div className="flex items-center">
@@ -393,193 +355,9 @@ const ProfilePage: React.FC = () => {
               ))}
             </div>
 
-            {/* Вкладки */}
-            <div className="flex gap-2 mb-6 overflow-x-auto no-scrollbar">
-              {TABS.map(tab => (
-                <button
-                  key={tab.id}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-xl font-semibold transition-all duration-200 whitespace-nowrap ${activeTab === tab.id ? 'bg-blue-100 text-blue-900 shadow' : 'bg-white text-gray-500 hover:bg-gray-100'}`}
-                  onClick={() => setActiveTab(tab.id as any)}
-                >
-                  <tab.icon size={18} /> {tab.label}
-                </button>
-              ))}
-            </div>
-
-            {/* Контент вкладок */}
-            {activeTab === 'services' && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Отзывы */}
-                <div>
-                  <h3 className="font-semibold text-lg mb-2">Отзывы</h3>
-                  {reviews.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center py-6 text-center text-gray-400">
-                      <div className="text-3xl mb-2">💬</div>
-                      <div className="font-medium mb-1">Нет отзывов</div>
-                      <div className="text-xs mb-2">
-                        Пользователь ещё не получил ни одного отзыва
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="space-y-2">
-                      {reviews.map((r) => (
-                        <div key={r.id} className="bg-gray-100 rounded-lg p-3">
-                          <div className="flex items-center gap-2 mb-1">
-                            {[1, 2, 3, 4, 5].map((i) => (
-                              <Star
-                                key={i}
-                                size={14}
-                                className={
-                                  i <= r.rating
-                                    ? "text-yellow-400 fill-yellow-400"
-                                    : "text-gray-300"
-                                }
-                              />
-                            ))}
-                            <span className="text-xs text-gray-500 ml-2">
-                              {new Date(r.created_at).toLocaleDateString()}
-                            </span>
-                          </div>
-                          <div className="text-sm">
-                            {r.comment || (
-                              <span className="text-gray-400">
-                                Без комментария
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-                {/* Выполненные заказы */}
-                <div>
-                  <h3 className="font-semibold text-lg mb-2">
-                    Выполненные заказы
-                  </h3>
-                  {orders.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center py-6 text-center text-gray-400">
-                      <div className="text-3xl mb-2">📦</div>
-                      <div className="font-medium mb-1">
-                        Нет выполненных заказов
-                      </div>
-                      <div className="text-xs mb-2">
-                        Пользователь ещё не выполнил ни одного заказа
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="space-y-2">
-                      {orders.map((o) => (
-                        <div key={o.id} className="bg-gray-100 rounded-lg p-3">
-                          <div className="font-medium">
-                            {o.service?.title || "Без названия"}
-                          </div>
-                          <div className="text-xs text-gray-500">
-                            {new Date(o.created_at).toLocaleDateString()}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-                {/* Услуги пользователя */}
-                <div className="md:col-span-2">
-                  <h3 className="font-semibold text-lg mb-2">
-                    Услуги пользователя
-                  </h3>
-                  {services.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center py-6 text-center text-gray-400">
-                      <div className="text-3xl mb-2">🛠️</div>
-                      <div className="font-medium mb-1">Нет активных услуг</div>
-                      <div className="text-xs mb-2">
-                        {isOwn
-                          ? "Вы ещё не добавили ни одной услуги"
-                          : "Пользователь ещё не добавил ни одной услуги"}
-                      </div>
-                      {isOwn && (
-                        <Button
-                          size="sm"
-                          variant="primary"
-                          onClick={() => navigate("/create-service")}
-                        >
-                          Добавить услугу
-                        </Button>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      {services.map((s) => (
-                        <div
-                          key={s.id}
-                          className="bg-white rounded-lg shadow p-3 flex flex-col"
-                        >
-                          <div className="font-medium mb-1">{s.title}</div>
-                          <div className="text-xs text-gray-500 mb-1">
-                            {s.category}
-                          </div>
-                          <div className="text-xs text-gray-500 mb-1">
-                            {s.price} кр.
-                          </div>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => navigate(`/services/${s.id}`)}
-                          >
-                            Подробнее
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-            {activeTab === 'quizzes' && (
-              <div className="max-w-xl w-full mx-auto p-2 sm:p-6 bg-white rounded-xl shadow min-h-[60vh] flex flex-col">
-                <h2 className="text-2xl sm:text-3xl font-extrabold mb-6 text-blue-900 text-center">Мои квизы</h2>
-                <Button variant="primary" className="mb-6 w-full py-3 text-base rounded-xl flex items-center justify-center gap-2" onClick={() => navigate('/quizzes/new')}>
-                  <Plus size={20} /> <span>Создать квиз</span>
-                </Button>
-                {quizLoading ? (
-                  <div className="flex-1 flex items-center justify-center text-gray-400">Загрузка...</div>
-                ) : quizzes.length === 0 ? (
-                  <div className="flex-1 flex items-center justify-center text-gray-500">У вас пока нет квизов.</div>
-                ) : (
-                  <div className="flex flex-col gap-4 w-full">
-                    {quizzes.map(quiz => (
-                      <div
-                        key={quiz.id}
-                        className="bg-gradient-to-br from-blue-50 to-cyan-100 rounded-3xl shadow-lg p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 transition-all duration-300 hover:shadow-2xl hover:scale-[1.025] active:scale-95 group"
-                      >
-                        <div className="flex-1 min-w-0">
-                          <div className="font-semibold text-lg sm:text-xl text-blue-900 truncate mb-1 group-hover:underline transition-all">{quiz.title}</div>
-                          <div className="text-gray-500 text-sm truncate">{quiz.description}</div>
-                        </div>
-                        <div className="flex gap-2 w-full sm:w-auto">
-                          <Button size="lg" variant="outline" className="w-full sm:w-auto flex items-center gap-2 transition-all duration-200 hover:scale-105 active:scale-95 rounded-2xl" onClick={() => navigate(`/quizzes/${quiz.id}/edit`)}>
-                            <Edit3 size={18} /> <span className="hidden xs:inline">Редактировать</span>
-                          </Button>
-                          <Button size="lg" variant="danger" className="w-full sm:w-auto flex items-center gap-2 transition-all duration-200 hover:scale-105 active:scale-95 rounded-2xl" onClick={() => setQuizToDelete(quiz.id)}>
-                            <Trash2 size={18} /> <span className="hidden xs:inline">Удалить</span>
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-                <Modal isOpen={!!quizToDelete} onClose={() => setQuizToDelete(null)}>
-                  <div className="p-2">
-                    <h2 className="text-lg font-bold mb-2">Удалить квиз?</h2>
-                    <p className="mb-4 text-gray-600">Это действие необратимо. Все вопросы квиза также будут удалены.</p>
-                    <div className="flex gap-2">
-                      <Button variant="outline" onClick={() => setQuizToDelete(null)} disabled={deletingQuiz}>Отмена</Button>
-                      <Button variant="danger" onClick={handleDeleteQuiz} loading={deletingQuiz} disabled={deletingQuiz}>Удалить</Button>
-                    </div>
-                  </div>
-                </Modal>
-              </div>
-            )}
-            {activeTab === 'reviews' && (
+            {/* Стена профиля */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Отзывы */}
               <div>
                 <h3 className="font-semibold text-lg mb-2">Отзывы</h3>
                 {reviews.length === 0 ? (
@@ -622,8 +400,7 @@ const ProfilePage: React.FC = () => {
                   </div>
                 )}
               </div>
-            )}
-            {activeTab === 'orders' && (
+              {/* Выполненные заказы */}
               <div>
                 <h3 className="font-semibold text-lg mb-2">
                   Выполненные заказы
@@ -653,7 +430,67 @@ const ProfilePage: React.FC = () => {
                   </div>
                 )}
               </div>
-            )}
+              {/* Услуги пользователя */}
+              <div className="md:col-span-2">
+                <h3 className="font-semibold text-lg mb-2">
+                  Услуги пользователя
+                </h3>
+                {services.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-6 text-center text-gray-400">
+                    <div className="text-3xl mb-2">🛠️</div>
+                    <div className="font-medium mb-1">Нет активных услуг</div>
+                    <div className="text-xs mb-2">
+                      {isOwn
+                        ? "Вы ещё не добавили ни одной услуги"
+                        : "Пользователь ещё не добавил ни одной услуги"}
+                    </div>
+                    {isOwn && (
+                      <Button
+                        size="sm"
+                        variant="primary"
+                        onClick={() => navigate("/create-service")}
+                      >
+                        Добавить услугу
+                      </Button>
+                    )}
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {services.map((s) => (
+                      <div
+                        key={s.id}
+                        className="bg-white rounded-lg shadow p-3 flex flex-col"
+                      >
+                        <div className="font-medium mb-1">{s.title}</div>
+                        <div className="text-xs text-gray-500 mb-1">
+                          {s.category}
+                        </div>
+                        <div className="text-xs text-gray-500 mb-1">
+                          {s.price} кр.
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => navigate(`/services/${s.id}`)}
+                        >
+                          Подробнее
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Logout button */}
+            <Button
+              variant="outline"
+              fullWidth
+              leftIcon={<LogOut size={16} />}
+              onClick={() => alert("Выход из системы")}
+            >
+              Выйти из аккаунта
+            </Button>
           </>
         )}
       </div>
@@ -802,19 +639,6 @@ const ProfilePage: React.FC = () => {
       )}
       {isOwn && (
         <PromoCodeActivation user={user} />
-      )}
-      {isOwn && (
-        <div className="mb-6 flex justify-center">
-          <Button
-            variant="primary"
-            size="lg"
-            className="w-full max-w-xs py-4 rounded-2xl text-lg flex items-center gap-3 shadow-lg hover:scale-[1.03] active:scale-95 transition"
-            onClick={() => setActiveTab('quizzes')}
-            leftIcon={<ListChecks size={24} />}
-          >
-            Мои квизы
-          </Button>
-        </div>
       )}
     </motion.div>
   );
