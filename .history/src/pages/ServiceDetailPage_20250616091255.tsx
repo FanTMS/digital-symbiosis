@@ -27,7 +27,7 @@ import {
 import { Star as StarIcon, StarOff } from "lucide-react";
 import { formatDate } from "../utils/formatters";
 import QuizRunner from '../components/QuizRunner';
-import { getQuizQuestions } from '../lib/quizApi';
+import { getQuizById, getQuizQuestions } from '../lib/quizApi';
 import type { QuizQuestion, QuizAnswers } from '../types/models';
 
 type Service = Database["public"]["Tables"]["services"]["Row"];
@@ -58,7 +58,6 @@ const ServiceDetailPage: React.FC = () => {
   const [quizAnswers, setQuizAnswers] = useState<QuizAnswers | null>(null);
   const [quizLoading, setQuizLoading] = useState(false);
   const [quizError, setQuizError] = useState<string | null>(null);
-  const [showQuizPreview, setShowQuizPreview] = useState(false);
 
   useEffect(() => {
     if (tg) {
@@ -125,7 +124,7 @@ const ServiceDetailPage: React.FC = () => {
     if (service?.quiz_id) {
       setQuizLoading(true);
       getQuizQuestions(service.quiz_id)
-        .then((qs: QuizQuestion[]) => setQuizQuestions(qs))
+        .then(qs => setQuizQuestions(qs))
         .catch(() => setQuizError('Ошибка загрузки квиза'))
         .finally(() => setQuizLoading(false));
     } else {
@@ -401,18 +400,6 @@ const ServiceDetailPage: React.FC = () => {
         <h1 className="text-2xl font-extrabold mb-2 flex items-center gap-2 text-blue-900">
           {service.title}
         </h1>
-        {user && provider && user.id === provider.id && (
-          <div className="flex gap-2 mb-4">
-            <Button variant="outline" size="sm" onClick={() => navigate(`/services/${service.id}/edit`)}>
-              Редактировать
-            </Button>
-            {service.quiz_id && quizQuestions && (
-              <Button variant="outline" size="sm" onClick={() => setShowQuizPreview(true)}>
-                Предпросмотр квиза
-              </Button>
-            )}
-          </div>
-        )}
         <div className="flex items-center text-sm text-gray-500 mb-4">
           <Clock size={14} className="mr-1" />
           <span>Опубликовано {formatDate(new Date(service.created_at))}</span>
@@ -623,24 +610,6 @@ const ServiceDetailPage: React.FC = () => {
                   </div>
                 </div>
               ))}
-            </div>
-          </div>
-        )}
-        {showQuizPreview && service.quiz_id && quizQuestions && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-            <div className="relative w-full max-w-lg mx-auto">
-              <QuizRunner
-                questions={quizQuestions}
-                onSubmit={() => setShowQuizPreview(false)}
-                onCancel={() => setShowQuizPreview(false)}
-              />
-              <button
-                className="absolute top-2 right-2 text-gray-400 hover:text-gray-700"
-                onClick={() => setShowQuizPreview(false)}
-                aria-label="Закрыть предпросмотр"
-              >
-                <X size={24} />
-              </button>
             </div>
           </div>
         )}

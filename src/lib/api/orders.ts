@@ -44,7 +44,7 @@ export const ordersApi = {
     return data;
   },
 
-  async createOrder(order: Omit<Order, 'id' | 'created_at' | 'updated_at' | 'completed_at'>) {
+  async createOrder(order: Omit<Order, 'id' | 'created_at' | 'updated_at' | 'completed_at'> & { quiz_answers?: any }) {
     const { data, error } = await supabase
       .from('orders')
       .insert(order)

@@ -27,7 +27,7 @@ import {
 import { Star as StarIcon, StarOff } from "lucide-react";
 import { formatDate } from "../utils/formatters";
 import QuizRunner from '../components/QuizRunner';
-import { getQuizQuestions } from '../lib/quizApi';
+import { getQuizById, getQuizQuestions } from '../lib/quizApi';
 import type { QuizQuestion, QuizAnswers } from '../types/models';
 
 type Service = Database["public"]["Tables"]["services"]["Row"];
@@ -125,7 +125,7 @@ const ServiceDetailPage: React.FC = () => {
     if (service?.quiz_id) {
       setQuizLoading(true);
       getQuizQuestions(service.quiz_id)
-        .then((qs: QuizQuestion[]) => setQuizQuestions(qs))
+        .then(qs => setQuizQuestions(qs))
         .catch(() => setQuizError('Ошибка загрузки квиза'))
         .finally(() => setQuizLoading(false));
     } else {

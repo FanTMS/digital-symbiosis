@@ -27,7 +27,6 @@ const EditOrderPage = lazy(() => import("./pages/EditOrderPage"));
 const QuizzesPage = lazy(() => import('./pages/QuizzesPage'));
 const QuizCreatePage = lazy(() => import('./pages/QuizCreatePage'));
 const QuizEditPage = lazy(() => import('./pages/QuizEditPage'));
-const EditServicePage = lazy(() => import('./pages/EditServicePage'));
 
 // Components
 import NavigationBar from "./components/ui/NavigationBar";
@@ -146,17 +145,6 @@ function App() {
                     <ProtectedRoute>
                       <PageWrapper>
                         <ServiceDetailPage />
-                      </PageWrapper>
-                    </ProtectedRoute>
-                  }
-                />
-
-                <Route
-                  path="/services/:id/edit"
-                  element={
-                    <ProtectedRoute>
-                      <PageWrapper>
-                        <EditServicePage />
                       </PageWrapper>
                     </ProtectedRoute>
                   }

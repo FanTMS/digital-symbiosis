@@ -154,6 +154,7 @@ export interface Database {
           created_at: string
           completed_at: string | null
           updated_at: string
+          quiz_answers?: Json | null
         }
         Insert: {
           id?: string
@@ -165,6 +166,7 @@ export interface Database {
           created_at?: string
           completed_at?: string | null
           updated_at?: string
+          quiz_answers?: Json | null
         }
         Update: {
           id?: string
@@ -176,6 +178,7 @@ export interface Database {
           created_at?: string
           completed_at?: string | null
           updated_at?: string
+          quiz_answers?: Json | null
         }
       }
       reviews: {

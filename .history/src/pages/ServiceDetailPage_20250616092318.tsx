@@ -27,7 +27,7 @@ import {
 import { Star as StarIcon, StarOff } from "lucide-react";
 import { formatDate } from "../utils/formatters";
 import QuizRunner from '../components/QuizRunner';
-import { getQuizQuestions } from '../lib/quizApi';
+import { getQuizById, getQuizQuestions } from '../lib/quizApi';
 import type { QuizQuestion, QuizAnswers } from '../types/models';
 
 type Service = Database["public"]["Tables"]["services"]["Row"];
@@ -125,7 +125,7 @@ const ServiceDetailPage: React.FC = () => {
     if (service?.quiz_id) {
       setQuizLoading(true);
       getQuizQuestions(service.quiz_id)
-        .then((qs: QuizQuestion[]) => setQuizQuestions(qs))
+        .then(qs => setQuizQuestions(qs))
         .catch(() => setQuizError('Ошибка загрузки квиза'))
         .finally(() => setQuizLoading(false));
     } else {
@@ -623,24 +623,6 @@ const ServiceDetailPage: React.FC = () => {
                   </div>
                 </div>
               ))}
-            </div>
-          </div>
-        )}
-        {showQuizPreview && service.quiz_id && quizQuestions && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-            <div className="relative w-full max-w-lg mx-auto">
-              <QuizRunner
-                questions={quizQuestions}
-                onSubmit={() => setShowQuizPreview(false)}
-                onCancel={() => setShowQuizPreview(false)}
-              />
-              <button
-                className="absolute top-2 right-2 text-gray-400 hover:text-gray-700"
-                onClick={() => setShowQuizPreview(false)}
-                aria-label="Закрыть предпросмотр"
-              >
-                <X size={24} />
-              </button>
             </div>
           </div>
         )}

@@ -32,7 +32,7 @@ export type UserWithBadges = User & {
 };
 
 // Перечисления
-export type ServiceCategory = 
+export type ServiceCategory =
   | 'education'
   | 'it'
   | 'design'
@@ -40,21 +40,49 @@ export type ServiceCategory =
   | 'business'
   | 'lifestyle';
 
-export type OrderStatus = 
+export type OrderStatus =
   | 'pending'
   | 'accepted'
   | 'in_progress'
   | 'completed'
   | 'cancelled';
 
-export type ReferralStatus = 
+export type ReferralStatus =
   | 'invited'
   | 'registered'
   | 'active';
 
-export type NotificationType = 
+export type NotificationType =
   | 'order_new'
   | 'order_status'
   | 'review_new'
   | 'referral_new'
-  | 'system'; 
+  | 'system';
+
+// Квизы
+export type Quiz = {
+  id: string;
+  user_id: number;
+  title: string;
+  description: string | null;
+  created_at: string;
+};
+
+export type QuizQuestion = {
+  id: string;
+  quiz_id: string;
+  question: string;
+  type: 'single' | 'multiple' | 'text';
+  options: string[] | null; // для single/multiple
+  order: number;
+};
+
+export type QuizAnswer = {
+  questionId: string;
+  answer: string | string[]; // строка для single/text, массив для multiple
+};
+
+export type QuizAnswers = QuizAnswer[];
+
+export type ServiceWithQuiz = Service & { quiz_id?: string | null };
+export type OrderWithQuizAnswers = Order & { quiz_answers?: QuizAnswers | null }; 
