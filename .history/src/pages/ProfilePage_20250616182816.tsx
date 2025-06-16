@@ -20,7 +20,6 @@ import {
   ListChecks,
   MessageSquare,
   Copy,
-  Users,
 } from "lucide-react";
 import ProfileCard from "../components/ui/ProfileCard";
 import Button from "../components/ui/Button";
@@ -61,11 +60,6 @@ const ProfilePage: React.FC = () => {
   const [quizLoading, setQuizLoading] = useState(false);
   const [quizToDelete, setQuizToDelete] = useState<string | null>(null);
   const [deletingQuiz, setDeletingQuiz] = useState(false);
-  const [followers, setFollowers] = useState<any[]>([]);
-  const [following, setFollowing] = useState<any[]>([]);
-  const [isFollowing, setIsFollowing] = useState(false);
-  const [subsLoading, setSubsLoading] = useState(true);
-  const [subsTab, setSubsTab] = useState<'followers' | 'following' | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -135,41 +129,6 @@ const ProfilePage: React.FC = () => {
     setQuizLoading(false);
   }, [user?.id]);
 
-  // Получаем подписчиков и подписки
-  useEffect(() => {
-    if (!user?.id) return;
-    setSubsLoading(true);
-    (async () => {
-      // Подписчики (кто подписан на этого пользователя)
-      const { data: followersData } = await supabase
-        .from('subscriptions')
-        .select('follower_id, users:follower_id(id, name, username, avatar_url)')
-        .eq('followed_id', user.id);
-      setFollowers(followersData?.map((s: any) => s.users) || []);
-      // Подписки (на кого подписан этот пользователь)
-      const { data: followingData } = await supabase
-        .from('subscriptions')
-        .select('followed_id, users:followed_id(id, name, username, avatar_url)')
-        .eq('follower_id', user.id);
-      setFollowing(followingData?.map((s: any) => s.users) || []);
-      setSubsLoading(false);
-    })();
-  }, [user?.id]);
-
-  // Проверяем, подписан ли текущий пользователь на этот профиль
-  useEffect(() => {
-    if (!user?.id || !currentUser?.id || user.id === currentUser.id) return;
-    (async () => {
-      const { data } = await supabase
-        .from('subscriptions')
-        .select('*')
-        .eq('follower_id', currentUser.id)
-        .eq('followed_id', user.id)
-        .single();
-      setIsFollowing(!!data);
-    })();
-  }, [user?.id, currentUser?.id]);
-
   const handleDeleteQuiz = async () => {
     if (!quizToDelete) return;
     setDeletingQuiz(true);
@@ -233,19 +192,6 @@ const ProfilePage: React.FC = () => {
     } else {
       alert('Ссылка скопирована!');
     }
-  };
-
-  const handleFollow = async () => {
-    if (!currentUser?.id || !user?.id) return;
-    await supabase.from('subscriptions').insert({ follower_id: currentUser.id, followed_id: user.id });
-    setIsFollowing(true);
-    setFollowers((prev) => [...prev, currentUser]);
-  };
-  const handleUnfollow = async () => {
-    if (!currentUser?.id || !user?.id) return;
-    await supabase.from('subscriptions').delete().eq('follower_id', currentUser.id).eq('followed_id', user.id);
-    setIsFollowing(false);
-    setFollowers((prev) => prev.filter((f) => f.id !== currentUser.id));
   };
 
   if (loading)
@@ -331,52 +277,8 @@ const ProfilePage: React.FC = () => {
         >
           <Copy size={16} /> Поделиться
         </button>
-        {/* Кнопка подписки/отписки */}
-        {!isOwn && (
-          <button
-            className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium shadow transition ${isFollowing ? 'bg-gray-100 text-gray-500 hover:bg-gray-200' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
-            onClick={isFollowing ? handleUnfollow : handleFollow}
-          >
-            <Users size={16} /> {isFollowing ? 'Отписаться' : 'Подписаться'}
-          </button>
-        )}
       </div>
-      {/* Кол-во подписчиков и подписок */}
-      <div className="px-4 mb-4 flex gap-4">
-        <button className="text-sm text-blue-700 hover:underline" onClick={() => setSubsTab('followers')}>
-          Подписчики: <b>{followers.length}</b>
-        </button>
-        <button className="text-sm text-blue-700 hover:underline" onClick={() => setSubsTab('following')}>
-          Подписки: <b>{following.length}</b>
-        </button>
-      </div>
-      {/* Модалка подписчиков/подписок */}
-      {subsTab && (
-        <Modal isOpen={!!subsTab} onClose={() => setSubsTab(null)}>
-          <div className="p-4 w-80">
-            <h2 className="text-xl font-bold mb-4">{subsTab === 'followers' ? 'Подписчики' : 'Подписки'}</h2>
-            {subsLoading ? (
-              <div className="text-gray-400">Загрузка...</div>
-            ) : (
-              <div className="flex flex-col gap-3">
-                {(subsTab === 'followers' ? followers : following).length === 0 ? (
-                  <div className="text-gray-400 text-center">Нет данных</div>
-                ) : (
-                  (subsTab === 'followers' ? followers : following).map((u) => (
-                    <div key={u.id} className="flex items-center gap-3 p-2 rounded hover:bg-blue-50 cursor-pointer" onClick={() => { setSubsTab(null); navigate(`/profile/${u.id}`); }}>
-                      <Avatar src={u.avatar_url} name={u.name} size={36} />
-                      <div>
-                        <div className="font-medium text-gray-900">{u.name}</div>
-                        <div className="text-xs text-gray-500">@{u.username}</div>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            )}
-          </div>
-        </Modal>
-      )}
+
       <div className="px-4 mb-6">
         <div className="flex items-center gap-4 mb-6">
           <div className="relative">

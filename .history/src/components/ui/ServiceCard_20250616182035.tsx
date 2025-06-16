@@ -127,8 +127,6 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
     >
       {/* Фото и кнопки */}
       <div className="relative w-full h-28 overflow-hidden flex-shrink-0">
-        {/* Нет поля image_url в сервисе, поэтому убираем отображение изображения услуги */}
-        {/*
         {service.image_url && (
           <img
             src={service.image_url}
@@ -137,7 +135,6 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
             style={{ borderTopLeftRadius: 16, borderTopRightRadius: 16 }}
           />
         )}
-        */}
         {/* Избранное */}
         <button
           className={`absolute top-2 right-2 z-20 p-1.5 rounded-full bg-white/90 shadow transition-all duration-200 group-hover:scale-110 group-active:scale-95 ${isFavorite ? 'text-red-500' : 'text-gray-300'} hover:bg-red-50`}
