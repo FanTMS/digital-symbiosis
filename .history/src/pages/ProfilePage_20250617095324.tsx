@@ -228,7 +228,11 @@ const ProfilePage: React.FC = () => {
   const handleShareProfile = async () => {
     const url = `${window.location.origin}/profile/${user?.id}`;
     await navigator.clipboard.writeText(url);
-    alert('Ссылка скопирована!');
+    if (window?.toast) {
+      window.toast.success('Ссылка скопирована!');
+    } else {
+      alert('Ссылка скопирована!');
+    }
   };
 
   const handleFollow = async () => {

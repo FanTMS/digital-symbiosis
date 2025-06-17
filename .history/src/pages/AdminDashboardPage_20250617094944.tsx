@@ -927,7 +927,6 @@ function PromoCodesAdminPanel() {
     amount: 10,
     expires_at: "",
     description: "",
-    max_activations: 1,
   });
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -959,14 +958,13 @@ function PromoCodesAdminPanel() {
       amount: Number(form.amount),
       expires_at: form.expires_at ? new Date(form.expires_at).toISOString() : null,
       description: form.description,
-      max_activations: Number(form.max_activations) || 1,
     });
     if (error) {
       setError(error.message);
       setSaving(false);
       return;
     }
-    setForm({ code: "", amount: 10, expires_at: "", description: "", max_activations: 1 });
+    setForm({ code: "", amount: 10, expires_at: "", description: "" });
     setSuccess(true);
     fetchCodes();
     setSaving(false);
@@ -977,8 +975,6 @@ function PromoCodesAdminPanel() {
     await supabase.from("promo_codes").update({ is_active: false }).eq("id", id);
     fetchCodes();
   };
-  // Заглушка: подсчёт активаций (реализовать через отдельную таблицу promo_code_activations)
-  const getActivationsCount = (code: any) => code.activations_count || 0;
   return (
     <>
       <form onSubmit={handleCreate} className="space-y-4 mb-8">
@@ -990,10 +986,6 @@ function PromoCodesAdminPanel() {
           <div style={{ minWidth: 100 }}>
             <label className="block font-medium mb-1">Сумма</label>
             <input name="amount" type="number" min={1} value={form.amount} onChange={handleChange} className="w-full border rounded px-3 py-2" required />
-          </div>
-          <div style={{ minWidth: 120 }}>
-            <label className="block font-medium mb-1">Макс. активаций</label>
-            <input name="max_activations" type="number" min={1} value={form.max_activations} onChange={handleChange} className="w-full border rounded px-3 py-2" required />
           </div>
         </div>
         <div>
@@ -1020,7 +1012,6 @@ function PromoCodesAdminPanel() {
               <tr>
                 <th className="p-2 border">Код</th>
                 <th className="p-2 border">Сумма</th>
-                <th className="p-2 border">Активаций / Лимит</th>
                 <th className="p-2 border">Статус</th>
                 <th className="p-2 border">Кто активировал</th>
                 <th className="p-2 border">Когда</th>
@@ -1034,7 +1025,6 @@ function PromoCodesAdminPanel() {
                 <tr key={c.id} className={c.is_active ? "" : "bg-gray-100 text-gray-400"}>
                   <td className="p-2 border font-mono font-bold">{c.code}</td>
                   <td className="p-2 border">{c.amount}</td>
-                  <td className="p-2 border">{getActivationsCount(c)} / {c.max_activations || 1}</td>
                   <td className="p-2 border">{c.is_active ? (c.activated_by ? "Использован" : "Активен") : "Деактивирован"}</td>
                   <td className="p-2 border">{c.activated_by || "-"}</td>
                   <td className="p-2 border">{c.activated_at ? new Date(c.activated_at).toLocaleString() : "-"}</td>
