@@ -264,6 +264,35 @@ export interface Database {
           bonus_received?: boolean
           created_at?: string
         }
+      },
+      promo_banners: {
+        Row: {
+          id: string;
+          title: string;
+          text: string;
+          image_url: string | null;
+          link: string | null;
+          color: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          title: string;
+          text: string;
+          image_url?: string | null;
+          link?: string | null;
+          color?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          title?: string;
+          text?: string;
+          image_url?: string | null;
+          link?: string | null;
+          color?: string | null;
+          updated_at?: string;
+        };
       }
     }
     Views: {
