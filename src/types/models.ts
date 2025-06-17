@@ -2,11 +2,16 @@ import type { Database } from './supabase';
 
 // Базовые типы из базы данных
 export type User = Database['public']['Tables']['users']['Row'] & { role?: string | null };
-export type Service = Database['public']['Tables']['services']['Row'];
-export type Order = Database['public']['Tables']['orders']['Row'];
+export type Service = Database['public']['Tables']['services']['Row'] & {
+  min_price?: number | null;
+};
+export type Order = Database['public']['Tables']['orders']['Row'] & {
+  max_price?: number | null;
+};
 export type Review = Database['public']['Tables']['reviews']['Row'];
 export type Notification = Database['public']['Tables']['notifications']['Row'];
 export type Referral = Database['public']['Tables']['referrals']['Row'];
+export type PriceProposal = Database['public']['Tables']['price_proposals']['Row'];
 
 // Расширенные типы с дополнительными данными
 export type ServiceWithUser = Service & {

@@ -349,16 +349,6 @@ const OrdersPage: React.FC = () => {
                             >
                               Связаться
                             </Button>
-                            {user && otherUser && user.id !== otherUser.id && (
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                className="flex-1 transition-all duration-200 hover:scale-105 active:scale-95 rounded-2xl"
-                                onClick={() => { setCurrentOrder(order); setShowPriceModal(true); }}
-                              >
-                                Предложить цену
-                              </Button>
-                            )}
                             {/* Кнопки для исполнителя */}
                             {activeTab === "provider" && order.status === "pending" && (
                               <>
@@ -478,61 +468,6 @@ const OrdersPage: React.FC = () => {
             </Button>
           </div>
         </Modal>
-      )}
-      {/* Модалка для предложения цены по заказу */}
-      <Modal isOpen={showPriceModal} onClose={() => { setShowPriceModal(false); setPriceError(null); }}>
-        <h2 className="text-xl font-bold mb-3">Предложить цену по заказу</h2>
-        <div className="mb-2 text-gray-600 text-sm">
-          {currentOrder?.max_price ? (
-            <>Максимальная цена заказчика: <b>{currentOrder.max_price} кр.</b></>
-          ) : (
-            <>Текущая цена: <b>{currentOrder?.price} кр.</b></>
-          )}
-        </div>
-        <input
-          type="number"
-          className="w-full border rounded px-3 py-2 mb-2"
-          placeholder="Введите вашу цену"
-          value={proposedPrice}
-          min={1}
-          onChange={e => setProposedPrice(e.target.value)}
-        />
-        {priceError && <div className="text-red-500 text-sm mb-2">{priceError}</div>}
-        <Button
-          variant="primary"
-          fullWidth
-          disabled={createProposal.isLoading}
-          onClick={async () => {
-            setPriceError(null);
-            const priceNum = Number(proposedPrice);
-            if (!priceNum || (currentOrder?.max_price && priceNum > currentOrder.max_price)) {
-              setPriceError(currentOrder?.max_price ? `Цена не может быть выше ${currentOrder.max_price} кр.` : 'Введите корректную цену');
-              return;
-            }
-            try {
-              await createProposal.mutateAsync({
-                order_id: currentOrder.id,
-                from_user_id: user.id,
-                to_user_id: otherUser.id,
-                proposed_price: priceNum,
-              });
-              setShowPriceModal(false);
-              setProposedPrice('');
-              setSuccessMsg('Ваше предложение отправлено!');
-            } catch (e: any) {
-              setPriceError(e.message || 'Ошибка отправки предложения');
-            }
-          }}
-        >
-          Отправить предложение
-        </Button>
-      </Modal>
-      {/* Уведомление об успехе */}
-      {successMsg && (
-        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 bg-green-100 text-green-800 px-4 py-2 rounded-xl shadow-lg z-50">
-          {successMsg}
-          <button className="ml-2 text-green-700 font-bold" onClick={() => setSuccessMsg(null)}>×</button>
-        </div>
       )}
     </div>
   );

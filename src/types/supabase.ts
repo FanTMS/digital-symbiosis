@@ -114,6 +114,7 @@ export interface Database {
           updated_at: string
           is_active: boolean
           image_url: string | null
+          min_price: number | null
         }
         Insert: {
           id?: string
@@ -129,6 +130,7 @@ export interface Database {
           updated_at?: string
           is_active?: boolean
           image_url?: string | null
+          min_price?: number | null
         }
         Update: {
           id?: string
@@ -144,6 +146,7 @@ export interface Database {
           updated_at?: string
           is_active?: boolean
           image_url?: string | null
+          min_price?: number | null
         }
       }
       orders: {
@@ -158,6 +161,7 @@ export interface Database {
           completed_at: string | null
           updated_at: string
           quiz_answers?: Json | null
+          max_price: number | null
         }
         Insert: {
           id?: string
@@ -170,6 +174,7 @@ export interface Database {
           completed_at?: string | null
           updated_at?: string
           quiz_answers?: Json | null
+          max_price?: number | null
         }
         Update: {
           id?: string
@@ -182,6 +187,7 @@ export interface Database {
           completed_at?: string | null
           updated_at?: string
           quiz_answers?: Json | null
+          max_price?: number | null
         }
       }
       reviews: {
@@ -293,6 +299,35 @@ export interface Database {
           color?: string | null;
           updated_at?: string;
         };
+      },
+      price_proposals: {
+        Row: {
+          id: string
+          order_id: string
+          from_user_id: number
+          to_user_id: number
+          proposed_price: number
+          status: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          order_id: string
+          from_user_id: number
+          to_user_id: number
+          proposed_price: number
+          status?: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          order_id?: string
+          from_user_id?: number
+          to_user_id?: number
+          proposed_price?: number
+          status?: string
+          created_at?: string
+        }
       }
     }
     Views: {
