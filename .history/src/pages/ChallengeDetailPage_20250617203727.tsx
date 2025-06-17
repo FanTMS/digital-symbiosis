@@ -123,7 +123,7 @@ const ChallengeDetailPage: React.FC = () => {
                     <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
                         <div className="h-2 bg-gradient-to-r from-cyan-400 to-blue-500" style={{ width: `${Math.max(0, Math.min(100, 100 - (new Date(challenge.ends_at).getTime() - Date.now()) / (1000 * 60 * 60 * 24 * 7) * 100))}%` }} />
                     </div>
-                    <span className="text-xs text-gray-500 ml-2">До {challenge.ends_at ? challenge.ends_at.slice(0, 10) : '—'}</span>
+                    <span className="text-xs text-gray-500 ml-2">До {challenge.ends_at?.slice(0, 10)}</span>
                 </div>
             </div>
 
