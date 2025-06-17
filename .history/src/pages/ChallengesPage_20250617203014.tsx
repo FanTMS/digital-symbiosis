@@ -6,7 +6,6 @@ import { useUser } from '../contexts/UserContext';
 import Modal from '../components/ui/Modal';
 import { challengesApi } from '../lib/api/challenges';
 import ChallengeCard from '../components/ui/PromoBanner';
-import { supabase } from '../lib/supabase';
 
 // TODO: Получать данные из Supabase
 // const { data: challenges, isLoading } = useChallenges();
@@ -62,9 +61,9 @@ const ChallengesPage: React.FC = () => {
                 // Загрузка изображения в Supabase Storage
                 const ext = imageFile.name.split('.').pop();
                 const filePath = `challenges/${Date.now()}.${ext}`;
-                const { error } = await supabase.storage.from('challenge-files').upload(filePath, imageFile, { upsert: true });
+                const { error } = await window.supabase.storage.from('challenge-files').upload(filePath, imageFile, { upsert: true });
                 if (error) throw error;
-                const { data } = supabase.storage.from('challenge-files').getPublicUrl(filePath);
+                const { data } = window.supabase.storage.from('challenge-files').getPublicUrl(filePath);
                 image_url = data.publicUrl;
             }
             await challengesApi.create({

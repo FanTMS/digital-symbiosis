@@ -8,7 +8,6 @@ import { useUser } from '../contexts/UserContext';
 import Modal from '../components/ui/Modal';
 import { useChallengeVotes, useHasVoted, useVote } from '../hooks/useChallengeVotes';
 import ChallengeCard from '../components/ui/PromoBanner';
-import { Avatar } from '../components/ui/Avatar';
 // TODO: Импортировать хуки для голосов, комментариев, жалоб
 
 const ChallengeDetailPage: React.FC = () => {
@@ -151,26 +150,6 @@ const ChallengeDetailPage: React.FC = () => {
                 {submitError && <div className="text-red-500 text-sm">{submitError}</div>}
                 <Button type="submit" variant="primary" isLoading={submitting}>Отправить работу</Button>
             </form>
-
-            {/* Список участников */}
-            <div className="mb-8">
-                <div className="flex items-center gap-2 mb-2">
-                    <span className="font-semibold text-lg">Участники</span>
-                    <span className="text-xs text-gray-500">({(submissions || []).filter((s: any) => s.status === 'approved').length})</span>
-                </div>
-                <div className="flex gap-3 overflow-x-auto pb-2">
-                    {(submissions || []).filter((s: any) => s.status === 'approved').length === 0 ? (
-                        <span className="text-gray-400 text-sm">Пока нет участников</span>
-                    ) : (
-                        (submissions || []).filter((s: any) => s.status === 'approved').map((s: any) => (
-                            <div key={s.id} className="flex flex-col items-center min-w-[64px] cursor-pointer" onClick={() => navigate(`/profile/${s.user_id}`)}>
-                                <Avatar src={s.user_avatar_url} name={s.user_name} size={48} />
-                                <span className="text-xs text-gray-700 mt-1 max-w-[60px] truncate text-center">{s.user_name}</span>
-                            </div>
-                        ))
-                    )}
-                </div>
-            </div>
 
             {/* Список работ участников */}
             <h2 className="font-semibold text-lg mb-2">Работы участников</h2>

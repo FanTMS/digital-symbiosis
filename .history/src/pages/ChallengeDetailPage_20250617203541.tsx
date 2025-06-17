@@ -163,7 +163,7 @@ const ChallengeDetailPage: React.FC = () => {
                         <span className="text-gray-400 text-sm">Пока нет участников</span>
                     ) : (
                         (submissions || []).filter((s: any) => s.status === 'approved').map((s: any) => (
-                            <div key={s.id} className="flex flex-col items-center min-w-[64px] cursor-pointer" onClick={() => navigate(`/profile/${s.user_id}`)}>
+                            <div key={s.id} className="flex flex-col items-center min-w-[64px]">
                                 <Avatar src={s.user_avatar_url} name={s.user_name} size={48} />
                                 <span className="text-xs text-gray-700 mt-1 max-w-[60px] truncate text-center">{s.user_name}</span>
                             </div>

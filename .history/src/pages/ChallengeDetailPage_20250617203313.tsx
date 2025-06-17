@@ -8,7 +8,6 @@ import { useUser } from '../contexts/UserContext';
 import Modal from '../components/ui/Modal';
 import { useChallengeVotes, useHasVoted, useVote } from '../hooks/useChallengeVotes';
 import ChallengeCard from '../components/ui/PromoBanner';
-import { Avatar } from '../components/ui/Avatar';
 // TODO: Импортировать хуки для голосов, комментариев, жалоб
 
 const ChallengeDetailPage: React.FC = () => {
@@ -127,20 +126,6 @@ const ChallengeDetailPage: React.FC = () => {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                <div className="bg-blue-50 rounded-xl p-4 flex flex-col gap-2 shadow-sm">
-                    <div className="text-sm text-blue-700 font-semibold mb-1">Призы</div>
-                    <div className="text-lg font-bold text-blue-900">{challenge.prize}</div>
-                    {challenge.prize_type && <div className="text-xs text-blue-500">Тип: {challenge.prize_type === 'money' ? 'Деньги' : challenge.prize_type === 'certificate' ? 'Сертификат' : challenge.prize_type === 'item' ? 'Товар' : 'Баллы'}</div>}
-                </div>
-                <div className="bg-gray-50 rounded-xl p-4 flex flex-col gap-2 shadow-sm">
-                    <div className="text-sm text-gray-700 font-semibold mb-1">Условия участия</div>
-                    <div className="text-gray-900 text-base">{challenge.description}</div>
-                    {challenge.participants_limit && <div className="text-xs text-gray-500">Лимит участников: {challenge.participants_limit}</div>}
-                    {challenge.brand && <div className="text-xs text-gray-500">Бренд: <span className="font-bold">{challenge.brand}</span></div>}
-                </div>
-            </div>
-
             {/* Форма отправки работы */}
             <form onSubmit={handleSubmit} className="bg-gray-50 rounded-lg p-4 mb-6 flex flex-col gap-3">
                 <label className="font-medium">Ваша работа (файл):</label>
@@ -151,26 +136,6 @@ const ChallengeDetailPage: React.FC = () => {
                 {submitError && <div className="text-red-500 text-sm">{submitError}</div>}
                 <Button type="submit" variant="primary" isLoading={submitting}>Отправить работу</Button>
             </form>
-
-            {/* Список участников */}
-            <div className="mb-8">
-                <div className="flex items-center gap-2 mb-2">
-                    <span className="font-semibold text-lg">Участники</span>
-                    <span className="text-xs text-gray-500">({(submissions || []).filter((s: any) => s.status === 'approved').length})</span>
-                </div>
-                <div className="flex gap-3 overflow-x-auto pb-2">
-                    {(submissions || []).filter((s: any) => s.status === 'approved').length === 0 ? (
-                        <span className="text-gray-400 text-sm">Пока нет участников</span>
-                    ) : (
-                        (submissions || []).filter((s: any) => s.status === 'approved').map((s: any) => (
-                            <div key={s.id} className="flex flex-col items-center min-w-[64px] cursor-pointer" onClick={() => navigate(`/profile/${s.user_id}`)}>
-                                <Avatar src={s.user_avatar_url} name={s.user_name} size={48} />
-                                <span className="text-xs text-gray-700 mt-1 max-w-[60px] truncate text-center">{s.user_name}</span>
-                            </div>
-                        ))
-                    )}
-                </div>
-            </div>
 
             {/* Список работ участников */}
             <h2 className="font-semibold text-lg mb-2">Работы участников</h2>
