@@ -580,33 +580,53 @@ const AdminDashboardPage: React.FC = () => {
             </div>
           )}
           {activeTab === "services" && (
-            <div className="bg-white rounded-2xl shadow-lg p-6">
-              <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-                <Briefcase size={28} className="text-accent-500" /> Услуги
-              </h2>
-              <div className="mb-6 flex flex-col sm:flex-row gap-2 items-center">
-                <select
-                  className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-2 text-base"
-                  value={selectedCategory}
-                  onChange={e => setSelectedCategory(e.target.value)}
-                >
-                  {serviceCategories.map(c => (
-                    <option key={c.id} value={c.id}>{c.emoji} {c.label}</option>
-                  ))}
-                </select>
-                <input
-                  type="text"
-                  className="w-full sm:w-72 rounded-xl border border-gray-200 px-4 py-2 text-base bg-gray-50"
-                  placeholder="Поиск по названию, описанию или навыкам..."
-                  value={serviceSearch}
-                  onChange={e => setServiceSearch(e.target.value)}
-                />
+            <div>
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
+                <h2 className="text-xl font-semibold">Услуги</h2>
+                <div className="flex gap-2 w-full md:w-auto">
+                  <div className="relative w-full md:w-72">
+                    <input
+                      type="text"
+                      className="w-full pl-10 pr-10 py-2 rounded-lg border border-gray-300 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      placeholder="Поиск по названию, описанию, навыкам..."
+                      value={serviceSearch}
+                      onChange={(e) => setServiceSearch(e.target.value)}
+                    />
+
+                    <Search
+                      className="absolute left-3 top-2.5 text-gray-400"
+                      size={18}
+                    />
+
+                    {serviceSearch && (
+                      <button
+                        className="absolute right-3 top-2.5 text-gray-400 hover:text-red-500"
+                        onClick={() => setServiceSearch("")}
+                      >
+                        <X size={18} />
+                      </button>
+                    )}
+                  </div>
+                  <select
+                    className="rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    value={selectedCategory}
+                    onChange={(e) => setSelectedCategory(e.target.value)}
+                  >
+                    {serviceCategories.map((cat) => (
+                      <option key={cat.id} value={cat.id}>
+                        {cat.emoji} {cat.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
               {serviceLoading ? (
-                <div className="flex items-center gap-2 text-gray-400"><Loader2 className="animate-spin" size={20} /> Загрузка...</div>
+                <div>Загрузка...</div>
+              ) : filteredServices.length === 0 ? (
+                <div className="text-gray-400 text-center py-12">Нет услуг</div>
               ) : (
-                <div className="overflow-x-auto rounded-xl shadow-sm">
-                  <table className="min-w-full text-base border">
+                <div className="overflow-x-auto rounded-xl shadow">
+                  <table className="min-w-full bg-white">
                     <thead>
                       <tr>
                         <th className="p-2 text-left">ID</th>
@@ -614,25 +634,42 @@ const AdminDashboardPage: React.FC = () => {
                         <th className="p-2 text-left">Категория</th>
                         <th className="p-2 text-left">Цена</th>
                         <th className="p-2 text-left">Владелец</th>
-                        <th className="p-2 text-left">Навыки</th>
+                        <th className="p-2 text-left">Рейтинг</th>
                         <th className="p-2 text-left">Действия</th>
                       </tr>
                     </thead>
                     <tbody>
                       {filteredServices.map((s) => (
-                        <tr key={s.id} className="border-b hover:bg-primary-50/30 transition">
+                        <tr
+                          key={s.id}
+                          className="border-b hover:bg-primary-50/30 transition"
+                        >
                           <td className="p-2">{s.id}</td>
                           <td className="p-2">{s.title}</td>
-                          <td className="p-2">{serviceCategories.find(c => c.id === s.category)?.label || s.category}</td>
+                          <td className="p-2">
+                            {serviceCategories.find((c) => c.id === s.category)
+                              ?.label || s.category}
+                          </td>
                           <td className="p-2">{s.price} кр.</td>
                           <td className="p-2">{s.user?.name || s.user_id}</td>
-                          <td className="p-2">{(s.skills || []).join(", ")}</td>
+                          <td className="p-2">{s.rating?.toFixed(1) ?? "-"}</td>
                           <td className="p-2 flex gap-2">
-                            <button className="text-primary-500 hover:underline flex items-center gap-1" onClick={() => { setSelectedService(s); setShowServiceModal(true); }}>
-                              <Eye size={16} /> Просмотр
+                            <button
+                              className="text-primary-500 hover:underline flex items-center gap-1"
+                              onClick={() => {
+                                setSelectedService(s);
+                                setShowServiceModal(true);
+                              }}
+                            >
+                              <Eye size={16} />
+                              Просмотр
                             </button>
-                            <button className="text-amber-500 hover:underline flex items-center gap-1" onClick={() => handleDeleteService(s.id)}>
-                              <Archive size={16} /> Архивировать
+                            <button
+                              className="text-red-500 hover:underline flex items-center gap-1"
+                              onClick={() => handleDeleteService(s.id)}
+                            >
+                              <Trash2 size={16} />
+                              Удалить
                             </button>
                           </td>
                         </tr>
@@ -641,20 +678,92 @@ const AdminDashboardPage: React.FC = () => {
                   </table>
                 </div>
               )}
+              {/* Модалка услуги */}
+              {showServiceModal && selectedService && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+                  <div className="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4 p-6 relative">
+                    <button
+                      className="absolute top-3 right-3 text-gray-400 hover:text-gray-700 text-xl font-bold"
+                      onClick={() => setShowServiceModal(false)}
+                      aria-label="Закрыть"
+                    >
+                      ×
+                    </button>
+                    <h3 className="text-xl font-bold mb-2 flex items-center gap-2">
+                      <Briefcase size={20} />
+                      Услуга
+                    </h3>
+                    <div className="mb-2">
+                      <b>ID:</b> {selectedService.id}
+                    </div>
+                    <div className="mb-2">
+                      <b>Название:</b> {selectedService.title}
+                    </div>
+                    <div className="mb-2">
+                      <b>Описание:</b> {selectedService.description}
+                    </div>
+                    <div className="mb-2">
+                      <b>Категория:</b>{" "}
+                      {serviceCategories.find(
+                        (c) => c.id === selectedService.category,
+                      )?.label || selectedService.category}
+                    </div>
+                    <div className="mb-2">
+                      <b>Цена:</b> {selectedService.price} кр.
+                    </div>
+                    <div className="mb-2">
+                      <b>Владелец:</b>{" "}
+                      {selectedService.user?.name || selectedService.user_id}
+                    </div>
+                    <div className="mb-2">
+                      <b>Навыки:</b> {(selectedService.skills || []).join(", ")}
+                    </div>
+                    <div className="mb-2">
+                      <b>Рейтинг:</b>{" "}
+                      {selectedService.rating?.toFixed(1) ?? "-"}
+                    </div>
+                    <div className="mb-2">
+                      <b>Создана:</b>{" "}
+                      {new Date(selectedService.created_at).toLocaleString()}
+                    </div>
+                    <div className="mb-2">
+                      <b>Обновлена:</b>{" "}
+                      {new Date(selectedService.updated_at).toLocaleString()}
+                    </div>
+                    <div className="mt-4 flex gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setShowServiceModal(false)}
+                      >
+                        Закрыть
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="danger"
+                        onClick={() => handleDeleteService(selectedService.id)}
+                      >
+                        <Trash2 size={16} />
+                        Удалить
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           )}
           {activeTab === "archive" && (
-            <div className="bg-white rounded-2xl shadow-lg p-6">
-              <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-                <Archive size={28} className="text-gray-500" /> Архив услуг
-              </h2>
+            <div>
+              <h2 className="text-xl font-semibold mb-4">Архив услуг</h2>
               {archivedLoading ? (
-                <div className="flex items-center gap-2 text-gray-400"><Loader2 className="animate-spin" size={20} /> Загрузка...</div>
+                <div>Загрузка...</div>
               ) : archivedServices.length === 0 ? (
-                <div className="text-gray-400 text-center py-12">Архив пуст</div>
+                <div className="text-gray-400 text-center py-12">
+                  Архив пуст
+                </div>
               ) : (
-                <div className="overflow-x-auto rounded-xl shadow-sm">
-                  <table className="min-w-full text-base border">
+                <div className="overflow-x-auto rounded-xl shadow">
+                  <table className="min-w-full bg-white">
                     <thead>
                       <tr>
                         <th className="p-2 text-left">ID</th>
@@ -668,27 +777,60 @@ const AdminDashboardPage: React.FC = () => {
                     </thead>
                     <tbody>
                       {archivedServices.map((s) => (
-                        <tr key={s.id} className="border-b hover:bg-primary-50/30 transition">
+                        <tr
+                          key={s.id}
+                          className="border-b hover:bg-primary-50/30 transition"
+                        >
                           <td className="p-2">{s.id}</td>
                           <td className="p-2">{s.title}</td>
-                          <td className="p-2">{serviceCategories.find(c => c.id === s.category)?.label || s.category}</td>
+                          <td className="p-2">
+                            {serviceCategories.find((c) => c.id === s.category)
+                              ?.label || s.category}
+                          </td>
                           <td className="p-2">{s.price} кр.</td>
                           <td className="p-2">{s.user?.name || s.user_id}</td>
-                          <td className="p-2">{s.rating ?? '-'}</td>
+                          <td className="p-2">{s.rating?.toFixed(1) ?? "-"}</td>
                           <td className="p-2 flex gap-2">
-                            <button className="text-primary-500 hover:underline flex items-center gap-1" onClick={() => { setSelectedService(s); setShowServiceModal(true); }}>
-                              <Eye size={16} /> Просмотр
+                            <button
+                              className="text-green-500 hover:underline flex items-center gap-1"
+                              onClick={async () => {
+                                await supabase
+                                  .from("services")
+                                  .update({ is_active: true })
+                                  .eq("id", s.id);
+                                setArchivedServices(
+                                  archivedServices.filter((a) => a.id !== s.id),
+                                );
+                                queryClient.invalidateQueries({
+                                  queryKey: ["services"],
+                                });
+                              }}
+                            >
+                              Восстановить
                             </button>
-                            <button className="text-red-500 hover:underline flex items-center gap-1" onClick={async () => {
-                              if (!window.confirm("Удалить навсегда?")) return;
-                              const { error } = await supabase.from("services").delete().eq("id", s.id);
-                              if (error && error.code === "409") {
-                                alert("Нельзя удалить услугу, пока есть связанные заказы или отзывы.");
-                              } else if (!error) {
-                                setArchivedServices(archivedServices.filter(a => a.id !== s.id));
-                              }
-                            }}>
-                              <Trash2 size={16} /> Удалить
+                            <button
+                              className="text-red-500 hover:underline flex items-center gap-1"
+                              onClick={async () => {
+                                if (!window.confirm("Удалить навсегда?"))
+                                  return;
+                                const { error } = await supabase
+                                  .from("services")
+                                  .delete()
+                                  .eq("id", s.id);
+                                if (error && error.code === "409") {
+                                  alert(
+                                    "Нельзя удалить услугу, пока есть связанные заказы или отзывы.",
+                                  );
+                                } else if (!error) {
+                                  setArchivedServices(
+                                    archivedServices.filter(
+                                      (a) => a.id !== s.id,
+                                    ),
+                                  );
+                                }
+                              }}
+                            >
+                              Удалить навсегда
                             </button>
                           </td>
                         </tr>

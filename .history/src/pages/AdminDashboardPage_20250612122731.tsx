@@ -19,9 +19,6 @@ import {
   Coins,
   Award,
   Gift,
-  CheckCircle,
-  XCircle,
-  Loader2,
 } from "lucide-react";
 import type { Database } from "../types/supabase";
 import { useQueryClient } from "@tanstack/react-query";
@@ -84,16 +81,12 @@ const AdminDashboardPage: React.FC = () => {
   const complaintsPerPage = 10;
   const paginatedComplaints = complaints.slice((complaintsPage - 1) * complaintsPerPage, complaintsPage * complaintsPerPage);
   const [complaintStatus, setComplaintStatus] = useState<string>('all');
-  const [verdictModal, setVerdictModal] = useState<{ open: boolean, complaint: any | null }>({ open: false, complaint: null });
+  const [verdictModal, setVerdictModal] = useState<{open: boolean, complaint: any | null}>({open: false, complaint: null});
   const [verdictBlock, setVerdictBlock] = useState(false);
   const [verdictBalance, setVerdictBalance] = useState(false);
   const [verdictRating, setVerdictRating] = useState('none');
   const [verdictText, setVerdictText] = useState("");
   const [verdictLoading, setVerdictLoading] = useState(false);
-  const [balanceModal, setBalanceModal] = useState<{ open: boolean, user: any | null }>({ open: false, user: null });
-  const [balanceDelta, setBalanceDelta] = useState(0);
-  const [balanceLoading, setBalanceLoading] = useState(false);
-  const [balanceError, setBalanceError] = useState("");
 
   useEffect(() => {
     if (!user || user.role !== "admin") return;
@@ -369,12 +362,6 @@ const AdminDashboardPage: React.FC = () => {
                             >
                               <Eye size={16} /> Просмотр
                             </button>
-                            <button
-                              className="ml-2 text-amber-500 hover:underline flex items-center gap-1"
-                              onClick={() => setBalanceModal({ open: true, user: u })}
-                            >
-                              <Coins size={16} /> Баланс
-                            </button>
                           </td>
                         </tr>
                       ))}
@@ -467,14 +454,12 @@ const AdminDashboardPage: React.FC = () => {
             </div>
           )}
           {activeTab === "complaints" && (
-            <div className="bg-white rounded-2xl shadow-lg p-6">
-              <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-                <AlertTriangle size={28} className="text-red-500" /> Жалобы
-              </h2>
-              <div className="mb-6 flex flex-col sm:flex-row gap-2 items-center">
+            <div>
+              <h2 className="text-xl font-semibold mb-4">Жалобы</h2>
+              <div className="mb-4 flex gap-2 items-center">
                 <span className="font-medium">Статус:</span>
                 <select
-                  className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-2 text-base"
+                  className="rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500"
                   value={complaintStatus}
                   onChange={e => setComplaintStatus(e.target.value)}
                 >
@@ -485,128 +470,128 @@ const AdminDashboardPage: React.FC = () => {
                 </select>
               </div>
               {loading ? (
-                <div className="flex items-center gap-2 text-gray-400"><Loader2 className="animate-spin" size={20} /> Загрузка...</div>
+                <div>Загрузка...</div>
+              ) : complaints.length === 0 ? (
+                <div className="text-gray-500">Жалоб нет</div>
               ) : (
-                <div className="overflow-x-auto rounded-xl shadow-sm">
-                  <table className="min-w-full text-base border">
-                    <thead>
-                      <tr>
-                        <th className="p-2 text-left">ID</th>
-                        <th className="p-2 text-left">Пользователь</th>
-                        <th className="p-2 text-left">Тип</th>
-                        <th className="p-2 text-left">Текст</th>
-                        <th className="p-2 text-left">Дата</th>
-                        <th className="p-2 text-left">Статус</th>
-                        <th className="p-2 text-left">Действия</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {paginatedComplaints
-                        .filter(c => complaintStatus === 'all' || c.status === complaintStatus)
-                        .map((c) => (
-                          <tr key={c.id} className="border-b hover:bg-primary-50/30 transition">
-                            <td className="p-2">{c.id}</td>
-                            <td className="p-2">{c.user_id}</td>
-                            <td className="p-2">{c.type}</td>
-                            <td className="p-2 max-w-xs truncate">{c.text}</td>
-                            <td className="p-2">{new Date(c.created_at).toLocaleString()}</td>
-                            <td className="p-2">
-                              {c.status === 'new' && <span className="text-orange-500 font-semibold">Новая</span>}
-                              {c.status === 'reviewed' && <span className="text-green-600 font-semibold">Рассмотрена</span>}
-                              {c.status === 'rejected' && <span className="text-gray-400">Отклонена</span>}
-                            </td>
-                            <td className="p-2">
-                              <button
-                                className="text-primary-500 hover:underline flex items-center gap-1"
-                                onClick={() => setVerdictModal({ open: true, complaint: c })}
-                              >
-                                <Eye size={16} /> Подробнее
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-              {/* Пагинация */}
-              <div className="flex justify-center gap-2 mt-4">
-                <Button size="sm" variant="outline" disabled={complaintsPage === 1} onClick={() => setComplaintsPage(p => Math.max(1, p - 1))}>Назад</Button>
-                <span className="px-2 py-1 text-base">Стр. {complaintsPage}</span>
-                <Button size="sm" variant="outline" disabled={paginatedComplaints.length < complaintsPerPage} onClick={() => setComplaintsPage(p => p + 1)}>Вперёд</Button>
-              </div>
-              {/* Модалка подробностей и принятия решения */}
-              {verdictModal.open && verdictModal.complaint && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-                  <div className="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4 p-6 relative">
-                    <button
-                      className="absolute top-3 right-3 text-gray-400 hover:text-gray-700 text-xl font-bold"
-                      onClick={() => setVerdictModal({ open: false, complaint: null })}
-                      aria-label="Закрыть"
+                <div className="space-y-4">
+                  {paginatedComplaints
+                    .filter(c => complaintStatus === 'all' || (c.status || 'new') === complaintStatus)
+                    .map((c) => (
+                    <div
+                      key={c.id}
+                      className="border rounded-lg p-4 bg-white shadow"
                     >
-                      ×
-                    </button>
-                    <h3 className="text-xl font-bold mb-2 flex items-center gap-2">
-                      <AlertTriangle size={20} className="text-red-500" /> Жалоба #{verdictModal.complaint.id}
-                    </h3>
-                    <div className="mb-2"><b>Пользователь:</b> {verdictModal.complaint.user_id}</div>
-                    <div className="mb-2"><b>Тип:</b> {verdictModal.complaint.type}</div>
-                    <div className="mb-2"><b>Текст:</b> {verdictModal.complaint.text}</div>
-                    <div className="mb-2"><b>Дата:</b> {new Date(verdictModal.complaint.created_at).toLocaleString()}</div>
-                    <div className="mb-4"><b>Статус:</b> {verdictModal.complaint.status}</div>
-                    <form
-                      onSubmit={async e => {
-                        e.preventDefault();
-                        setVerdictLoading(true);
-                        // Здесь логика принятия решения (например, обновить статус в Supabase)
-                        // ...
-                        setVerdictModal({ open: false, complaint: null });
-                        setVerdictLoading(false);
-                      }}
-                      className="space-y-4"
-                    >
-                      <div className="flex gap-2">
-                        <Button type="submit" variant="primary" size="md" disabled={verdictLoading}>
-                          {verdictLoading ? <Loader2 className="animate-spin" size={20} /> : <CheckCircle size={20} />} Рассмотреть
-                        </Button>
-                        <Button type="button" variant="danger" size="md" onClick={() => setVerdictModal({ open: false, complaint: null })}>
-                          <XCircle size={20} /> Отклонить
+                      <div className="mb-2 text-sm text-gray-500">
+                        {new Date(c.created_at).toLocaleString()} 
+                        <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-gray-100 border font-medium capitalize">
+                          {((c.status || 'new') === 'new') ? 'Новая' : (c.status === 'reviewed' ? 'Рассмотрена' : 'Отклонена')}
+                        </span>
+                      </div>
+                      <div className="mb-2">
+                        <span className="font-semibold">От:</span> {c.from_user_id} <span className="ml-2 font-semibold">На:</span> {c.to_user_id}
+                      </div>
+                      <div className="mb-2">
+                        <span className="font-semibold">Чат:</span> {c.chat_id}
+                        <Button size="sm" variant="outline" className="ml-2" onClick={() => navigate(`/chat/${c.chat_id}`)}>
+                          Открыть чат
                         </Button>
                       </div>
-                    </form>
-                  </div>
+                      <div className="mb-2">
+                        <span className="font-semibold">Текст жалобы:</span>
+                      </div>
+                      <div className="bg-gray-100 rounded p-2 text-sm mb-2">
+                        {c.message}
+                      </div>
+                      <div className="flex gap-2 mt-2 items-center">
+                        <span className="text-sm">Статус:</span>
+                        <select
+                          className="rounded border px-2 py-1 text-sm"
+                          value={c.status || 'new'}
+                          onChange={async (e) => {
+                            const newStatus = e.target.value;
+                            if (newStatus === 'reviewed') {
+                              setVerdictModal({open: true, complaint: c});
+                              setVerdictBlock(false);
+                              setVerdictBalance(false);
+                              setVerdictRating('none');
+                              setVerdictText("");
+                              return;
+                            }
+                            await supabase.from('complaints').update({ status: newStatus }).eq('id', c.id);
+                            setComplaints(complaints.map(item => item.id === c.id ? { ...item, status: newStatus } : item));
+                          }}
+                        >
+                          <option value="new">Новая</option>
+                          <option value="reviewed">Рассмотрена</option>
+                          <option value="rejected">Отклонена</option>
+                        </select>
+                      </div>
+                    </div>
+                  ))}
+                  {complaints.length > complaintsPerPage && (
+                    <div className="flex justify-center gap-4 mt-6">
+                      <Button size="sm" variant="outline" disabled={complaintsPage === 1} onClick={() => setComplaintsPage(complaintsPage - 1)}>
+                        Назад
+                      </Button>
+                      <span className="px-2 py-1 text-sm">Страница {complaintsPage} из {Math.ceil(complaints.length / complaintsPerPage)}</span>
+                      <Button size="sm" variant="outline" disabled={complaintsPage === Math.ceil(complaints.length / complaintsPerPage)} onClick={() => setComplaintsPage(complaintsPage + 1)}>
+                        Вперёд
+                      </Button>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
           )}
           {activeTab === "services" && (
-            <div className="bg-white rounded-2xl shadow-lg p-6">
-              <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-                <Briefcase size={28} className="text-accent-500" /> Услуги
-              </h2>
-              <div className="mb-6 flex flex-col sm:flex-row gap-2 items-center">
-                <select
-                  className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-2 text-base"
-                  value={selectedCategory}
-                  onChange={e => setSelectedCategory(e.target.value)}
-                >
-                  {serviceCategories.map(c => (
-                    <option key={c.id} value={c.id}>{c.emoji} {c.label}</option>
-                  ))}
-                </select>
-                <input
-                  type="text"
-                  className="w-full sm:w-72 rounded-xl border border-gray-200 px-4 py-2 text-base bg-gray-50"
-                  placeholder="Поиск по названию, описанию или навыкам..."
-                  value={serviceSearch}
-                  onChange={e => setServiceSearch(e.target.value)}
-                />
+            <div>
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
+                <h2 className="text-xl font-semibold">Услуги</h2>
+                <div className="flex gap-2 w-full md:w-auto">
+                  <div className="relative w-full md:w-72">
+                    <input
+                      type="text"
+                      className="w-full pl-10 pr-10 py-2 rounded-lg border border-gray-300 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      placeholder="Поиск по названию, описанию, навыкам..."
+                      value={serviceSearch}
+                      onChange={(e) => setServiceSearch(e.target.value)}
+                    />
+
+                    <Search
+                      className="absolute left-3 top-2.5 text-gray-400"
+                      size={18}
+                    />
+
+                    {serviceSearch && (
+                      <button
+                        className="absolute right-3 top-2.5 text-gray-400 hover:text-red-500"
+                        onClick={() => setServiceSearch("")}
+                      >
+                        <X size={18} />
+                      </button>
+                    )}
+                  </div>
+                  <select
+                    className="rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    value={selectedCategory}
+                    onChange={(e) => setSelectedCategory(e.target.value)}
+                  >
+                    {serviceCategories.map((cat) => (
+                      <option key={cat.id} value={cat.id}>
+                        {cat.emoji} {cat.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
               {serviceLoading ? (
-                <div className="flex items-center gap-2 text-gray-400"><Loader2 className="animate-spin" size={20} /> Загрузка...</div>
+                <div>Загрузка...</div>
+              ) : filteredServices.length === 0 ? (
+                <div className="text-gray-400 text-center py-12">Нет услуг</div>
               ) : (
-                <div className="overflow-x-auto rounded-xl shadow-sm">
-                  <table className="min-w-full text-base border">
+                <div className="overflow-x-auto rounded-xl shadow">
+                  <table className="min-w-full bg-white">
                     <thead>
                       <tr>
                         <th className="p-2 text-left">ID</th>
@@ -614,25 +599,42 @@ const AdminDashboardPage: React.FC = () => {
                         <th className="p-2 text-left">Категория</th>
                         <th className="p-2 text-left">Цена</th>
                         <th className="p-2 text-left">Владелец</th>
-                        <th className="p-2 text-left">Навыки</th>
+                        <th className="p-2 text-left">Рейтинг</th>
                         <th className="p-2 text-left">Действия</th>
                       </tr>
                     </thead>
                     <tbody>
                       {filteredServices.map((s) => (
-                        <tr key={s.id} className="border-b hover:bg-primary-50/30 transition">
+                        <tr
+                          key={s.id}
+                          className="border-b hover:bg-primary-50/30 transition"
+                        >
                           <td className="p-2">{s.id}</td>
                           <td className="p-2">{s.title}</td>
-                          <td className="p-2">{serviceCategories.find(c => c.id === s.category)?.label || s.category}</td>
+                          <td className="p-2">
+                            {serviceCategories.find((c) => c.id === s.category)
+                              ?.label || s.category}
+                          </td>
                           <td className="p-2">{s.price} кр.</td>
                           <td className="p-2">{s.user?.name || s.user_id}</td>
-                          <td className="p-2">{(s.skills || []).join(", ")}</td>
+                          <td className="p-2">{s.rating?.toFixed(1) ?? "-"}</td>
                           <td className="p-2 flex gap-2">
-                            <button className="text-primary-500 hover:underline flex items-center gap-1" onClick={() => { setSelectedService(s); setShowServiceModal(true); }}>
-                              <Eye size={16} /> Просмотр
+                            <button
+                              className="text-primary-500 hover:underline flex items-center gap-1"
+                              onClick={() => {
+                                setSelectedService(s);
+                                setShowServiceModal(true);
+                              }}
+                            >
+                              <Eye size={16} />
+                              Просмотр
                             </button>
-                            <button className="text-amber-500 hover:underline flex items-center gap-1" onClick={() => handleDeleteService(s.id)}>
-                              <Archive size={16} /> Архивировать
+                            <button
+                              className="text-red-500 hover:underline flex items-center gap-1"
+                              onClick={() => handleDeleteService(s.id)}
+                            >
+                              <Trash2 size={16} />
+                              Удалить
                             </button>
                           </td>
                         </tr>
@@ -641,20 +643,92 @@ const AdminDashboardPage: React.FC = () => {
                   </table>
                 </div>
               )}
+              {/* Модалка услуги */}
+              {showServiceModal && selectedService && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+                  <div className="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4 p-6 relative">
+                    <button
+                      className="absolute top-3 right-3 text-gray-400 hover:text-gray-700 text-xl font-bold"
+                      onClick={() => setShowServiceModal(false)}
+                      aria-label="Закрыть"
+                    >
+                      ×
+                    </button>
+                    <h3 className="text-xl font-bold mb-2 flex items-center gap-2">
+                      <Briefcase size={20} />
+                      Услуга
+                    </h3>
+                    <div className="mb-2">
+                      <b>ID:</b> {selectedService.id}
+                    </div>
+                    <div className="mb-2">
+                      <b>Название:</b> {selectedService.title}
+                    </div>
+                    <div className="mb-2">
+                      <b>Описание:</b> {selectedService.description}
+                    </div>
+                    <div className="mb-2">
+                      <b>Категория:</b>{" "}
+                      {serviceCategories.find(
+                        (c) => c.id === selectedService.category,
+                      )?.label || selectedService.category}
+                    </div>
+                    <div className="mb-2">
+                      <b>Цена:</b> {selectedService.price} кр.
+                    </div>
+                    <div className="mb-2">
+                      <b>Владелец:</b>{" "}
+                      {selectedService.user?.name || selectedService.user_id}
+                    </div>
+                    <div className="mb-2">
+                      <b>Навыки:</b> {(selectedService.skills || []).join(", ")}
+                    </div>
+                    <div className="mb-2">
+                      <b>Рейтинг:</b>{" "}
+                      {selectedService.rating?.toFixed(1) ?? "-"}
+                    </div>
+                    <div className="mb-2">
+                      <b>Создана:</b>{" "}
+                      {new Date(selectedService.created_at).toLocaleString()}
+                    </div>
+                    <div className="mb-2">
+                      <b>Обновлена:</b>{" "}
+                      {new Date(selectedService.updated_at).toLocaleString()}
+                    </div>
+                    <div className="mt-4 flex gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setShowServiceModal(false)}
+                      >
+                        Закрыть
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="danger"
+                        onClick={() => handleDeleteService(selectedService.id)}
+                      >
+                        <Trash2 size={16} />
+                        Удалить
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           )}
           {activeTab === "archive" && (
-            <div className="bg-white rounded-2xl shadow-lg p-6">
-              <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-                <Archive size={28} className="text-gray-500" /> Архив услуг
-              </h2>
+            <div>
+              <h2 className="text-xl font-semibold mb-4">Архив услуг</h2>
               {archivedLoading ? (
-                <div className="flex items-center gap-2 text-gray-400"><Loader2 className="animate-spin" size={20} /> Загрузка...</div>
+                <div>Загрузка...</div>
               ) : archivedServices.length === 0 ? (
-                <div className="text-gray-400 text-center py-12">Архив пуст</div>
+                <div className="text-gray-400 text-center py-12">
+                  Архив пуст
+                </div>
               ) : (
-                <div className="overflow-x-auto rounded-xl shadow-sm">
-                  <table className="min-w-full text-base border">
+                <div className="overflow-x-auto rounded-xl shadow">
+                  <table className="min-w-full bg-white">
                     <thead>
                       <tr>
                         <th className="p-2 text-left">ID</th>
@@ -668,27 +742,60 @@ const AdminDashboardPage: React.FC = () => {
                     </thead>
                     <tbody>
                       {archivedServices.map((s) => (
-                        <tr key={s.id} className="border-b hover:bg-primary-50/30 transition">
+                        <tr
+                          key={s.id}
+                          className="border-b hover:bg-primary-50/30 transition"
+                        >
                           <td className="p-2">{s.id}</td>
                           <td className="p-2">{s.title}</td>
-                          <td className="p-2">{serviceCategories.find(c => c.id === s.category)?.label || s.category}</td>
+                          <td className="p-2">
+                            {serviceCategories.find((c) => c.id === s.category)
+                              ?.label || s.category}
+                          </td>
                           <td className="p-2">{s.price} кр.</td>
                           <td className="p-2">{s.user?.name || s.user_id}</td>
-                          <td className="p-2">{s.rating ?? '-'}</td>
+                          <td className="p-2">{s.rating?.toFixed(1) ?? "-"}</td>
                           <td className="p-2 flex gap-2">
-                            <button className="text-primary-500 hover:underline flex items-center gap-1" onClick={() => { setSelectedService(s); setShowServiceModal(true); }}>
-                              <Eye size={16} /> Просмотр
+                            <button
+                              className="text-green-500 hover:underline flex items-center gap-1"
+                              onClick={async () => {
+                                await supabase
+                                  .from("services")
+                                  .update({ is_active: true })
+                                  .eq("id", s.id);
+                                setArchivedServices(
+                                  archivedServices.filter((a) => a.id !== s.id),
+                                );
+                                queryClient.invalidateQueries({
+                                  queryKey: ["services"],
+                                });
+                              }}
+                            >
+                              Восстановить
                             </button>
-                            <button className="text-red-500 hover:underline flex items-center gap-1" onClick={async () => {
-                              if (!window.confirm("Удалить навсегда?")) return;
-                              const { error } = await supabase.from("services").delete().eq("id", s.id);
-                              if (error && error.code === "409") {
-                                alert("Нельзя удалить услугу, пока есть связанные заказы или отзывы.");
-                              } else if (!error) {
-                                setArchivedServices(archivedServices.filter(a => a.id !== s.id));
-                              }
-                            }}>
-                              <Trash2 size={16} /> Удалить
+                            <button
+                              className="text-red-500 hover:underline flex items-center gap-1"
+                              onClick={async () => {
+                                if (!window.confirm("Удалить навсегда?"))
+                                  return;
+                                const { error } = await supabase
+                                  .from("services")
+                                  .delete()
+                                  .eq("id", s.id);
+                                if (error && error.code === "409") {
+                                  alert(
+                                    "Нельзя удалить услугу, пока есть связанные заказы или отзывы.",
+                                  );
+                                } else if (!error) {
+                                  setArchivedServices(
+                                    archivedServices.filter(
+                                      (a) => a.id !== s.id,
+                                    ),
+                                  );
+                                }
+                              }}
+                            >
+                              Удалить навсегда
                             </button>
                           </td>
                         </tr>
@@ -723,78 +830,77 @@ const AdminDashboardPage: React.FC = () => {
           </div>
         </div>
       )}
-      {/* Модалка управления балансом */}
-      {balanceModal.open && balanceModal.user && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4 p-6 relative">
-            <button
-              className="absolute top-3 right-3 text-gray-400 hover:text-gray-700 text-xl font-bold"
-              onClick={() => setBalanceModal({ open: false, user: null })}
-              aria-label="Закрыть"
-            >
-              ×
-            </button>
-            <h3 className="text-xl font-bold mb-2 flex items-center gap-2">
-              <Coins size={20} /> Управление балансом
-            </h3>
-            <div className="mb-2">
-              <b>ID:</b> {balanceModal.user.id}
-            </div>
-            <div className="mb-2">
-              <b>Имя:</b> {balanceModal.user.name}
-            </div>
-            <div className="mb-4">
-              <b>Текущий баланс:</b> <span className="font-mono text-lg text-amber-600">{balanceModal.user.credits ?? 0} кр.</span>
-            </div>
-            <form
-              onSubmit={async e => {
-                e.preventDefault();
-                setBalanceLoading(true);
-                setBalanceError("");
-                const newBalance = (balanceModal.user.credits ?? 0) + Number(balanceDelta);
-                if (isNaN(newBalance) || newBalance < 0) {
-                  setBalanceError("Баланс не может быть отрицательным");
-                  setBalanceLoading(false);
-                  return;
-                }
-                const { error } = await supabase.from("users").update({ credits: newBalance }).eq("id", balanceModal.user.id);
-                if (error) {
-                  setBalanceError(error.message);
-                  setBalanceLoading(false);
-                  return;
-                }
-                setBalanceModal({ open: false, user: null });
-                setBalanceDelta(0);
-                // Обновить список пользователей
-                if (activeTab === "users") {
-                  supabase.from("users").select("*").then(({ data }) => {
-                    setUsers(data || []);
-                    setFilteredUsers(data || []);
-                  });
-                }
-                setBalanceLoading(false);
-              }}
-              className="space-y-4"
-            >
-              <div>
-                <label className="block font-medium mb-1">Изменить баланс (± кредиты)</label>
-                <input
-                  type="number"
-                  className="w-full border rounded px-3 py-2"
-                  value={balanceDelta}
-                  onChange={e => setBalanceDelta(Number(e.target.value))}
-                  placeholder="Например, 10 или -5"
-                  required
-                />
-              </div>
-              {balanceError && <div className="text-red-500 text-sm">{balanceError}</div>}
-              <Button type="submit" variant="primary" size="md" disabled={balanceLoading}>
-                {balanceLoading ? "Сохранение..." : "Сохранить"}
-              </Button>
-            </form>
+      {/* МОДАЛКА ВЕРДИКТА */}
+      <Modal isOpen={verdictModal.open} onClose={() => setVerdictModal({open: false, complaint: null})}>
+        <h2 className="text-xl font-bold mb-4">Вердикт по жалобе</h2>
+        <div className="mb-3 flex flex-col gap-2">
+          <label className="flex items-center gap-2">
+            <input type="checkbox" checked={verdictBlock} onChange={e => setVerdictBlock(e.target.checked)} />
+            Заблокировать пользователя
+          </label>
+          <label className="flex items-center gap-2">
+            <input type="checkbox" checked={verdictBalance} onChange={e => setVerdictBalance(e.target.checked)} />
+            Списать баланс
+          </label>
+          <div className="flex items-center gap-2">
+            <span>Обнулить рейтинг:</span>
+            <label className="flex items-center gap-1">
+              <input type="radio" name="verdictRating" value="1" checked={verdictRating==='1'} onChange={() => setVerdictRating('1')} />1 звезда
+            </label>
+            <label className="flex items-center gap-1">
+              <input type="radio" name="verdictRating" value="2" checked={verdictRating==='2'} onChange={() => setVerdictRating('2')} />2 звезды
+            </label>
+            <label className="flex items-center gap-1">
+              <input type="radio" name="verdictRating" value="none" checked={verdictRating==='none'} onChange={() => setVerdictRating('none')} />Не менять
+            </label>
           </div>
+          <textarea
+            className="w-full border rounded p-2 min-h-[60px]"
+            placeholder="Ответ на жалобу (будет отправлен пользователю)"
+            value={verdictText}
+            onChange={e => setVerdictText(e.target.value)}
+          />
         </div>
-      )}
+        <div className="flex justify-end gap-2 mt-4">
+          <Button variant="outline" onClick={() => setVerdictModal({open: false, complaint: null})}>Отмена</Button>
+          <Button
+            variant="primary"
+            isLoading={verdictLoading}
+            onClick={async () => {
+              if (!verdictModal.complaint) return;
+              setVerdictLoading(true);
+              const c = verdictModal.complaint;
+              // 1. Применяем санкции
+              if (verdictBlock) {
+                await supabase.from('users').update({ blocked: true }).eq('id', c.to_user_id);
+              }
+              if (verdictBalance) {
+                await supabase.from('users').update({ credits: 0 }).eq('id', c.to_user_id);
+              }
+              if (verdictRating === '1' || verdictRating === '2') {
+                await supabase.from('users').update({ rating: parseInt(verdictRating) }).eq('id', c.to_user_id);
+              }
+              // 2. Обновляем статус жалобы
+              await supabase.from('complaints').update({ status: 'reviewed' }).eq('id', c.id);
+              setComplaints(complaints.map(item => item.id === c.id ? { ...item, status: 'reviewed' } : item));
+              // 3. Отправляем системное сообщение в чат
+              if (c.chat_id && c.from_user_id) {
+                await supabase.from('messages').insert({
+                  chat_id: c.chat_id,
+                  sender_id: null, // системное сообщение
+                  content: `Жалоба рассмотрена, вердикт: ${verdictText}`,
+                  meta: { type: 'system', complaintId: c.id, verdict: verdictText },
+                });
+              }
+              setVerdictLoading(false);
+              setVerdictModal({open: false, complaint: null});
+            }}
+            disabled={!verdictText.trim()}
+          >
+            Завершить
+          </Button>
+        </div>
+      </Modal>
     </div>
   );
 };
