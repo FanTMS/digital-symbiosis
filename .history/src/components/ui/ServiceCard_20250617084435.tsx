@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import type { Database } from "../../types/supabase";
 import { supabase } from "../../lib/supabase";
 import { useTelegram } from "../../hooks/useTelegram";
-import { Avatar } from "../ui/Avatar";
+import Avatar from "../ui/Avatar";
 
 type ServiceWithUser = Database["public"]["Tables"]["services"]["Row"] & {
   user: Database["public"]["Tables"]["users"]["Row"];
