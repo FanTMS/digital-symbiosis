@@ -660,39 +660,47 @@ const ProfilePage: React.FC = () => {
               </div>
             )}
             {activeTab === 'quizzes' && (
-              <div className="bg-white rounded-lg shadow-card p-4 w-full max-w-2xl mx-auto">
-                <h3 className="font-semibold text-lg mb-2">Мои квизы</h3>
-                <div className="mb-4 flex flex-col sm:flex-row gap-2">
-                  <Button
-                    variant="primary"
-                    className="w-full sm:w-auto"
-                    onClick={() => navigate('/quizzes/new')}
-                  >
-                    <Plus size={18} /> Создать квиз
-                  </Button>
-                </div>
+              <div className="max-w-xl w-full mx-auto p-4 sm:p-8 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-3xl shadow-2xl flex flex-col items-center min-h-[60vh]">
+                <h2 className="text-3xl sm:text-4xl font-extrabold mb-2 text-blue-900 text-center">Мои квизы</h2>
+                <p className="text-gray-500 mb-6 text-center">Создавайте квизы для своих клиентов и повышайте вовлечённость!</p>
+                <Button
+                  variant="primary"
+                  className="mb-8 w-full max-w-xs py-4 text-lg rounded-2xl flex items-center justify-center gap-2 shadow-lg hover:scale-[1.03] active:scale-95 transition"
+                  onClick={() => navigate('/quizzes/new')}
+                >
+                  <Plus size={24} /> <span>Создать квиз</span>
+                </Button>
                 {quizLoading ? (
-                  <div className="flex items-center justify-center py-6 text-center text-gray-400">Загрузка...</div>
+                  <div className="flex-1 flex items-center justify-center text-gray-400">Загрузка...</div>
                 ) : quizzes.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center py-6 text-center text-gray-400">
-                    <div className="text-3xl mb-2">📝</div>
-                    <div className="font-medium mb-1">Нет квизов</div>
-                    <div className="text-xs mb-2">Создайте первый квиз, чтобы начать!</div>
+                  <div className="flex-1 flex flex-col items-center justify-center">
+                    <svg width="120" height="120" fill="none" viewBox="0 0 120 120" className="mb-4 opacity-80">
+                      <rect x="10" y="20" width="100" height="80" rx="18" fill="#e0f2fe" />
+                      <rect x="30" y="40" width="60" height="10" rx="4" fill="#bae6fd" />
+                      <rect x="30" y="60" width="40" height="10" rx="4" fill="#bae6fd" />
+                      <rect x="30" y="80" width="30" height="10" rx="4" fill="#bae6fd" />
+                    </svg>
+                    <div className="text-gray-400 text-lg text-center">
+                      У вас пока нет квизов.<br />Создайте первый, чтобы начать!
+                    </div>
                   </div>
                 ) : (
-                  <div className="space-y-2">
+                  <div className="flex flex-col gap-4 w-full">
                     {quizzes.map(quiz => (
-                      <div key={quiz.id} className="bg-gray-100 rounded-lg p-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                      <div
+                        key={quiz.id}
+                        className="bg-gradient-to-br from-blue-50 to-cyan-100 rounded-3xl shadow-lg p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 transition-all duration-300 hover:shadow-2xl hover:scale-[1.025] active:scale-95 group"
+                      >
                         <div className="flex-1 min-w-0">
-                          <div className="font-medium text-base truncate mb-1">{quiz.title}</div>
+                          <div className="font-semibold text-lg sm:text-xl text-blue-900 truncate mb-1 group-hover:underline transition-all">{quiz.title}</div>
                           <div className="text-gray-500 text-sm truncate">{quiz.description}</div>
                         </div>
                         <div className="flex gap-2 w-full sm:w-auto">
-                          <Button size="sm" variant="outline" className="w-full sm:w-auto" onClick={() => navigate(`/quizzes/${quiz.id}/edit`)}>
-                            <Edit3 size={16} /> <span className="hidden xs:inline">Редактировать</span>
+                          <Button size="lg" variant="outline" className="w-full sm:w-auto flex items-center gap-2 transition-all duration-200 hover:scale-105 active:scale-95 rounded-2xl" onClick={() => navigate(`/quizzes/${quiz.id}/edit`)}>
+                            <Edit3 size={18} /> <span className="hidden xs:inline">Редактировать</span>
                           </Button>
-                          <Button size="sm" variant="danger" className="w-full sm:w-auto" onClick={() => setQuizToDelete(quiz.id)}>
-                            <Trash2 size={16} /> <span className="hidden xs:inline">Удалить</span>
+                          <Button size="lg" variant="danger" className="w-full sm:w-auto flex items-center gap-2 transition-all duration-200 hover:scale-105 active:scale-95 rounded-2xl" onClick={() => setQuizToDelete(quiz.id)}>
+                            <Trash2 size={18} /> <span className="hidden xs:inline">Удалить</span>
                           </Button>
                         </div>
                       </div>
