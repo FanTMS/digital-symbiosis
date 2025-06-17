@@ -940,7 +940,7 @@ function PromoBannerAdminForm() {
       try {
         // Парсим путь из публичного URL
         const url = bannerToDelete.image_url;
-        const match = url.match(/public\\/([^?] +) /) || url.match(/public\/([^?]+)/) || url.match(/public%2F([^?]+)/);
+        const match = url.match(/public\\/([^?]+)/) || url.match(/public\/([^?]+)/) || url.match(/public%2F([^?]+)/);
         let filePath = null;
         if (match && match[1]) {
           filePath = decodeURIComponent(match[1]);

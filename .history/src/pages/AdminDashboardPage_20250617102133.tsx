@@ -933,28 +933,6 @@ function PromoBannerAdminForm() {
   const handleDelete = async (id: string) => {
     if (!window.confirm("Удалить этот баннер?")) return;
     setSaving(true);
-    // Найти баннер по id
-    const bannerToDelete = banners.find(b => b.id === id);
-    // Если есть картинка в Storage — удалить её
-    if (bannerToDelete && bannerToDelete.image_url) {
-      try {
-        // Парсим путь из публичного URL
-        const url = bannerToDelete.image_url;
-        const match = url.match(/public\\/([^?] +) /) || url.match(/public\/([^?]+)/) || url.match(/public%2F([^?]+)/);
-        let filePath = null;
-        if (match && match[1]) {
-          filePath = decodeURIComponent(match[1]);
-        } else if (url.includes('/promo-banners/')) {
-          filePath = url.split('/promo-banners/')[1].split('?')[0];
-          filePath = 'promo-banners/' + filePath;
-        }
-        if (filePath) {
-          await supabase.storage.from("public").remove([filePath]);
-        }
-      } catch (e) {
-        // ignore
-      }
-    }
     await supabase.from("promo_banners").delete().eq("id", id);
     setSaving(false);
     setSuccess(false);
