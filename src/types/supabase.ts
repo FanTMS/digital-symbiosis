@@ -113,6 +113,7 @@ export interface Database {
           created_at: string
           updated_at: string
           is_active: boolean
+          image_url: string | null
         }
         Insert: {
           id?: string
@@ -127,6 +128,7 @@ export interface Database {
           created_at?: string
           updated_at?: string
           is_active?: boolean
+          image_url?: string | null
         }
         Update: {
           id?: string
@@ -141,6 +143,7 @@ export interface Database {
           created_at?: string
           updated_at?: string
           is_active?: boolean
+          image_url?: string | null
         }
       }
       orders: {
