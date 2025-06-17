@@ -24,7 +24,6 @@ export default function QuizEditor({ quiz, questions: initialQuestions, onSave }
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const { tg } = useTelegram();
-    const { user } = useUser();
 
     // Добавить вопрос
     const addQuestion = () => setQuestions(qs => [...qs, emptyQuestion()]);
@@ -62,8 +61,8 @@ export default function QuizEditor({ quiz, questions: initialQuestions, onSave }
         try {
             let quizId = quiz?.id;
             if (!quizId) {
-                // Создать квиз с user_id
-                const { data, error } = await supabase.from('quizzes').insert({ title, description, user_id: user?.id }).select().single();
+                // Создать квиз
+                const { data, error } = await supabase.from('quizzes').insert({ title, description }).select().single();
                 if (error) throw error;
                 quizId = data.id;
             } else {
