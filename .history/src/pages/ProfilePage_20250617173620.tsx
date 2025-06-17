@@ -444,12 +444,22 @@ const ProfilePage: React.FC = () => {
               </span>
             </div>
             <div className="flex items-center gap-2 mt-2">
-              <span className="text-xs text-gray-500">Рейтинг активности: {user.challenge_points ?? 0}</span>
-              {user.challenge_awards?.map((award: any) => (
-                <span key={award.id} className="inline-flex items-center px-2 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs gap-1">
-                  🏆 {award.title}
-                </span>
-              ))}
+              {/* Бейджи */}
+              {Array.isArray((user as any).badges) &&
+                (user as any).badges.length > 0 ? (
+                (user as any).badges.map((b: any) => (
+                  <span
+                    key={b.badge_id}
+                    title={b.badge?.name}
+                    className="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs gap-1"
+                  >
+                    <Award size={14} />
+                    {b.badge?.name}
+                  </span>
+                ))
+              ) : (
+                <span className="text-gray-400 text-xs">Бейджей нет</span>
+              )}
             </div>
           </div>
           {!isOwn && (

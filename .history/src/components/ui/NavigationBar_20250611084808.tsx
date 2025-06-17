@@ -39,7 +39,6 @@ const NavigationBar: React.FC = () => {
     { path: "/services", icon: ShoppingBag, label: "Услуги" },
     { path: "/orders", icon: FileText, label: "Заказы" },
     { path: "/chats", icon: MessageCircle, label: "Чаты" },
-    { path: "/challenges", icon: Star, label: "Челленджи" },
     { path: "/profile", icon: User, label: "Профиль" },
   ];
 
@@ -63,8 +62,9 @@ const NavigationBar: React.FC = () => {
             <button
               key={item.path}
               onClick={() => navigate(item.path)}
-              className={`flex flex-col items-center justify-center py-2 px-3 relative min-w-[64px] ${isActive ? "text-primary-500" : "text-gray-500"
-                } text-base`}
+              className={`flex flex-col items-center justify-center py-2 px-3 relative min-w-[64px] ${
+                isActive ? "text-primary-500" : "text-gray-500"
+              } text-base`}
               style={{ flex: "1 0 0", minWidth: 0 }}
             >
               <motion.div
