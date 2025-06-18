@@ -202,10 +202,11 @@ const ChallengesPage: React.FC = () => {
 
                 {/* Список челленджей */}
                 {isLoading ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 animate-pulse">
-                        {Array.from({ length: 4 }).map((_, idx) => (
-                            <ChallengeSkeleton key={idx} />
-                        ))}
+                    <div className="flex justify-center items-center py-20">
+                        <div className="text-center">
+                            <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-500 rounded-full animate-spin mx-auto mb-4"></div>
+                            <p className="text-xl text-gray-600">Загружаем челленджи...</p>
+                        </div>
                     </div>
                 ) : filteredChallenges.length === 0 ? (
                     <div className="text-center py-20 bg-white/50 backdrop-blur-sm rounded-3xl shadow-xl max-w-2xl mx-auto">
@@ -235,6 +236,7 @@ const ChallengesPage: React.FC = () => {
                                 title={challenge.title}
                                 description={challenge.description || undefined}
                                 image={challenge.background_url || challenge.image_url || undefined}
+                                avatar={challenge.avatar_url || challenge.brand_logo || undefined}
                                 prize={challenge.prize}
                                 endsAt={challenge.ends_at}
                                 createdAt={challenge.created_at}

@@ -6,6 +6,7 @@ interface ChallengeCardProps {
     title: string;
     description?: string;
     image?: string;
+    avatar?: string;
     prize?: string;
     endsAt: string;
     createdAt?: string;
@@ -20,6 +21,7 @@ const ChallengeCard: React.FC<ChallengeCardProps> = ({
     title,
     description,
     image,
+    avatar,
     prize,
     endsAt,
     createdAt,
@@ -41,7 +43,7 @@ const ChallengeCard: React.FC<ChallengeCardProps> = ({
         <motion.div
             whileHover={{ y: -2, scale: 1.01, boxShadow: "0 4px 16px 0 rgba(34,197,246,0.10)" }}
             whileTap={{ scale: 0.98 }}
-            className={`group bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-200 overflow-hidden cursor-pointer border border-gray-100 flex flex-col ${className}`}
+            className={`bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-200 overflow-hidden cursor-pointer border border-gray-100 flex flex-col ${className}`}
             onClick={onClick}
         >
             {/* Картинка */}

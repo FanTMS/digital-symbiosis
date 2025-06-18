@@ -6,6 +6,7 @@ interface ChallengeCardProps {
     title: string;
     description?: string;
     image?: string;
+    avatar?: string;
     prize?: string;
     endsAt: string;
     createdAt?: string;

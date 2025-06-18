@@ -6,6 +6,7 @@ interface ChallengeCardProps {
     title: string;
     description?: string;
     image?: string;
+    avatar?: string;
     prize?: string;
     endsAt: string;
     createdAt?: string;
@@ -20,6 +21,7 @@ const ChallengeCard: React.FC<ChallengeCardProps> = ({
     title,
     description,
     image,
+    avatar,
     prize,
     endsAt,
     createdAt,

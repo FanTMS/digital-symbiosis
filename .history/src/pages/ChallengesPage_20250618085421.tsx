@@ -235,6 +235,7 @@ const ChallengesPage: React.FC = () => {
                                 title={challenge.title}
                                 description={challenge.description || undefined}
                                 image={challenge.background_url || challenge.image_url || undefined}
+                                avatar={challenge.avatar_url || challenge.brand_logo || undefined}
                                 prize={challenge.prize}
                                 endsAt={challenge.ends_at}
                                 createdAt={challenge.created_at}
