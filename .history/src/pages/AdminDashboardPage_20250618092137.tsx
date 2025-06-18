@@ -715,9 +715,6 @@ const AdminDashboardPage: React.FC = () => {
               <PromoCodesAdminPanel />
             </div>
           )}
-          {activeTab === "challenges" && (
-            <ChallengesAdminPanel />
-          )}
         </motion.div>
       </AnimatePresence>
       {showUserModal && userProfileLoading && (
