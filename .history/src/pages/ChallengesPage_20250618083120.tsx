@@ -47,17 +47,16 @@ const ChallengesPage: React.FC = () => {
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     // Фильтрация челленджей
-    const filteredChallenges = (challenges || [])
-        .filter((challenge: Challenge | null | undefined) => !!challenge)
-        .filter((challenge: Challenge) => {
-            // Фильтр по вкладкам
-            if (tab === 'my') return challenge.my_participation;
-            if (tab === 'active') return challenge.status === 'active';
-            if (tab === 'finished') return challenge.status === 'finished';
-            // Фильтр по типу приза
-            if (filter === 'all') return true;
-            return challenge.prize_type === filter;
-        });
+    const filteredChallenges = (challenges || []).filter((challenge: Challenge) => {
+        // Фильтр по вкладкам
+        if (tab === 'my') return challenge.my_participation;
+        if (tab === 'active') return challenge.status === 'active';
+        if (tab === 'finished') return challenge.status === 'finished';
+
+        // Фильтр по типу приза
+        if (filter === 'all') return true;
+        return challenge.prize_type === filter;
+    });
 
     const getTabCount = (tabId: string) => {
         if (!challenges) return 0;
