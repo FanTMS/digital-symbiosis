@@ -171,8 +171,8 @@ const ChallengeDetailPage: React.FC = () => {
                                 </span>
                             )}
                             <span className={`px-3 py-1 rounded-full text-sm font-semibold ${timeRemaining.expired
-                                ? 'bg-gray-100 text-gray-600'
-                                : 'bg-orange-100 text-orange-700'
+                                    ? 'bg-gray-100 text-gray-600'
+                                    : 'bg-orange-100 text-orange-700'
                                 }`}>
                                 {timeRemaining.text}
                             </span>

@@ -159,8 +159,8 @@ const ChallengesPage: React.FC = () => {
                                 <button
                                     key={tabItem.id}
                                     className={`relative px-4 md:px-8 py-2.5 md:py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 text-sm md:text-base ${tab === tabItem.id
-                                        ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg'
-                                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                                            ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg'
+                                            : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                                         }`}
                                     onClick={() => setTab(tabItem.id as any)}
                                 >
@@ -168,8 +168,8 @@ const ChallengesPage: React.FC = () => {
                                     <span>{tabItem.label}</span>
                                     {getTabCount(tabItem.id) > 0 && (
                                         <span className={`ml-1 px-2 py-0.5 rounded-full text-xs font-bold ${tab === tabItem.id
-                                            ? 'bg-white/20 text-white'
-                                            : 'bg-gray-100 text-gray-600'
+                                                ? 'bg-white/20 text-white'
+                                                : 'bg-gray-100 text-gray-600'
                                             }`}>
                                             {getTabCount(tabItem.id)}
                                         </span>
@@ -187,8 +187,8 @@ const ChallengesPage: React.FC = () => {
                             <button
                                 key={f.id}
                                 className={`flex items-center gap-1.5 md:gap-2 px-3 md:px-5 py-2 md:py-2.5 rounded-full font-medium transition-all duration-300 whitespace-nowrap text-sm md:text-base ${filter === f.id
-                                    ? 'bg-white text-gray-900 shadow-lg border-2 border-blue-200 scale-105'
-                                    : 'bg-white/60 text-gray-600 hover:bg-white hover:text-gray-900 border border-gray-200'
+                                        ? 'bg-white text-gray-900 shadow-lg border-2 border-blue-200 scale-105'
+                                        : 'bg-white/60 text-gray-600 hover:bg-white hover:text-gray-900 border border-gray-200'
                                     }`}
                                 onClick={() => setFilter(f.id)}
                             >
