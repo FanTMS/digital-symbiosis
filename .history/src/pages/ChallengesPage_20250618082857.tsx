@@ -8,6 +8,7 @@ import { challengesApi } from '../lib/api/challenges';
 import ChallengeCard from '../components/ui/ChallengeCard';
 import { supabase } from '../lib/supabase';
 import type { Challenge } from '../types/models';
+import { useToast } from '../components/ui/ToastProvider';
 
 const TABS = [
     { id: 'active', label: 'Активные', icon: '🔥' },
@@ -30,6 +31,7 @@ const ChallengesPage: React.FC = () => {
     const isAdmin = currentUser?.role === 'admin';
     const { data: challenges, isLoading, refetch } = useChallenges();
     const navigate = useNavigate();
+    const toast = useToast();
 
     // Модальное окно создания челленджа
     const [showCreate, setShowCreate] = useState(false);
@@ -84,10 +86,12 @@ const ChallengesPage: React.FC = () => {
     const handleCreate = async (e: React.FormEvent) => {
         e.preventDefault();
         setCreateError('');
+
         if (!title.trim() || !endsAt) {
             setCreateError('Заполните все обязательные поля');
             return;
         }
+
         setCreating(true);
         try {
             let image_url = null;
@@ -99,6 +103,7 @@ const ChallengesPage: React.FC = () => {
                 const { data } = supabase.storage.from('challenge-files').getPublicUrl(filePath);
                 image_url = data.publicUrl;
             }
+
             await challengesApi.create({
                 title: title.trim(),
                 description: description.trim() || null,
@@ -110,6 +115,8 @@ const ChallengesPage: React.FC = () => {
                 image_url,
                 participants_limit: participantsLimit ? Number(participantsLimit) : null,
             });
+
+            // Сброс формы
             setShowCreate(false);
             setTitle('');
             setDescription('');
@@ -119,7 +126,9 @@ const ChallengesPage: React.FC = () => {
             setImageFile(null);
             setImagePreview(null);
             setParticipantsLimit('');
+
             refetch();
+            toast.success('Челлендж успешно создан!');
         } catch (e: any) {
             setCreateError(e.message || 'Ошибка создания челленджа');
         } finally {

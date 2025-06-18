@@ -84,10 +84,12 @@ const ChallengesPage: React.FC = () => {
     const handleCreate = async (e: React.FormEvent) => {
         e.preventDefault();
         setCreateError('');
+
         if (!title.trim() || !endsAt) {
             setCreateError('Заполните все обязательные поля');
             return;
         }
+
         setCreating(true);
         try {
             let image_url = null;
@@ -99,6 +101,7 @@ const ChallengesPage: React.FC = () => {
                 const { data } = supabase.storage.from('challenge-files').getPublicUrl(filePath);
                 image_url = data.publicUrl;
             }
+
             await challengesApi.create({
                 title: title.trim(),
                 description: description.trim() || null,
@@ -110,6 +113,8 @@ const ChallengesPage: React.FC = () => {
                 image_url,
                 participants_limit: participantsLimit ? Number(participantsLimit) : null,
             });
+
+            // Сброс формы
             setShowCreate(false);
             setTitle('');
             setDescription('');
@@ -119,6 +124,7 @@ const ChallengesPage: React.FC = () => {
             setImageFile(null);
             setImagePreview(null);
             setParticipantsLimit('');
+
             refetch();
         } catch (e: any) {
             setCreateError(e.message || 'Ошибка создания челленджа');
@@ -160,8 +166,8 @@ const ChallengesPage: React.FC = () => {
                                 <button
                                     key={tabItem.id}
                                     className={`relative px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 ${tab === tabItem.id
-                                        ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg'
-                                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                                            ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg'
+                                            : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                                         }`}
                                     onClick={() => setTab(tabItem.id as any)}
                                 >
@@ -169,8 +175,8 @@ const ChallengesPage: React.FC = () => {
                                     <span>{tabItem.label}</span>
                                     {getTabCount(tabItem.id) > 0 && (
                                         <span className={`ml-1 px-2 py-0.5 rounded-full text-xs font-bold ${tab === tabItem.id
-                                            ? 'bg-white/20 text-white'
-                                            : 'bg-gray-100 text-gray-600'
+                                                ? 'bg-white/20 text-white'
+                                                : 'bg-gray-100 text-gray-600'
                                             }`}>
                                             {getTabCount(tabItem.id)}
                                         </span>
@@ -188,8 +194,8 @@ const ChallengesPage: React.FC = () => {
                             <button
                                 key={f.id}
                                 className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-all duration-300 whitespace-nowrap ${filter === f.id
-                                    ? 'bg-white text-gray-900 shadow-lg border-2 border-blue-200'
-                                    : 'bg-white/60 text-gray-600 hover:bg-white hover:text-gray-900 border border-gray-200'
+                                        ? 'bg-white text-gray-900 shadow-lg border-2 border-blue-200'
+                                        : 'bg-white/60 text-gray-600 hover:bg-white hover:text-gray-900 border border-gray-200'
                                     }`}
                                 onClick={() => setFilter(f.id)}
                             >
@@ -234,17 +240,16 @@ const ChallengesPage: React.FC = () => {
                             <ChallengeCard
                                 key={challenge.id}
                                 title={challenge.title}
-                                description={challenge.description || undefined}
-                                image={challenge.background_url || challenge.image_url || undefined}
-                                avatar={challenge.avatar_url || challenge.brand_logo || undefined}
+                                description={challenge.description}
+                                image={challenge.background_url || challenge.image_url}
+                                avatar={challenge.avatar_url || challenge.brand_logo}
                                 prize={challenge.prize}
                                 endsAt={challenge.ends_at}
                                 createdAt={challenge.created_at}
                                 participants={challenge.current_participants}
-                                participantsLimit={challenge.participants_limit || undefined}
-                                brand={challenge.brand || undefined}
+                                participantsLimit={challenge.participants_limit}
+                                brand={challenge.brand}
                                 onClick={() => navigate(`/challenges/${challenge.id}`)}
-                                className="animate-fadein"
                             />
                         ))}
                     </div>

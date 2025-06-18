@@ -12,7 +12,6 @@ interface ChallengeCardProps {
     participantsLimit?: number;
     brand?: string;
     onClick?: () => void;
-    className?: string;
 }
 
 function getTimeRemaining(endsAt: string) {
@@ -61,31 +60,17 @@ const ChallengeCard: React.FC<ChallengeCardProps> = ({
     participants = 0,
     participantsLimit,
     brand,
-    onClick,
-    className = ""
+    onClick
 }) => {
     const progress = getProgressPercent(endsAt, createdAt);
     const timeRemaining = getTimeRemaining(endsAt);
     const prizeIcon = getPrizeIcon(prize);
-    const isLimitReached = participantsLimit && participants === participantsLimit;
 
     return (
         <div
-            className={`group relative rounded-3xl overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl bg-white border border-gray-100 ${className}`}
+            className="group relative rounded-3xl overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl bg-white border border-gray-100"
             onClick={onClick}
         >
-            {/* Оверлей завершён */}
-            {timeRemaining.expired && (
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center z-20 rounded-3xl">
-                    <span className="text-white text-lg font-bold">Завершён</span>
-                </div>
-            )}
-            {/* Бейдж лимита */}
-            {isLimitReached && !timeRemaining.expired && (
-                <div className="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold z-20 shadow-lg">
-                    Лимит достигнут
-                </div>
-            )}
             {/* Фоновое изображение */}
             <div
                 className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50"
@@ -119,8 +104,8 @@ const ChallengeCard: React.FC<ChallengeCardProps> = ({
 
                     {/* Статус времени */}
                     <div className={`px-3 py-1 rounded-full text-xs font-bold ${timeRemaining.expired
-                        ? 'bg-gray-100 text-gray-600'
-                        : 'bg-orange-100 text-orange-700'
+                            ? 'bg-gray-100 text-gray-600'
+                            : 'bg-orange-100 text-orange-700'
                         }`}>
                         {timeRemaining.text}
                     </div>
@@ -159,7 +144,7 @@ const ChallengeCard: React.FC<ChallengeCardProps> = ({
                     {/* Прогресс-бар */}
                     <div className="space-y-2">
                         <div className="flex justify-between items-center text-xs text-gray-500">
-                            <span>До конца: {timeRemaining.expired ? 'Завершён' : timeRemaining.text}</span>
+                            <span>Прогресс челленджа</span>
                             <span>{Math.round(progress)}%</span>
                         </div>
                         <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">

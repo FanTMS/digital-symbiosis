@@ -90,4 +90,20 @@ export type QuizAnswer = {
 export type QuizAnswers = QuizAnswer[];
 
 export type ServiceWithQuiz = Service & { quiz_id?: string | null };
-export type OrderWithQuizAnswers = Order & { quiz_answers?: QuizAnswers | null }; 
+export type OrderWithQuizAnswers = Order & { quiz_answers?: QuizAnswers | null };
+
+// Челленджи
+export type Challenge = Database['public']['Tables']['challenges']['Row'] & {
+  my_participation?: boolean;
+};
+
+export type ChallengeSubmission = Database['public']['Tables']['challenge_submissions']['Row'] & {
+  votes_count?: number;
+  has_voted?: boolean;
+};
+
+export type ChallengeComment = Database['public']['Tables']['challenge_comments']['Row'] & {
+  user?: User;
+};
+
+export type ChallengeVote = Database['public']['Tables']['challenge_votes']['Row']; 

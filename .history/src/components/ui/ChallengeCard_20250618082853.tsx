@@ -12,7 +12,6 @@ interface ChallengeCardProps {
     participantsLimit?: number;
     brand?: string;
     onClick?: () => void;
-    className?: string;
 }
 
 function getTimeRemaining(endsAt: string) {
@@ -61,8 +60,7 @@ const ChallengeCard: React.FC<ChallengeCardProps> = ({
     participants = 0,
     participantsLimit,
     brand,
-    onClick,
-    className = ""
+    onClick
 }) => {
     const progress = getProgressPercent(endsAt, createdAt);
     const timeRemaining = getTimeRemaining(endsAt);
@@ -71,7 +69,7 @@ const ChallengeCard: React.FC<ChallengeCardProps> = ({
 
     return (
         <div
-            className={`group relative rounded-3xl overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl bg-white border border-gray-100 ${className}`}
+            className="group relative rounded-3xl overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl bg-white border border-gray-100 animate-fadein"
             onClick={onClick}
         >
             {/* Оверлей завершён */}

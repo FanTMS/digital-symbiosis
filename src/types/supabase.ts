@@ -328,6 +328,157 @@ export interface Database {
           status?: string
           created_at?: string
         }
+      },
+      challenges: {
+        Row: {
+          id: string
+          title: string
+          description: string | null
+          image_url: string | null
+          background_url: string | null
+          avatar_url: string | null
+          brand_logo: string | null
+          brand: string | null
+          prize: string
+          prize_type: 'money' | 'certificate' | 'item' | 'points'
+          status: 'active' | 'finished' | 'draft'
+          ends_at: string
+          created_at: string
+          participants_limit: number | null
+          current_participants: number
+        }
+        Insert: {
+          id?: string
+          title: string
+          description?: string | null
+          image_url?: string | null
+          background_url?: string | null
+          avatar_url?: string | null
+          brand_logo?: string | null
+          brand?: string | null
+          prize: string
+          prize_type: 'money' | 'certificate' | 'item' | 'points'
+          status?: 'active' | 'finished' | 'draft'
+          ends_at: string
+          created_at?: string
+          participants_limit?: number | null
+          current_participants?: number
+        }
+        Update: {
+          id?: string
+          title?: string
+          description?: string | null
+          image_url?: string | null
+          background_url?: string | null
+          avatar_url?: string | null
+          brand_logo?: string | null
+          brand?: string | null
+          prize?: string
+          prize_type?: 'money' | 'certificate' | 'item' | 'points'
+          status?: 'active' | 'finished' | 'draft'
+          ends_at?: string
+          created_at?: string
+          participants_limit?: number | null
+          current_participants?: number
+        }
+      },
+      challenge_submissions: {
+        Row: {
+          id: string
+          challenge_id: string
+          user_id: number
+          title: string
+          description: string | null
+          file_url: string | null
+          status: 'pending' | 'approved' | 'rejected'
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          challenge_id: string
+          user_id: number
+          title: string
+          description?: string | null
+          file_url?: string | null
+          status?: 'pending' | 'approved' | 'rejected'
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          challenge_id?: string
+          user_id?: number
+          title?: string
+          description?: string | null
+          file_url?: string | null
+          status?: 'pending' | 'approved' | 'rejected'
+          created_at?: string
+        }
+      },
+      challenge_comments: {
+        Row: {
+          id: string
+          submission_id: string
+          user_id: number
+          text: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          submission_id: string
+          user_id: number
+          text: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          submission_id?: string
+          user_id?: number
+          text?: string
+          created_at?: string
+        }
+      },
+      challenge_votes: {
+        Row: {
+          id: string
+          submission_id: string
+          voter_id: number
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          submission_id: string
+          voter_id: number
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          submission_id?: string
+          voter_id?: number
+          created_at?: string
+        }
+      },
+      challenge_reports: {
+        Row: {
+          id: string
+          submission_id: string
+          user_id: number
+          reason: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          submission_id: string
+          user_id: number
+          reason: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          submission_id?: string
+          user_id?: number
+          reason?: string
+          created_at?: string
+        }
       }
     }
     Views: {

@@ -84,10 +84,12 @@ const ChallengesPage: React.FC = () => {
     const handleCreate = async (e: React.FormEvent) => {
         e.preventDefault();
         setCreateError('');
+
         if (!title.trim() || !endsAt) {
             setCreateError('Заполните все обязательные поля');
             return;
         }
+
         setCreating(true);
         try {
             let image_url = null;
@@ -99,6 +101,7 @@ const ChallengesPage: React.FC = () => {
                 const { data } = supabase.storage.from('challenge-files').getPublicUrl(filePath);
                 image_url = data.publicUrl;
             }
+
             await challengesApi.create({
                 title: title.trim(),
                 description: description.trim() || null,
@@ -110,6 +113,8 @@ const ChallengesPage: React.FC = () => {
                 image_url,
                 participants_limit: participantsLimit ? Number(participantsLimit) : null,
             });
+
+            // Сброс формы
             setShowCreate(false);
             setTitle('');
             setDescription('');
@@ -119,6 +124,7 @@ const ChallengesPage: React.FC = () => {
             setImageFile(null);
             setImagePreview(null);
             setParticipantsLimit('');
+
             refetch();
         } catch (e: any) {
             setCreateError(e.message || 'Ошибка создания челленджа');
@@ -244,7 +250,6 @@ const ChallengesPage: React.FC = () => {
                                 participantsLimit={challenge.participants_limit || undefined}
                                 brand={challenge.brand || undefined}
                                 onClick={() => navigate(`/challenges/${challenge.id}`)}
-                                className="animate-fadein"
                             />
                         ))}
                     </div>
