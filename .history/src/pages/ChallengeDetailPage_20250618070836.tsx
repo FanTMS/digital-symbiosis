@@ -103,11 +103,6 @@ const ChallengeDetailPage: React.FC = () => {
         hasVotedMap[s.id] = useHasVoted(s.id, currentUser?.id || 0);
     });
 
-    const approvedSubmissions = (submissions || []).filter((s: any) => s.status === 'approved');
-    const winners = challenge.status === 'finished'
-        ? [...approvedSubmissions].sort((a, b) => (b.votes || 0) - (a.votes || 0)).slice(0, 3)
-        : [];
-
     if (loading) return <div className="text-center py-12 text-gray-400">Загрузка...</div>;
     if (!challenge) return <div className="text-center py-12 text-red-500">Челлендж не найден</div>;
 

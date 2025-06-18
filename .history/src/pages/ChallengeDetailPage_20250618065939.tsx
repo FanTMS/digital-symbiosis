@@ -103,11 +103,6 @@ const ChallengeDetailPage: React.FC = () => {
         hasVotedMap[s.id] = useHasVoted(s.id, currentUser?.id || 0);
     });
 
-    const approvedSubmissions = (submissions || []).filter((s: any) => s.status === 'approved');
-    const winners = challenge.status === 'finished'
-        ? [...approvedSubmissions].sort((a, b) => (b.votes || 0) - (a.votes || 0)).slice(0, 3)
-        : [];
-
     if (loading) return <div className="text-center py-12 text-gray-400">Загрузка...</div>;
     if (!challenge) return <div className="text-center py-12 text-red-500">Челлендж не найден</div>;
 
@@ -230,35 +225,25 @@ const ChallengeDetailPage: React.FC = () => {
                                         {/* Комментарии */}
                                         <div className="mt-2">
                                             <div className="font-semibold text-sm mb-1">Комментарии:</div>
-                                            <div className="space-y-2 mb-2">
+                                            <div className="space-y-1 mb-2">
                                                 {(comments ?? []).length === 0 ? (
                                                     <div className="text-gray-400 text-xs">Комментариев нет</div>
                                                 ) : (
                                                     (comments ?? []).map((c: any) => (
-                                                        <div key={c.id} className="flex items-start gap-2">
-                                                            <Avatar src={c.user_avatar_url} name={c.user_name} size={28} />
-                                                            <div className="bg-gray-100 rounded-xl px-3 py-2 flex-1">
-                                                                <div className="flex items-center gap-2 mb-0.5">
-                                                                    <span className="font-semibold text-xs text-gray-800">{c.user_name}</span>
-                                                                    <span className="text-[10px] text-gray-400">{c.created_at ? new Date(c.created_at).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : ''}</span>
-                                                                </div>
-                                                                <div className="text-xs text-gray-700">{c.text}</div>
-                                                            </div>
-                                                        </div>
+                                                        <div key={c.id} className="text-xs text-gray-700 bg-gray-50 rounded px-2 py-1">{c.text}</div>
                                                     ))
                                                 )}
                                             </div>
-                                            <form onSubmit={handleAddComment} className="flex gap-2 items-center mt-2">
-                                                <Avatar src={currentUser?.avatar_url} name={currentUser?.name} size={28} />
+                                            <form onSubmit={handleAddComment} className="flex gap-2 items-center">
                                                 <input
                                                     type="text"
                                                     value={commentText}
                                                     onChange={e => setCommentTextMap(prev => ({ ...prev, [s.id]: e.target.value }))}
-                                                    className="border rounded-xl px-3 py-2 text-xs flex-1"
+                                                    className="border rounded px-2 py-1 text-xs flex-1"
                                                     placeholder="Добавить комментарий..."
                                                     disabled={commentLoading}
                                                 />
-                                                <Button type="submit" size="sm" variant="primary" disabled={commentLoading}>Отправить</Button>
+                                                <Button type="submit" size="sm" variant="outline" disabled={commentLoading}>Ок</Button>
                                             </form>
                                             {commentError && <div className="text-red-500 text-xs mt-1">{commentError}</div>}
                                         </div>
@@ -287,28 +272,6 @@ const ChallengeDetailPage: React.FC = () => {
                             );
                         })
                     )}
-                </div>
-            )}
-
-            {challenge.status === 'finished' && winners && winners.length > 0 && (
-                <div className="mb-10">
-                    <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">🏆 Победители</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        {winners.map((w: any, idx: number) => (
-                            <div key={w.id} className="bg-white rounded-2xl shadow-xl p-4 flex flex-col items-center text-center border-2 border-amber-300 relative">
-                                <div className="absolute -top-5 left-1/2 -translate-x-1/2 text-4xl">
-                                    {idx === 0 ? '🥇' : idx === 1 ? '🥈' : '🥉'}
-                                </div>
-                                <Avatar src={w.user_avatar_url} name={w.user_name} size={64} className="mb-2 mt-4" />
-                                <div className="font-bold text-lg mb-1">{w.user_name}</div>
-                                <div className="text-xs text-gray-500 mb-2">{w.prize || challenge.prize}</div>
-                                {w.file_url && w.file_url.match(/\.(jpg|jpeg|png|gif|webp)$/i)
-                                    ? <img src={w.file_url} alt="Работа победителя" className="w-full h-32 object-cover rounded mb-2" />
-                                    : <a href={w.file_url} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center text-blue-600 underline"><svg width="32" height="32" fill="none" viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="#e0e7ef" /><path d="M8 16h8M8 12h8M8 8h8" stroke="#60a5fa" strokeWidth="2" strokeLinecap="round" /></svg><span className="text-xs mt-1">Документ</span></a>
-                                }
-                            </div>
-                        ))}
-                    </div>
                 </div>
             )}
         </div>
