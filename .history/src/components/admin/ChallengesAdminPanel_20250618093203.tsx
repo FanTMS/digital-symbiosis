@@ -29,45 +29,43 @@ const EditChallengeModal: React.FC<ChallengeFormProps> = ({ challenge, onClose, 
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [prize, setPrize] = useState('');
-    const [prizeType, setPrizeType] = useState<'money' | 'certificate' | 'item' | 'points'>('money');
+    const [prizeType, setPrizeType] = useState<'money'|'certificate'|'item'|'points'>('money');
     const [brand, setBrand] = useState('');
     const [endsAt, setEndsAt] = useState('');
     const [participantsLimit, setParticipantsLimit] = useState('');
-    const [imageFile, setImageFile] = useState<File | null>(null);
-    const [imagePreview, setImagePreview] = useState<string | null>(null);
+    const [imageFile, setImageFile] = useState<File|null>(null);
+    const [imagePreview, setImagePreview] = useState<string|null>(null);
 
-    useEffect(() => {
-        (async () => {
-            const { data } = await supabase.from('challenges').select('*').eq('id', challenge.id).single();
-            if (data) {
-                setTitle(data.title || '');
-                setDescription(data.description || '');
-                setPrize(data.prize || '');
-                setPrizeType(data.prize_type || 'money');
-                setBrand(data.brand || '');
-                setEndsAt(data.ends_at ? data.ends_at.slice(0, 10) : '');
-                setParticipantsLimit(data.participants_limit?.toString() || '');
-                setImagePreview(data.image_url || null);
-            }
-            setLoading(false);
-        })();
-    }, [challenge.id]);
+    useEffect(()=>{ (async ()=>{
+        const { data } = await supabase.from('challenges').select('*').eq('id', challenge.id).single();
+        if(data){
+            setTitle(data.title || '');
+            setDescription(data.description || '');
+            setPrize(data.prize || '');
+            setPrizeType(data.prize_type || 'money');
+            setBrand(data.brand || '');
+            setEndsAt(data.ends_at ? data.ends_at.slice(0,10): '');
+            setParticipantsLimit(data.participants_limit?.toString()||'');
+            setImagePreview(data.image_url || null);
+        }
+        setLoading(false);
+    })();}, [challenge.id]);
 
-    function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
-        const file = e.target.files?.[0] || null;
+    function handleImageChange(e: React.ChangeEvent<HTMLInputElement>){
+        const file = e.target.files?.[0]||null;
         setImageFile(file);
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = ev => setImagePreview(ev.target?.result as string);
+        if(file){
+            const reader=new FileReader();
+            reader.onload=ev=>setImagePreview(ev.target?.result as string);
             reader.readAsDataURL(file);
         }
     }
 
-    async function handleSave(e: React.FormEvent) {
+    async function handleSave(e: React.FormEvent){
         e.preventDefault();
         setSaving(true);
         let image_url = imagePreview;
-        if (imageFile) {
+        if(imageFile){
             const ext = imageFile.name.split('.').pop();
             const path = `challenges/${challenge.id}/${Date.now()}.${ext}`;
             await supabase.storage.from('challenge-files').upload(path, imageFile, { upsert: true });
@@ -75,15 +73,15 @@ const EditChallengeModal: React.FC<ChallengeFormProps> = ({ challenge, onClose, 
             image_url = data.publicUrl;
         }
         await supabase.from('challenges').update({
-            title, description, prize, prize_type: prizeType, brand, ends_at: endsAt, participants_limit: participantsLimit ? Number(participantsLimit) : null, image_url
+            title, description, prize, prize_type: prizeType, brand, ends_at: endsAt, participants_limit: participantsLimit?Number(participantsLimit):null, image_url
         }).eq('id', challenge.id);
         setSaving(false);
         onSaved();
         onClose();
     }
 
-    if (loading) {
-        return <Modal isOpen onClose={onClose}><div className="p-6 flex items-center gap-2"><Loader2 className="animate-spin" /> Загрузка...</div></Modal>;
+    if(loading){
+        return <Modal isOpen onClose={onClose}><div className="p-6 flex items-center gap-2"><Loader2 className="animate-spin"/> Загрузка...</div></Modal>;
     }
 
     return (
@@ -93,18 +91,18 @@ const EditChallengeModal: React.FC<ChallengeFormProps> = ({ challenge, onClose, 
 
                 <div>
                     <label className="block text-sm font-medium mb-1">Название</label>
-                    <input value={title} onChange={e => setTitle(e.target.value)} className="w-full p-3 rounded-xl border border-gray-200 bg-gray-50 focus:ring-2 focus:ring-primary-200" />
+                    <input value={title} onChange={e=>setTitle(e.target.value)} className="w-full p-3 rounded-xl border border-gray-200 bg-gray-50 focus:ring-2 focus:ring-primary-200" />
                 </div>
 
                 <div>
                     <label className="block text-sm font-medium mb-1">Описание</label>
-                    <textarea value={description} onChange={e => setDescription(e.target.value)} rows={3} className="w-full p-3 rounded-xl border border-gray-200 bg-gray-50 focus:ring-2 focus:ring-primary-200"></textarea>
+                    <textarea value={description} onChange={e=>setDescription(e.target.value)} rows={3} className="w-full p-3 rounded-xl border border-gray-200 bg-gray-50 focus:ring-2 focus:ring-primary-200"></textarea>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                     <div>
                         <label className="block text-sm font-medium mb-1">Тип приза</label>
-                        <select value={prizeType} onChange={e => setPrizeType(e.target.value as any)} className="w-full p-3 rounded-xl border border-gray-200 bg-gray-50">
+                        <select value={prizeType} onChange={e=>setPrizeType(e.target.value as any)} className="w-full p-3 rounded-xl border border-gray-200 bg-gray-50">
                             <option value="money">💰 Деньги</option>
                             <option value="certificate">🎫 Сертификат</option>
                             <option value="item">🎁 Товар</option>
@@ -113,24 +111,24 @@ const EditChallengeModal: React.FC<ChallengeFormProps> = ({ challenge, onClose, 
                     </div>
                     <div>
                         <label className="block text-sm font-medium mb-1">Приз</label>
-                        <input value={prize} onChange={e => setPrize(e.target.value)} className="w-full p-3 rounded-xl border border-gray-200 bg-gray-50" />
+                        <input value={prize} onChange={e=>setPrize(e.target.value)} className="w-full p-3 rounded-xl border border-gray-200 bg-gray-50" />
                     </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                     <div>
                         <label className="block text-sm font-medium mb-1">Дата окончания</label>
-                        <input type="date" value={endsAt} onChange={e => setEndsAt(e.target.value)} className="w-full p-3 rounded-xl border border-gray-200 bg-gray-50" />
+                        <input type="date" value={endsAt} onChange={e=>setEndsAt(e.target.value)} className="w-full p-3 rounded-xl border border-gray-200 bg-gray-50" />
                     </div>
                     <div>
                         <label className="block text-sm font-medium mb-1">Лимит участников</label>
-                        <input type="number" min="1" value={participantsLimit} onChange={e => setParticipantsLimit(e.target.value)} className="w-full p-3 rounded-xl border border-gray-200 bg-gray-50" />
+                        <input type="number" min="1" value={participantsLimit} onChange={e=>setParticipantsLimit(e.target.value)} className="w-full p-3 rounded-xl border border-gray-200 bg-gray-50" />
                     </div>
                 </div>
 
                 <div>
                     <label className="block text-sm font-medium mb-1">Бренд</label>
-                    <input value={brand} onChange={e => setBrand(e.target.value)} className="w-full p-3 rounded-xl border border-gray-200 bg-gray-50" />
+                    <input value={brand} onChange={e=>setBrand(e.target.value)} className="w-full p-3 rounded-xl border border-gray-200 bg-gray-50" />
                 </div>
 
                 <div>

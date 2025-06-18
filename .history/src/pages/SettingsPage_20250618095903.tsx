@@ -4,11 +4,14 @@ import { motion } from "framer-motion";
 import { useTelegram } from "../hooks/useTelegram";
 import {
   Bell,
+  Moon,
+  Sun,
   Globe,
   Shield,
   CreditCard,
   HelpCircle,
   ChevronRight,
+  ToggleLeft as Toggle,
 } from "lucide-react";
 import { supabase } from "../lib/supabase";
 import Button from "../components/ui/Button";
@@ -106,6 +109,9 @@ const SettingsPage: React.FC = () => {
           { onConflict: "user_id" }
         );
       if (error) throw error;
+      if (key === "dark_mode") {
+        localStorage.setItem("dark_mode", value ? "true" : "false");
+      }
     } catch (error) {
       console.error("Error updating setting:", error);
       setSettings((prev) => ({ ...prev, [key]: !value }));
@@ -125,6 +131,13 @@ const SettingsPage: React.FC = () => {
               "notifications_enabled",
               !settings.notifications_enabled,
             ),
+          type: "toggle",
+        },
+        {
+          icon: settings.dark_mode ? Sun : Moon,
+          label: "Тёмная тема",
+          value: settings.dark_mode,
+          onChange: () => updateSetting("dark_mode", !settings.dark_mode),
           type: "toggle",
         },
       ],
@@ -221,8 +234,8 @@ const SettingsPage: React.FC = () => {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: groupIndex * 0.1 + settingIndex * 0.05 }}
                   className={`flex items-center justify-between p-4 ${settingIndex !== group.settings.length - 1
-                    ? "border-b border-gray-100"
-                    : ""
+                      ? "border-b border-gray-100"
+                      : ""
                     }`}
                 >
                   <div className="flex items-center">

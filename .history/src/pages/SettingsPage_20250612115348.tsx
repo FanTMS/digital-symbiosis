@@ -4,11 +4,14 @@ import { motion } from "framer-motion";
 import { useTelegram } from "../hooks/useTelegram";
 import {
   Bell,
+  Moon,
+  Sun,
   Globe,
   Shield,
   CreditCard,
   HelpCircle,
   ChevronRight,
+  ToggleLeft as Toggle,
 } from "lucide-react";
 import { supabase } from "../lib/supabase";
 import Button from "../components/ui/Button";
@@ -70,14 +73,7 @@ const SettingsPage: React.FC = () => {
           .single();
 
         if (error && error.code !== "PGRST116") throw error;
-        if (data) {
-          setSettings(data);
-        } else {
-          await supabase.from("user_settings").insert({
-            user_id: user.id,
-            ...settings,
-          });
-        }
+        if (data) setSettings(data);
       } catch (error) {
         console.error("Error fetching settings:", error);
       } finally {
@@ -97,18 +93,16 @@ const SettingsPage: React.FC = () => {
 
   const updateSetting = async (key: keyof UserSettings, value: any) => {
     if (!user?.id) return;
-    setSettings((prev) => ({ ...prev, [key]: value }));
     try {
       const { error } = await supabase
         .from("user_settings")
-        .upsert(
-          { user_id: user.id, ...settings, [key]: value },
-          { onConflict: "user_id" }
-        );
+        .update({ [key]: value })
+        .eq("user_id", user.id);
+
       if (error) throw error;
+      setSettings((prev) => ({ ...prev, [key]: value }));
     } catch (error) {
       console.error("Error updating setting:", error);
-      setSettings((prev) => ({ ...prev, [key]: !value }));
     }
   };
 
@@ -154,15 +148,6 @@ const SettingsPage: React.FC = () => {
           icon: HelpCircle,
           label: "Помощь",
           onClick: () => alert("Раздел в разработке"),
-          type: "button",
-        },
-        {
-          icon: Globe,
-          label: "Язык интерфейса",
-          onClick: () => {
-            const newLang = settings.language === "ru" ? "en" : "ru";
-            updateSetting("language", newLang);
-          },
           type: "button",
         },
       ],
@@ -220,10 +205,11 @@ const SettingsPage: React.FC = () => {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: groupIndex * 0.1 + settingIndex * 0.05 }}
-                  className={`flex items-center justify-between p-4 ${settingIndex !== group.settings.length - 1
-                    ? "border-b border-gray-100"
-                    : ""
-                    }`}
+                  className={`flex items-center justify-between p-4 ${
+                    settingIndex !== group.settings.length - 1
+                      ? "border-b border-gray-100"
+                      : ""
+                  }`}
                 >
                   <div className="flex items-center">
                     <setting.icon size={20} className="text-gray-500" />
@@ -233,8 +219,9 @@ const SettingsPage: React.FC = () => {
                   {setting.type === "toggle" ? (
                     <button
                       onClick={setting.onChange}
-                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${setting.value ? "bg-primary-500" : "bg-gray-200"
-                        }`}
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                        setting.value ? "bg-primary-500" : "bg-gray-200"
+                      }`}
                     >
                       <motion.span
                         initial={false}

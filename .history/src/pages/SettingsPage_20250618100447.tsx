@@ -9,6 +9,7 @@ import {
   CreditCard,
   HelpCircle,
   ChevronRight,
+  ToggleLeft as Toggle,
 } from "lucide-react";
 import { supabase } from "../lib/supabase";
 import Button from "../components/ui/Button";

@@ -437,9 +437,9 @@ const ProfilePage: React.FC = () => {
                   @{user.username}
                 </span>
               </span>
-              {(user as any).display_badge_id && (
+              {user.display_badge_id && (
                 (() => {
-                  const badge = userBadges.find(b => b.id === (user as any).display_badge_id);
+                  const badge = userBadges.find(b => b.id === user.display_badge_id);
                   return badge ? (
                     <span title={badge.name} className="ml-1">
                       {BADGE_ICONS[badge.name] || "🏅"}
@@ -473,8 +473,8 @@ const ProfilePage: React.FC = () => {
               </span>
             </div>
             <div className="flex items-center gap-2 mt-2">
-              <span className="text-xs text-gray-500">Рейтинг активности: {(user as any).challenge_points ?? 0}</span>
-              {(user as any).challenge_awards?.map((award: any) => (
+              <span className="text-xs text-gray-500">Рейтинг активности: {user.challenge_points ?? 0}</span>
+              {user.challenge_awards?.map((award: any) => (
                 <span key={award.id} className="inline-flex items-center px-2 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs gap-1">
                   🏆 {award.title}
                 </span>
@@ -1008,7 +1008,7 @@ const ProfilePage: React.FC = () => {
                     avatar_url: editAvatar,
                     description: editDescription,
                     skills: editSkills,
-                    display_badge_id: selectedBadgeId as any,
+                    display_badge_id: selectedBadgeId,
                   })
                   .eq("id", user.id);
                 setShowEditModal(false);

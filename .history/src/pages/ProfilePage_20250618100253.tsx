@@ -437,16 +437,6 @@ const ProfilePage: React.FC = () => {
                   @{user.username}
                 </span>
               </span>
-              {(user as any).display_badge_id && (
-                (() => {
-                  const badge = userBadges.find(b => b.id === (user as any).display_badge_id);
-                  return badge ? (
-                    <span title={badge.name} className="ml-1">
-                      {BADGE_ICONS[badge.name] || "🏅"}
-                    </span>
-                  ) : null;
-                })()
-              )}
               {isOwn && (
                 <button
                   className="ml-2 p-1 rounded-full hover:bg-gray-100"
@@ -473,8 +463,8 @@ const ProfilePage: React.FC = () => {
               </span>
             </div>
             <div className="flex items-center gap-2 mt-2">
-              <span className="text-xs text-gray-500">Рейтинг активности: {(user as any).challenge_points ?? 0}</span>
-              {(user as any).challenge_awards?.map((award: any) => (
+              <span className="text-xs text-gray-500">Рейтинг активности: {user.challenge_points ?? 0}</span>
+              {user.challenge_awards?.map((award: any) => (
                 <span key={award.id} className="inline-flex items-center px-2 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs gap-1">
                   🏆 {award.title}
                 </span>
@@ -975,27 +965,6 @@ const ProfilePage: React.FC = () => {
                 Максимум 10 навыков, каждый до 30 символов
               </div>
             </div>
-            {/* Выбор титульного бейджа */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium mb-1">Титул (бейдж)</label>
-              {userBadges.length === 0 ? (
-                <div className="text-gray-400 text-xs">У вас пока нет наград</div>
-              ) : (
-                <div className="grid grid-cols-4 gap-2">
-                  {userBadges.map(b => (
-                    <button
-                      key={b.id}
-                      type="button"
-                      className={`flex flex-col items-center justify-center p-2 rounded-lg border text-xs ${selectedBadgeId === b.id ? 'border-primary-500 bg-primary-50' : 'border-gray-200'}`}
-                      onClick={() => setSelectedBadgeId(selectedBadgeId === b.id ? null : b.id)}
-                    >
-                      {BADGE_ICONS[b.name] || '🏅'}
-                      <span className="mt-1 truncate max-w-[60px]">{b.name}</span>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
             <Button
               className="w-full bg-primary-500 text-white rounded py-2 font-medium disabled:opacity-60"
               disabled={saving}
@@ -1008,7 +977,6 @@ const ProfilePage: React.FC = () => {
                     avatar_url: editAvatar,
                     description: editDescription,
                     skills: editSkills,
-                    display_badge_id: selectedBadgeId as any,
                   })
                   .eq("id", user.id);
                 setShowEditModal(false);

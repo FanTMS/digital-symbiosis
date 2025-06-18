@@ -4,11 +4,14 @@ import { motion } from "framer-motion";
 import { useTelegram } from "../hooks/useTelegram";
 import {
   Bell,
+  Moon,
+  Sun,
   Globe,
   Shield,
   CreditCard,
   HelpCircle,
   ChevronRight,
+  ToggleLeft as Toggle,
 } from "lucide-react";
 import { supabase } from "../lib/supabase";
 import Button from "../components/ui/Button";
