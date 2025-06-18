@@ -239,7 +239,7 @@ const ChallengesPage: React.FC = () => {
                 {/* Модальное окно создания челленджа */}
                 <Modal isOpen={showCreate} onClose={() => setShowCreate(false)}>
                     <div className="p-6 md:p-8 max-w-lg w-full">
-                        <h2 className="text-2xl md:text-3xl font-bold text-blue-700 mb-6 md:mb-8 text-center">
+                        <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6 md:mb-8 text-center">
                             ✨ Создать новый челлендж
                         </h2>
 

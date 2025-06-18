@@ -41,7 +41,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
 
           {/* Контент модалки с анимацией scale, opacity и смещением по Y */}
           <motion.div
-            className="relative bg-white rounded-xl shadow-2xl max-w-md w-full mx-4 p-6 z-10 max-h-[90vh] overflow-y-auto"
+            className="relative bg-white rounded-xl shadow-2xl max-w-md w-full mx-4 p-6 z-10"
             initial={{ scale: 0.95, opacity: 0, y: 40 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.95, opacity: 0, y: 40 }}
