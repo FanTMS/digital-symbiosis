@@ -7,7 +7,7 @@ import { supabase } from "../../lib/supabase";
 import { useTelegram } from "../../hooks/useTelegram";
 import { useUser } from "../../contexts/UserContext";
 import { Avatar } from "../ui/Avatar";
-
+import { addToFavoritesViaAPI, removeFromFavoritesViaAPI } from "../../lib/initializeFavorites";
 
 type ServiceWithUser = Database["public"]["Tables"]["services"]["Row"] & {
   user: Database["public"]["Tables"]["users"]["Row"];
