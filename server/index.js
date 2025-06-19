@@ -272,6 +272,24 @@ app.post('/api/log-error', async (req, res) => {
   }
 });
 
+// ======= Простое уведомление в Telegram по user_id или chat_id =======
+app.post('/api/notify', async (req, res) => {
+  try {
+    const { user_id, text } = req.body;
+    if (!user_id || !text) return res.status(400).json({ error: 'user_id and text required' });
+    const token = process.env.TELEGRAM_BOT_TOKEN;
+    await axios.post(`https://api.telegram.org/bot${token}/sendMessage`, {
+      chat_id: user_id,
+      text,
+      parse_mode: 'HTML',
+    });
+    res.json({ ok: true });
+  } catch (e) {
+    console.error('[NOTIFY] error', e);
+    res.status(500).json({ error: 'notify failed' });
+  }
+});
+
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   console.log(`YooKassa backend listening on port ${PORT}`);

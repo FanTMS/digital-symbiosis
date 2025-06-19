@@ -1,11 +1,6 @@
 import React, { ButtonHTMLAttributes, forwardRef } from 'react';
 import { motion } from 'framer-motion';
 
-// Типизация framer-motion часто конфликтует с HTML props, поэтому упрощаем
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-const MotionButton: any = motion.button;
-
 type Variant = 'primary' | 'outline' | 'ghost' | 'success' | 'danger' | 'icon';
 type Size = 'xs' | 'sm' | 'md' | 'lg' | 'icon';
 
@@ -52,7 +47,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const width = fullWidth ? 'w-full' : '';
     const sizeKey: Size = variant === 'icon' ? 'icon' : size;
     return (
-      <MotionButton
+      <motion.button
         ref={ref}
         className={`${base} ${variants[variant]} ${sizes[sizeKey]} ${width} ${disabled ? 'opacity-60 cursor-not-allowed' : ''} ${className}`}
         whileTap={{ scale: 0.97 }}
@@ -73,7 +68,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             {rightIcon && <span className="-mr-1">{rightIcon}</span>}
           </>
         )}
-      </MotionButton>
+      </motion.button>
     );
   }
 );

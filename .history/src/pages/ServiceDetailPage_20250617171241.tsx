@@ -63,11 +63,6 @@ const ServiceDetailPage: React.FC = () => {
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const createProposal = useCreatePriceProposal();
 
-  // --- deadline modal ---
-  const [showDeadlineModal, setShowDeadlineModal] = useState(false);
-  const [deadlineValue, setDeadlineValue] = useState('');
-  const [deadlineError, setDeadlineError] = useState<string | null>(null);
-
   useEffect(() => {
     if (tg) {
       tg.setHeaderColor("#0BBBEF");
@@ -141,7 +136,7 @@ const ServiceDetailPage: React.FC = () => {
     }
   }, [service?.quiz_id]);
 
-  const handleCreateOrder = async (deadlineIso: string) => {
+  const handleOrder = async () => {
     if (service && provider?.id && user?.id) {
       if (user.id === provider.id) {
         alert("Вы не можете заказать свою собственную услугу");
@@ -163,15 +158,20 @@ const ServiceDetailPage: React.FC = () => {
         return;
       }
 
-      // 1. Создаём заказ с удержанием средств
+      // 1. Создаём заказ
       const order = await ordersApi.createOrder({
         service_id: service.id,
         client_id: user.id,
         provider_id: provider.id,
         status: "pending",
         price: service.price,
-        deadline_at: deadlineIso,
       });
+
+      // 2. Списываем кредиты у пользователя
+      await supabase
+        .from("users")
+        .update({ credits: (user.credits || 0) - service.price })
+        .eq("id", user.id);
 
       // Создаём или находим чат
       const chat = await chatApi.getOrCreateChat(user.id, provider.id);
@@ -263,11 +263,7 @@ const ServiceDetailPage: React.FC = () => {
   const handleOrderWithQuiz = async (answers: QuizAnswers) => {
     setQuizAnswers(answers);
     setShowQuiz(false);
-    // Запрашиваем дедлайн у пользователя (простой prompt)
-    const dlInput = window.prompt('Введите дедлайн в формате ГГГГ-ММ-ДД ЧЧ:ММ', '');
-    const dlIso = dlInput ? new Date(dlInput).toISOString() : undefined;
-
-    // 1. Создаём заказ с quiz_answers и дедлайном
+    // Далее обычный процесс заказа, но с передачей quiz_answers
     if (service && provider?.id && user?.id) {
       if (user.id === provider.id) {
         alert('Вы не можете заказать свою собственную услугу');
@@ -287,7 +283,7 @@ const ServiceDetailPage: React.FC = () => {
         alert('Вы уже заказали эту услугу и она ещё не завершена');
         return;
       }
-      // 1. Создаём заказ с quiz_answers и дедлайном
+      // 1. Создаём заказ с quiz_answers
       const order = await ordersApi.createOrder({
         service_id: service.id,
         client_id: user.id,
@@ -295,8 +291,11 @@ const ServiceDetailPage: React.FC = () => {
         status: 'pending',
         price: service.price,
         quiz_answers: answers,
-        deadline_at: dlIso,
       });
+      await supabase
+        .from('users')
+        .update({ credits: (user.credits || 0) - service.price })
+        .eq('id', user.id);
       const chat = await chatApi.getOrCreateChat(user.id, provider.id);
       await chatApi.sendMessage(
         chat.id,
@@ -512,7 +511,7 @@ const ServiceDetailPage: React.FC = () => {
             fullWidth
             size="lg"
             className="text-lg py-3 rounded-xl shadow-md bg-gradient-to-r from-blue-400 to-cyan-400 hover:from-blue-500 hover:to-cyan-500"
-            onClick={() => service.quiz_id ? setShowQuiz(true) : setShowDeadlineModal(true)}
+            onClick={() => service.quiz_id ? setShowQuiz(true) : handleOrder()}
             disabled={showQuiz || quizLoading}
           >
             {service.quiz_id ? 'Пройти квиз для заказа' : 'Заказать услугу'}
@@ -708,32 +707,6 @@ const ServiceDetailPage: React.FC = () => {
             <button className="ml-2 text-green-700 font-bold" onClick={() => setSuccessMsg(null)}>×</button>
           </div>
         )}
-        {/* Модалка выбора дедлайна */}
-        <Modal isOpen={showDeadlineModal} onClose={() => { setShowDeadlineModal(false); setDeadlineError(null); }}>
-          <h2 className="text-xl font-bold mb-3">Укажите срок выполнения</h2>
-          <input
-            type="datetime-local"
-            value={deadlineValue}
-            onChange={e => setDeadlineValue(e.target.value)}
-            className="w-full border rounded px-3 py-2 mb-2"
-          />
-          {deadlineError && <div className="text-red-500 text-sm mb-2">{deadlineError}</div>}
-          <Button
-            variant="primary"
-            fullWidth
-            onClick={() => {
-              if (!deadlineValue) {
-                setDeadlineError('Пожалуйста, выберите дедлайн');
-                return;
-              }
-              const deadlineIso = new Date(deadlineValue).toISOString();
-              setShowDeadlineModal(false);
-              handleCreateOrder(deadlineIso);
-            }}
-          >
-            Подтвердить заказ
-          </Button>
-        </Modal>
       </div>
     </motion.div>
   );

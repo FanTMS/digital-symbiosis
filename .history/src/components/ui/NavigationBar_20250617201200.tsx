@@ -10,7 +10,6 @@ import {
   MessageCircle,
   Shield,
   Star,
-  AlertTriangle,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useUser } from "../../contexts/UserContext";
@@ -45,7 +44,6 @@ const NavigationBar: React.FC = () => {
 
   if (user && user.role === "admin") {
     navItems.push({ path: "/admin-dashboard", icon: Shield, label: "Админ" });
-    navItems.push({ path: "/admin/disputes", icon: AlertTriangle, label: "Споры" });
   }
 
   return (

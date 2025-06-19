@@ -432,9 +432,6 @@ const OrdersPage: React.FC = () => {
                             {activeTab === 'client' && order.status === 'completed_by_provider' && (
                               <>
                                 <Button variant="success" size="sm" className="flex-1" onClick={() => handleClientConfirm(order)}>Подтвердить</Button>
-                                <Button variant="danger" size="sm" className="flex-1" onClick={() => handleDisputeOrder(order)}>Спор</Button>
-                              </>
-                            )}
                           </div>
                         </div>
                       </motion.div>

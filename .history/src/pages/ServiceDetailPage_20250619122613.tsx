@@ -265,9 +265,7 @@ const ServiceDetailPage: React.FC = () => {
     setShowQuiz(false);
     // Запрашиваем дедлайн у пользователя (простой prompt)
     const dlInput = window.prompt('Введите дедлайн в формате ГГГГ-ММ-ДД ЧЧ:ММ', '');
-    const dlIso = dlInput ? new Date(dlInput).toISOString() : undefined;
-
-    // 1. Создаём заказ с quiz_answers и дедлайном
+    // Далее обычный процесс заказа, но с передачей quiz_answers
     if (service && provider?.id && user?.id) {
       if (user.id === provider.id) {
         alert('Вы не можете заказать свою собственную услугу');
@@ -287,7 +285,7 @@ const ServiceDetailPage: React.FC = () => {
         alert('Вы уже заказали эту услугу и она ещё не завершена');
         return;
       }
-      // 1. Создаём заказ с quiz_answers и дедлайном
+      // 1. Создаём заказ с quiz_answers
       const order = await ordersApi.createOrder({
         service_id: service.id,
         client_id: user.id,
@@ -295,7 +293,6 @@ const ServiceDetailPage: React.FC = () => {
         status: 'pending',
         price: service.price,
         quiz_answers: answers,
-        deadline_at: dlIso,
       });
       const chat = await chatApi.getOrCreateChat(user.id, provider.id);
       await chatApi.sendMessage(

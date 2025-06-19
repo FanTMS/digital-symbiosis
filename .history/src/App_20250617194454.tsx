@@ -31,7 +31,6 @@ const QuizEditPage = lazy(() => import('./pages/QuizEditPage'));
 const EditServicePage = lazy(() => import('./pages/EditServicePage'));
 const ChallengesPage = lazy(() => import('./pages/ChallengesPage'));
 const ChallengeDetailPage = lazy(() => import('./pages/ChallengeDetailPage'));
-const AdminDisputesPage = lazy(() => import("./pages/AdminDisputesPage"));
 
 // Components
 import NavigationBar from "./components/ui/NavigationBar";
@@ -349,17 +348,6 @@ function App() {
                       <ProtectedRoute>
                         <PageWrapper>
                           <ChallengeDetailPage />
-                        </PageWrapper>
-                      </ProtectedRoute>
-                    }
-                  />
-
-                  <Route
-                    path="/admin/disputes"
-                    element={
-                      <ProtectedRoute>
-                        <PageWrapper>
-                          <AdminDisputesPage />
                         </PageWrapper>
                       </ProtectedRoute>
                     }
