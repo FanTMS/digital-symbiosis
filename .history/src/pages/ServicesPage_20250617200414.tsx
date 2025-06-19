@@ -8,6 +8,8 @@ import {
   Filter,
   X,
   Star as StarIcon,
+  SortAsc,
+  SortDesc,
   FileText,
 } from "lucide-react";
 import { useServices } from "../hooks/useServices";
@@ -215,16 +217,11 @@ const ServicesPage: React.FC = () => {
               <StarIcon size={24} />
             </button>
           </h1>
-          <div className="flex items-center gap-3">
-            <Button variant="icon" size="icon" onClick={handleCreateService} aria-label="Создать услугу">
-              <Plus size={20} />
-            </Button>
-            <Button variant="icon" size="icon" onClick={() => navigate('/orders')} aria-label="Мои заказы">
-              <FileText size={20} />
-            </Button>
-            <Button variant="icon" size="icon" onClick={() => setShowSortModal(true)} aria-label="Сортировать">
-              <Filter size={20} />
-            </Button>
+          <div className="flex items-center gap-2 mb-4 justify-between">
+            <div className="flex gap-2">
+              <Button variant="primary" leftIcon={<Plus size={18} />} className="h-11 rounded-xl px-5 text-base font-semibold shadow-sm sm:h-9 sm:px-3 sm:text-sm" onClick={handleCreateService}>Создать</Button>
+              <Button variant="outline" leftIcon={<FileText size={18} />} className="h-11 rounded-xl px-5 text-base font-semibold shadow-sm sm:h-9 sm:px-3 sm:text-sm" onClick={() => navigate('/orders')}>Мои заказы</Button>
+            </div>
           </div>
         </div>
 

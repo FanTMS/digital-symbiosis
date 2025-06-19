@@ -8,9 +8,8 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   | "outline"
   | "ghost"
   | "danger"
-  | "success"
-  | "icon";
-  size?: "sm" | "md" | "lg" | "icon";
+  | "success";
+  size?: "sm" | "md" | "lg";
   fullWidth?: boolean;
   isLoading?: boolean;
   leftIcon?: React.ReactNode;
@@ -44,15 +43,12 @@ const Button: React.FC<ButtonProps> = ({
       "bg-gradient-to-r from-error-500 to-error-600 text-white hover:shadow-lg hover:shadow-error-500/25 active:scale-95",
     success:
       "bg-gradient-to-r from-green-400 to-green-600 text-white hover:shadow-lg hover:shadow-green-500/25 active:scale-95",
-    icon:
-      "bg-gradient-to-br from-primary-500 to-blue-500 text-white p-2 rounded-full shadow hover:shadow-lg active:scale-95",
   };
 
   const sizeStyles = {
     sm: "text-xs px-4 py-2",
     md: "text-sm px-5 py-2.5",
     lg: "text-base px-6 py-3",
-    icon: "w-10 h-10 flex items-center justify-center",
   };
 
   const widthStyles = fullWidth ? "w-full" : "";
@@ -65,7 +61,7 @@ const Button: React.FC<ButtonProps> = ({
       className={`
         ${baseStyles}
         ${variantStyles[variant]}
-        ${sizeStyles[variant === 'icon' ? 'icon' : size]}
+        ${sizeStyles[size]}
         ${widthStyles}
         ${disabled || isLoading ? "cursor-not-allowed opacity-70" : ""}
         ${className}

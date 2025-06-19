@@ -11,7 +11,6 @@ import BalanceTopupBar from "../components/ui/BalanceTopupBar";
 import PromoBanner from "../components/ui/PromoBanner";
 import Modal from "../components/ui/Modal";
 import Button from "../components/ui/Button";
-import StatsBlock from '../components/ui/StatsBlock';
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
@@ -419,9 +418,63 @@ const HomePage: React.FC = () => {
       </div>
 
       {/* Stats */}
-      <div className="px-4 mb-8">
+      <div className="px-4">
         <h2 className="text-lg font-semibold mb-3">Статистика платформы</h2>
-        <StatsBlock stats={stats} loading={stats.users === 0 && stats.completedOrders === 0 && stats.categories === 0 && stats.avgRating === 0} />
+        <div className="bg-white rounded-lg shadow-card p-4">
+          <div className="grid grid-cols-2 gap-4">
+            {stats.users === 0 &&
+              stats.completedOrders === 0 &&
+              stats.categories === 0 &&
+              stats.avgRating === 0 ? (
+              // Skeleton
+              <>
+                {[1, 2, 3, 4].map((i) => (
+                  <div className="text-center" key={i}>
+                    <div className="h-8 w-16 mx-auto bg-gray-200 rounded mb-2 animate-pulse" />
+
+                    <div className="h-4 w-24 mx-auto bg-gray-200 rounded animate-pulse" />
+                  </div>
+                ))}
+              </>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
+                className="contents"
+              >
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-primary-500">
+                    {stats.users}
+                  </div>
+                  <div className="text-sm text-gray-500">
+                    Активных пользователей
+                  </div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-accent-500">
+                    {stats.completedOrders}
+                  </div>
+                  <div className="text-sm text-gray-500">
+                    Завершённых заданий
+                  </div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-green-500">
+                    {stats.categories}
+                  </div>
+                  <div className="text-sm text-gray-500">Категорий услуг</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-yellow-500">
+                    {stats.avgRating}
+                  </div>
+                  <div className="text-sm text-gray-500">Средний рейтинг</div>
+                </div>
+              </motion.div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
