@@ -873,13 +873,13 @@ const ProfilePage: React.FC = () => {
                   placeholder="Введите промокод"
                   value={promoInput}
                   onChange={e => setPromoInput(e.target.value)}
-                  className="mb-3 px-4 py-3 rounded-lg border w-full max-w-sm text-center"
+                  className="mb-2 px-4 py-2 rounded border w-full max-w-xs"
                   disabled={promoStatus === 'loading'}
                 />
                 <Button
                   onClick={handleActivatePromo}
                   disabled={promoStatus === 'loading' || !promoInput.trim()}
-                  className="w-full max-w-sm touch-manipulation"
+                  className="w-full max-w-xs"
                 >
                   Активировать
                 </Button>

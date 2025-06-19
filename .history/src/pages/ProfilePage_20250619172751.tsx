@@ -792,7 +792,7 @@ const ProfilePage: React.FC = () => {
             )}
             {activeTab === 'reviews' && (
               <div>
-                <h3 className="font-semibold text-base sm:text-lg mb-3">Отзывы</h3>
+                <h3 className="font-semibold text-lg mb-2">Отзывы</h3>
                 {reviews.length === 0 ? (
                   <div className="flex flex-col items-center justify-center py-6 text-center text-gray-400">
                     <div className="text-3xl mb-2">💬</div>
@@ -836,7 +836,7 @@ const ProfilePage: React.FC = () => {
             )}
             {activeTab === 'orders' && (
               <div>
-                <h3 className="font-semibold text-base sm:text-lg mb-3">
+                <h3 className="font-semibold text-lg mb-2">
                   Выполненные заказы
                 </h3>
                 {orders.length === 0 ? (
@@ -866,20 +866,20 @@ const ProfilePage: React.FC = () => {
               </div>
             )}
             {activeTab === 'promo' && (
-              <div className="bg-white rounded-lg shadow-card p-4 w-full flex flex-col items-center">
-                <h3 className="font-semibold text-base sm:text-lg mb-4">Активация промокода</h3>
+              <div className="bg-white rounded-lg shadow-card p-4 w-full max-w-md mx-auto flex flex-col items-center">
+                <h3 className="font-semibold text-lg mb-4">Активация промокода</h3>
                 <input
                   type="text"
                   placeholder="Введите промокод"
                   value={promoInput}
                   onChange={e => setPromoInput(e.target.value)}
-                  className="mb-3 px-4 py-3 rounded-lg border w-full max-w-sm text-center"
+                  className="mb-2 px-4 py-2 rounded border w-full max-w-xs"
                   disabled={promoStatus === 'loading'}
                 />
                 <Button
                   onClick={handleActivatePromo}
                   disabled={promoStatus === 'loading' || !promoInput.trim()}
-                  className="w-full max-w-sm touch-manipulation"
+                  className="w-full max-w-xs"
                 >
                   Активировать
                 </Button>

@@ -366,30 +366,24 @@ const ProfilePage: React.FC = () => {
       transition={{ duration: 0.4, ease: "easeOut" }}
       className="pb-16 pt-2"
     >
-      {/* Мобильный заголовок и кнопки */}
-      <div className="px-4 mb-4">
-        <h1 className="text-2xl font-bold mb-3">Профиль</h1>
-
-        {/* Кнопки действий - адаптивно под мобильные */}
-        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+      <div className="px-4 mb-6 flex items-center justify-between">
+        <h1 className="text-2xl font-bold mb-4">Профиль</h1>
+        <button
+          className="flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 text-sm font-medium shadow transition"
+          onClick={handleShareProfile}
+          title="Скопировать ссылку на профиль"
+        >
+          <Copy size={16} /> Поделиться
+        </button>
+        {/* Кнопка подписки/отписки */}
+        {!isOwn && (
           <button
-            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 text-sm font-medium shadow-sm transition touch-manipulation"
-            onClick={handleShareProfile}
-            title="Скопировать ссылку на профиль"
+            className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium shadow transition ${isFollowing ? 'bg-gray-100 text-gray-500 hover:bg-gray-200' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
+            onClick={isFollowing ? handleUnfollow : handleFollow}
           >
-            <Copy size={16} /> Поделиться
+            <Users size={16} /> {isFollowing ? 'Отписаться' : 'Подписаться'}
           </button>
-
-          {/* Кнопка подписки/отписки */}
-          {!isOwn && (
-            <button
-              className={`flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium shadow-sm transition touch-manipulation ${isFollowing ? 'bg-gray-100 text-gray-500 hover:bg-gray-200' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
-              onClick={isFollowing ? handleUnfollow : handleFollow}
-            >
-              <Users size={16} /> {isFollowing ? 'Отписаться' : 'Подписаться'}
-            </button>
-          )}
-        </div>
+        )}
       </div>
       {/* Кол-во подписчиков и подписок */}
       <div className="px-4 mb-4 flex gap-4">
@@ -428,92 +422,70 @@ const ProfilePage: React.FC = () => {
         </Modal>
       )}
       <div className="px-4 mb-6">
-        {/* Адаптивная карточка пользователя */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-6">
-          <div className="flex items-center gap-4 w-full sm:w-auto">
-            <div className="relative">
-              <Avatar src={user.avatar_url} name={user.name} size={80} className="cursor-pointer border-2 border-primary-500" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 flex-wrap">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
-                  <span className="text-xl sm:text-2xl font-bold truncate">
-                    {user.name}
-                  </span>
-                  <span className="text-gray-400 text-sm sm:text-base">
-                    @{user.username}
-                  </span>
-                </div>
-                {(user as any).display_badge_id && (
-                  (() => {
-                    const badge = userBadges.find(b => b.id === (user as any).display_badge_id);
-                    return badge ? (
-                      <span title={badge.name} className="ml-1">
-                        {BADGE_ICONS[badge.name] || "🏅"}
-                      </span>
-                    ) : null;
-                  })()
-                )}
-                {isOwn && (
-                  <button
-                    className="ml-2 p-1.5 rounded-full hover:bg-gray-100 touch-manipulation"
-                    onClick={() => setShowEditModal(true)}
-                    title="Редактировать профиль"
-                  >
-                    <Pencil size={18} />
-                  </button>
-                )}
-              </div>
-
-              {/* Рейтинг и статистика - адаптивно */}
-              <div className="flex flex-col gap-1 mt-2">
-                <div className="flex items-center gap-2 text-sm">
-                  <Star size={16} className="text-yellow-400 fill-yellow-400" />
-                  <span className="font-medium">
-                    {user.rating?.toFixed(1) ?? "—"}
-                  </span>
-                  <span className="text-gray-400">•</span>
-                  <span className="text-gray-500">
-                    Уровень: {user.level ?? "-"}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <span className="text-gray-500">
-                    Кредиты: {user.credits ?? 0}
-                  </span>
-                  <span className="text-gray-400">•</span>
-                  <span className="text-gray-500">
-                    Активность: {(user as any).challenge_points ?? 0}
-                  </span>
-                </div>
-              </div>
-
-              {/* Награды */}
-              {(user as any).challenge_awards?.length > 0 && (
-                <div className="flex flex-wrap gap-1 mt-2">
-                  {(user as any).challenge_awards?.map((award: any) => (
-                    <span key={award.id} className="inline-flex items-center px-2 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs gap-1">
-                      🏆 {award.title}
+        <div className="flex items-center gap-4 mb-6">
+          <div className="relative">
+            <Avatar src={user.avatar_url} name={user.name} size={80} className="cursor-pointer border-2 border-primary-500" />
+          </div>
+          <div className="flex-1">
+            <div className="flex items-center gap-2">
+              <span className="text-2xl font-bold">
+                {user.name}{" "}
+                <span className="text-gray-400 text-base">
+                  @{user.username}
+                </span>
+              </span>
+              {(user as any).display_badge_id && (
+                (() => {
+                  const badge = userBadges.find(b => b.id === (user as any).display_badge_id);
+                  return badge ? (
+                    <span title={badge.name} className="ml-1">
+                      {BADGE_ICONS[badge.name] || "🏅"}
                     </span>
-                  ))}
-                </div>
+                  ) : null;
+                })()
+              )}
+              {isOwn && (
+                <button
+                  className="ml-2 p-1 rounded-full hover:bg-gray-100"
+                  onClick={() => setShowEditModal(true)}
+                  title="Редактировать профиль"
+                >
+                  <Pencil size={18} />
+                </button>
               )}
             </div>
-          </div>
+            <div className="flex items-center gap-2 mt-1">
+              <Star size={18} className="text-yellow-400 fill-yellow-400" />
 
-          {/* Кнопка сообщения - адаптивная */}
-          {!isOwn && (
-            <div className="w-full sm:w-auto">
-              <Button
-                className="w-full sm:w-auto"
-                leftIcon={<MessageCircle size={18} />}
-                onClick={() => navigate(`/chat/${user.id}`)}
-                size="sm"
-              >
-                <span className="sm:inline">Написать сообщение</span>
-                <span className="sm:hidden">Сообщение</span>
-              </Button>
+              <span className="font-medium">
+                {user.rating?.toFixed(1) ?? "—"}
+              </span>
+              <span className="text-gray-400">•</span>
+              <span className="text-gray-500">
+                Уровень: {user.level ?? "-"}
+              </span>
+              <span className="text-gray-400">•</span>
+              <span className="text-gray-500">
+                Кредиты: {user.credits ?? 0}
+              </span>
             </div>
+            <div className="flex items-center gap-2 mt-2">
+              <span className="text-xs text-gray-500">Рейтинг активности: {(user as any).challenge_points ?? 0}</span>
+              {(user as any).challenge_awards?.map((award: any) => (
+                <span key={award.id} className="inline-flex items-center px-2 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs gap-1">
+                  🏆 {award.title}
+                </span>
+              ))}
+            </div>
+          </div>
+          {!isOwn && (
+            <Button
+              className="ml-auto"
+              leftIcon={<MessageCircle size={18} />}
+              onClick={() => navigate(`/chat/${user.id}`)}
+            >
+              Написать сообщение
+            </Button>
           )}
         </div>
 
@@ -559,32 +531,34 @@ const ProfilePage: React.FC = () => {
                     {item.value !== undefined && (
                       <span className="text-primary-500 font-bold">{item.value}</span>
                     )}
+                    {item.badge !== undefined && (
+                      <span className="ml-2 bg-blue-100 text-blue-700 rounded-full px-2 py-0.5 text-xs font-bold">{item.badge}</span>
+                    )}
                     <ChevronRight size={18} className="text-gray-300 group-hover:text-primary-400 transition" />
                   </button>
                 ))}
               </div>
             )}
 
-            {/* Вкладки - адаптивные */}
-            <div className="flex gap-2 mb-6 overflow-x-auto scrollbar-hide">
+            {/* Вкладки */}
+            <div className="flex gap-2 mb-6 overflow-x-auto no-scrollbar">
               {TABS.map(tab => (
                 <button
                   key={tab.id}
-                  className={`flex items-center gap-2 px-3 sm:px-4 py-2.5 rounded-xl font-medium transition-all duration-200 whitespace-nowrap touch-manipulation min-w-max ${activeTab === tab.id ? 'bg-blue-100 text-blue-900 shadow-sm' : 'bg-white text-gray-500 hover:bg-gray-100'}`}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-xl font-semibold transition-all duration-200 whitespace-nowrap ${activeTab === tab.id ? 'bg-blue-100 text-blue-900 shadow' : 'bg-white text-gray-500 hover:bg-gray-100'}`}
                   onClick={() => setActiveTab(tab.id as any)}
                 >
-                  <tab.icon size={16} className="sm:w-[18px] sm:h-[18px]" />
-                  <span className="text-sm sm:text-base">{tab.label}</span>
+                  <tab.icon size={18} /> {tab.label}
                 </button>
               ))}
             </div>
 
             {/* Контент вкладок */}
             {activeTab === 'services' && (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Отзывы */}
                 <div>
-                  <h3 className="font-semibold text-base sm:text-lg mb-3">Отзывы</h3>
+                  <h3 className="font-semibold text-lg mb-2">Отзывы</h3>
                   {reviews.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-6 text-center text-gray-400">
                       <div className="text-3xl mb-2">💬</div>
@@ -596,8 +570,8 @@ const ProfilePage: React.FC = () => {
                   ) : (
                     <div className="space-y-2">
                       {reviews.map((r) => (
-                        <div key={r.id} className="bg-gray-100 rounded-lg p-3 sm:p-4">
-                          <div className="flex items-center gap-2 mb-2">
+                        <div key={r.id} className="bg-gray-100 rounded-lg p-3">
+                          <div className="flex items-center gap-2 mb-1">
                             {[1, 2, 3, 4, 5].map((i) => (
                               <Star
                                 key={i}
@@ -613,7 +587,7 @@ const ProfilePage: React.FC = () => {
                               {new Date(r.created_at).toLocaleDateString()}
                             </span>
                           </div>
-                          <div className="text-sm leading-relaxed">
+                          <div className="text-sm">
                             {r.comment || (
                               <span className="text-gray-400">
                                 Без комментария
@@ -627,7 +601,7 @@ const ProfilePage: React.FC = () => {
                 </div>
                 {/* Выполненные заказы */}
                 <div>
-                  <h3 className="font-semibold text-base sm:text-lg mb-3">
+                  <h3 className="font-semibold text-lg mb-2">
                     Выполненные заказы
                   </h3>
                   {orders.length === 0 ? (
@@ -643,11 +617,11 @@ const ProfilePage: React.FC = () => {
                   ) : (
                     <div className="space-y-2">
                       {orders.map((o) => (
-                        <div key={o.id} className="bg-gray-100 rounded-lg p-3 sm:p-4">
-                          <div className="font-medium text-sm sm:text-base truncate">
+                        <div key={o.id} className="bg-gray-100 rounded-lg p-3">
+                          <div className="font-medium">
                             {o.service?.title || "Без названия"}
                           </div>
-                          <div className="text-xs text-gray-500 mt-1">
+                          <div className="text-xs text-gray-500">
                             {new Date(o.created_at).toLocaleDateString()}
                           </div>
                         </div>
@@ -656,15 +630,15 @@ const ProfilePage: React.FC = () => {
                   )}
                 </div>
                 {/* Услуги пользователя */}
-                <div className="lg:col-span-2">
-                  <h3 className="font-semibold text-base sm:text-lg mb-3">
+                <div className="md:col-span-2">
+                  <h3 className="font-semibold text-lg mb-2">
                     Услуги пользователя
                   </h3>
                   {services.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-6 text-center text-gray-400">
                       <div className="text-3xl mb-2">🛠️</div>
                       <div className="font-medium mb-1">Нет активных услуг</div>
-                      <div className="text-xs mb-3">
+                      <div className="text-xs mb-2">
                         {isOwn
                           ? "Вы ещё не добавили ни одной услуги"
                           : "Пользователь ещё не добавил ни одной услуги"}
@@ -674,31 +648,29 @@ const ProfilePage: React.FC = () => {
                           size="sm"
                           variant="primary"
                           onClick={() => navigate("/create-service")}
-                          className="touch-manipulation"
                         >
                           Добавить услугу
                         </Button>
                       )}
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       {services.map((s) => (
                         <div
                           key={s.id}
-                          className="bg-white rounded-lg shadow-sm border p-3 flex flex-col"
+                          className="bg-white rounded-lg shadow p-3 flex flex-col"
                         >
-                          <div className="font-medium mb-1 text-sm sm:text-base truncate">{s.title}</div>
+                          <div className="font-medium mb-1">{s.title}</div>
                           <div className="text-xs text-gray-500 mb-1">
                             {s.category}
                           </div>
-                          <div className="text-xs text-gray-500 mb-2">
+                          <div className="text-xs text-gray-500 mb-1">
                             {s.price} кр.
                           </div>
                           <Button
                             size="sm"
                             variant="outline"
                             onClick={() => navigate(`/services/${s.id}`)}
-                            className="mt-auto touch-manipulation"
                           >
                             Подробнее
                           </Button>
@@ -710,8 +682,8 @@ const ProfilePage: React.FC = () => {
               </div>
             )}
             {activeTab === 'quizzes' && (
-              <div className="bg-white rounded-lg shadow-card p-4 w-full">
-                <h3 className="font-semibold text-base sm:text-lg mb-3">Мои квизы</h3>
+              <div className="bg-white rounded-lg shadow-card p-4 w-full max-w-2xl mx-auto">
+                <h3 className="font-semibold text-lg mb-2">Мои квизы</h3>
                 <div className="mb-4 flex flex-col sm:flex-row gap-2">
                   <Button
                     variant="primary"
@@ -730,19 +702,19 @@ const ProfilePage: React.FC = () => {
                     <div className="text-xs mb-2">Создайте первый квиз, чтобы начать!</div>
                   </div>
                 ) : (
-                  <div className="space-y-3">
+                  <div className="space-y-2">
                     {quizzes.map(quiz => (
-                      <div key={quiz.id} className="bg-gray-100 rounded-lg p-3 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                      <div key={quiz.id} className="bg-gray-100 rounded-lg p-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                         <div className="flex-1 min-w-0">
-                          <div className="font-medium text-sm sm:text-base truncate mb-1">{quiz.title}</div>
-                          <div className="text-gray-500 text-xs sm:text-sm truncate">{quiz.description}</div>
+                          <div className="font-medium text-base truncate mb-1">{quiz.title}</div>
+                          <div className="text-gray-500 text-sm truncate">{quiz.description}</div>
                         </div>
                         <div className="flex gap-2 w-full sm:w-auto">
-                          <Button size="sm" variant="outline" className="flex-1 sm:flex-initial touch-manipulation" onClick={() => navigate(`/quizzes/${quiz.id}/edit`)}>
-                            <Edit3 size={16} /> <span className="hidden sm:inline">Редактировать</span><span className="sm:hidden">Ред.</span>
+                          <Button size="sm" variant="outline" className="w-full sm:w-auto" onClick={() => navigate(`/quizzes/${quiz.id}/edit`)}>
+                            <Edit3 size={16} /> <span className="hidden xs:inline">Редактировать</span>
                           </Button>
-                          <Button size="sm" variant="danger" className="flex-1 sm:flex-initial touch-manipulation" onClick={() => setQuizToDelete(quiz.id)}>
-                            <Trash2 size={16} /> <span className="hidden sm:inline">Удалить</span><span className="sm:hidden">Уд.</span>
+                          <Button size="sm" variant="danger" className="w-full sm:w-auto" onClick={() => setQuizToDelete(quiz.id)}>
+                            <Trash2 size={16} /> <span className="hidden xs:inline">Удалить</span>
                           </Button>
                         </div>
                       </div>
@@ -792,7 +764,7 @@ const ProfilePage: React.FC = () => {
             )}
             {activeTab === 'reviews' && (
               <div>
-                <h3 className="font-semibold text-base sm:text-lg mb-3">Отзывы</h3>
+                <h3 className="font-semibold text-lg mb-2">Отзывы</h3>
                 {reviews.length === 0 ? (
                   <div className="flex flex-col items-center justify-center py-6 text-center text-gray-400">
                     <div className="text-3xl mb-2">💬</div>
@@ -836,7 +808,7 @@ const ProfilePage: React.FC = () => {
             )}
             {activeTab === 'orders' && (
               <div>
-                <h3 className="font-semibold text-base sm:text-lg mb-3">
+                <h3 className="font-semibold text-lg mb-2">
                   Выполненные заказы
                 </h3>
                 {orders.length === 0 ? (
@@ -866,20 +838,20 @@ const ProfilePage: React.FC = () => {
               </div>
             )}
             {activeTab === 'promo' && (
-              <div className="bg-white rounded-lg shadow-card p-4 w-full flex flex-col items-center">
-                <h3 className="font-semibold text-base sm:text-lg mb-4">Активация промокода</h3>
+              <div className="bg-white rounded-lg shadow-card p-4 w-full max-w-md mx-auto flex flex-col items-center">
+                <h3 className="font-semibold text-lg mb-4">Активация промокода</h3>
                 <input
                   type="text"
                   placeholder="Введите промокод"
                   value={promoInput}
                   onChange={e => setPromoInput(e.target.value)}
-                  className="mb-3 px-4 py-3 rounded-lg border w-full max-w-sm text-center"
+                  className="mb-2 px-4 py-2 rounded border w-full max-w-xs"
                   disabled={promoStatus === 'loading'}
                 />
                 <Button
                   onClick={handleActivatePromo}
                   disabled={promoStatus === 'loading' || !promoInput.trim()}
-                  className="w-full max-w-sm touch-manipulation"
+                  className="w-full max-w-xs"
                 >
                   Активировать
                 </Button>
