@@ -56,7 +56,7 @@ const PaymentsAdminPanel: React.FC = () => {
       setHistoryLoading(true);
       const { data } = await supabase
         .from("topup_history")
-        .select("*, user:users!topup_history_user_id_fkey(*)")
+        .select("*, user:users(*)")
         .order("created_at", { ascending: false })
         .limit(50);
       setHistory(data || []);

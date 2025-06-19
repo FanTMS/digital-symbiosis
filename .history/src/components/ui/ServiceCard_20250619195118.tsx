@@ -192,9 +192,9 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
         )}
         {/* Избранное */}
         <button
-          className={`absolute top-2 right-2 z-20 w-10 h-10 rounded-full bg-white shadow-lg transition-all duration-200 flex items-center justify-center border-2
-            ${isFavorite ? 'text-red-500 bg-red-50 border-red-200' : 'text-gray-600 hover:text-red-400 border-gray-200 hover:border-red-200'} 
-            hover:bg-red-50 hover:scale-105 active:scale-95 active:bg-red-100
+          className={`absolute top-2 right-2 z-20 w-10 h-10 rounded-full bg-white/95 shadow-lg transition-all duration-200 flex items-center justify-center
+            ${isFavorite ? 'text-red-500 bg-red-50/95' : 'text-gray-400 hover:text-red-400'} 
+            hover:bg-red-50/95 hover:scale-105 active:scale-95 active:bg-red-100/95
             touch-manipulation select-none`}
           onClick={handleFavorite}
           onTouchStart={handleFavorite}
