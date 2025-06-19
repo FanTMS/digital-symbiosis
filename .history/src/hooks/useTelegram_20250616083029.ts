@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import WebApp from '@twa-dev/sdk';
 import { supabase } from '../lib/supabase';
 import { logErrorToTelegram } from '../utils/logError';
-import { API_URL } from '../config';
 
 declare global {
   interface Window {
@@ -109,7 +108,7 @@ export function useTelegram() {
         return;
       }
       // Новый способ: авторизация через backend
-      const response = await fetch(`${API_URL}/api/auth/telegram`, {
+      const response = await fetch('https://digital-symbiosis.onrender.com/api/auth/telegram', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

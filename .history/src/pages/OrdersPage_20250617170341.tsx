@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
@@ -22,7 +21,6 @@ import { useOrders, useUpdateOrderStatus } from "../hooks/useOrders";
 import { useQueryClient } from "@tanstack/react-query";
 import { Avatar } from "../components/ui/Avatar";
 import { useCreatePriceProposal } from '../hooks/usePriceProposals';
-import { API_URL } from '../config';
 
 const PAGE_SIZE = 20;
 const CARD_HEIGHT = 120; // px, высота одной карточки заказа
@@ -31,7 +29,7 @@ const VISIBLE_COUNT = 8;
 // Функция для отправки уведомления в бота
 async function notifyBot(userId: number, text: string) {
   try {
-    await fetch(`${API_URL}/api/notify`, {
+    await fetch('https://digital-symbiosis.onrender.com/api/notify', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ user_id: userId, text }),
@@ -162,7 +160,6 @@ const OrdersPage: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ["orders", userId, "provider"] });
     }
     // Сообщение в чат
-    // @ts-ignore
     const chat = await chatApi.getOrCreateChat(order.client_id, order.provider_id);
     await chatApi.sendMessage(
       chat.id,
@@ -180,7 +177,6 @@ const OrdersPage: React.FC = () => {
     if (userId) {
       queryClient.invalidateQueries({ queryKey: ["orders", userId, "provider"] });
     }
-    // @ts-ignore
     const chat = await chatApi.getOrCreateChat(order.client_id, order.provider_id);
     await chatApi.sendMessage(
       chat.id,
@@ -199,7 +195,6 @@ const OrdersPage: React.FC = () => {
     }
     const order = userOrders.find((o) => o.id === orderId);
     if (order) {
-      // @ts-ignore
       const chat = await chatApi.getOrCreateChat(order.client_id, order.provider_id);
       await chatApi.sendMessage(
         chat.id,
@@ -518,8 +513,7 @@ const OrdersPage: React.FC = () => {
               await createProposal.mutateAsync({
                 order_id: currentOrder.id,
                 from_user_id: user.id,
-                // @ts-ignore – otherUser определён на момент выполнения, но недоступен типам
-                to_user_id: (currentOrder?.provider_id && currentOrder?.provider_id !== user.id ? currentOrder?.provider_id : currentOrder?.client_id) as number,
+                to_user_id: otherUser.id,
                 proposed_price: priceNum,
               });
               setShowPriceModal(false);

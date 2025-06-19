@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
@@ -180,7 +179,6 @@ const OrdersPage: React.FC = () => {
     if (userId) {
       queryClient.invalidateQueries({ queryKey: ["orders", userId, "provider"] });
     }
-    // @ts-ignore
     const chat = await chatApi.getOrCreateChat(order.client_id, order.provider_id);
     await chatApi.sendMessage(
       chat.id,
@@ -199,7 +197,6 @@ const OrdersPage: React.FC = () => {
     }
     const order = userOrders.find((o) => o.id === orderId);
     if (order) {
-      // @ts-ignore
       const chat = await chatApi.getOrCreateChat(order.client_id, order.provider_id);
       await chatApi.sendMessage(
         chat.id,
@@ -518,8 +515,7 @@ const OrdersPage: React.FC = () => {
               await createProposal.mutateAsync({
                 order_id: currentOrder.id,
                 from_user_id: user.id,
-                // @ts-ignore – otherUser определён на момент выполнения, но недоступен типам
-                to_user_id: (currentOrder?.provider_id && currentOrder?.provider_id !== user.id ? currentOrder?.provider_id : currentOrder?.client_id) as number,
+                to_user_id: otherUser.id,
                 proposed_price: priceNum,
               });
               setShowPriceModal(false);
