@@ -152,21 +152,33 @@ select:focus {
   user-select: none;
 }
 
-/* Общие стили для touch кнопок */
-.touch-button {
+/* Избранное кнопка - специальные стили */
+.favorite-button {
+  position: relative;
+  z-index: 20;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
   touch-action: manipulation;
   transition: all 0.2s ease;
 }
 
-.touch-button:active {
+.favorite-button:active {
   transform: scale(0.9);
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
 }
 
-.touch-button:disabled {
+.favorite-button:disabled {
   pointer-events: none;
   opacity: 0.6;
+}
+
+/* Дополнительная анимация при клике на мобильных */
+@media (hover: none) and (pointer: coarse) {
+  .favorite-button:active {
+    transform: scale(0.85);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+    background-color: rgba(239, 68, 68, 0.1) !important;
+  }
 }
 
 /* Адаптивные отступы для мобильных */

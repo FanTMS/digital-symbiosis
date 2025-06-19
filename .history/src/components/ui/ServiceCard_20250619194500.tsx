@@ -192,17 +192,17 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
         )}
         {/* Избранное */}
         <button
-          className={`absolute top-2 right-2 z-20 w-10 h-10 rounded-full bg-white/95 shadow-lg transition-all duration-200 flex items-center justify-center
+          className={`favorite-button mobile-touch-target absolute top-1 right-1 p-2 rounded-full bg-white/95 shadow-lg transition-all duration-200 flex items-center justify-center
             ${isFavorite ? 'text-red-500 bg-red-50/95' : 'text-gray-400 hover:text-red-400'} 
-            hover:bg-red-50/95 hover:scale-105 active:scale-95 active:bg-red-100/95
-            touch-manipulation select-none`}
+            hover:bg-red-50/95 hover:scale-105 active:bg-red-100/95`}
           onClick={handleFavorite}
           onTouchStart={handleFavorite}
           aria-label={isFavorite ? 'Удалить из избранного' : 'Добавить в избранное'}
           disabled={loading}
+          tabIndex={0}
         >
           <Heart
-            size={18}
+            size={20}
             fill={isFavorite ? '#ef4444' : 'none'}
             strokeWidth={isFavorite ? 0 : 2}
             className={`transition-all duration-200 ${loading ? 'animate-pulse' : ''}`}
@@ -211,15 +211,11 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
         {/* Редактировать */}
         {currentUser?.id === service.user_id && (
           <button
-            className={`absolute top-2 left-2 z-20 w-10 h-10 rounded-full bg-primary-50 text-primary-700 shadow-lg hover:bg-primary-100 transition-all duration-200 flex items-center justify-center
-              hover:scale-105 active:scale-95 active:bg-primary-200
-              touch-manipulation select-none`}
+            className={`absolute top-2 left-2 z-20 p-1.5 rounded-full bg-primary-50 text-primary-700 shadow hover:bg-primary-100 transition-all duration-200 group-hover:scale-110 group-active:scale-95`}
+            style={{ minWidth: 0 }}
             onClick={e => { e.stopPropagation(); navigate(`/services/${service.id}?edit=1`); }}
-            aria-label="Редактировать услугу"
           >
-            <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
-              <path d='M4 21h17M12.5 8.5l3 3M7 20l-3-3 9-9a2.121 2.121 0 013 3l-9 9z' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round' />
-            </svg>
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d='M4 21h17M12.5 8.5l3 3M7 20l-3-3 9-9a2.121 2.121 0 013 3l-9 9z' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round' /></svg>
           </button>
         )}
       </div>
