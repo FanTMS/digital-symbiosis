@@ -48,9 +48,13 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 
   const handleFavorite = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!currentUser?.id) return;
+    if (!currentUser?.id) {
+      console.log('Нет авторизованного пользователя');
+      return;
+    }
 
     setLoading(true);
+    console.log(`Обновляем избранное для пользователя ${currentUser.id}, услуга ${service.id}, текущее состояние: ${isFavorite}`);
 
     try {
       if (isFavorite) {
@@ -60,15 +64,22 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
           .eq("user_id", currentUser.id)
           .eq("service_id", service.id);
 
-        if (!error) {
+        if (error) {
+          console.error('Ошибка при удалении из избранного:', error);
+        } else {
+          console.log('Успешно удалено из избранного');
           setIsFavorite(false);
         }
       } else {
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from("favorites")
-          .insert({ user_id: currentUser.id, service_id: service.id });
+          .insert({ user_id: currentUser.id, service_id: service.id })
+          .select();
 
-        if (!error) {
+        if (error) {
+          console.error('Ошибка при добавлении в избранное:', error);
+        } else {
+          console.log('Успешно добавлено в избранное:', data);
           setIsFavorite(true);
         }
       }

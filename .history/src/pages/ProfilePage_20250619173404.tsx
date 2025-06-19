@@ -161,10 +161,10 @@ const ProfilePage: React.FC = () => {
         .eq("status", "completed")
         .order("created_at", { ascending: false });
       setOrders(orderData || []);
-      // Получаем услуги пользователя с информацией о пользователе
+      // Получаем услуги пользователя
       const { data: serviceData } = await supabase
         .from("services")
-        .select("*, user:users(*)")
+        .select("*")
         .eq("user_id", idNum)
         .eq("is_active", true);
       setServices(serviceData || []);

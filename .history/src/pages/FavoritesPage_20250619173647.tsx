@@ -64,7 +64,8 @@ const FavoritesPage: React.FC = () => {
     })();
   }, [user?.id]);
 
-
+  // Добавляю вывод в консоль для отладки
+  console.log("favorites", favorites);
 
   const refetchFavorites = async () => {
     if (!user?.id) return;

@@ -9,8 +9,7 @@ import Button from "../components/ui/Button";
 import { Star } from "lucide-react";
 
 const FavoritesPage: React.FC = () => {
-  const { tg } = useTelegram();
-  const { user } = useUser(); // Используем UserContext вместо TelegramContext
+  const { user, tg } = useTelegram();
   const navigate = useNavigate();
   const [favorites, setFavorites] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -64,7 +63,8 @@ const FavoritesPage: React.FC = () => {
     })();
   }, [user?.id]);
 
-
+  // Добавляю вывод в консоль для отладки
+  console.log("favorites", favorites);
 
   const refetchFavorites = async () => {
     if (!user?.id) return;
