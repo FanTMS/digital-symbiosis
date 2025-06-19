@@ -56,7 +56,7 @@ const HomePage: React.FC = () => {
 
       const defaultTitle = document.querySelector("[data-default]");
       if (defaultTitle) {
-        document.title = "БртЦ";
+        document.title = "WL Blend";
       }
     }
   }, [tg]);

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useTelegram } from "../hooks/useTelegram";
-import { Search, TrendingUp, Award, Gift, Plus } from "lucide-react";
+import { Search, TrendingUp, Award, Gift, Plus, Bell } from "lucide-react";
 import { notificationsApi } from "../lib/api/notifications";
 import { supabase } from "../lib/supabase";
 import ServiceCard from "../components/ui/ServiceCard";
@@ -56,7 +56,7 @@ const HomePage: React.FC = () => {
 
       const defaultTitle = document.querySelector("[data-default]");
       if (defaultTitle) {
-        document.title = "БртЦ";
+        document.title = "WL Blend";
       }
     }
   }, [tg]);

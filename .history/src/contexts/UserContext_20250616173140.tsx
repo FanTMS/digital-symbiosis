@@ -3,7 +3,6 @@ import { useTelegram } from "../hooks/useTelegram";
 import { supabase } from "../lib/supabase";
 import type { User } from "../types/models";
 import { logErrorToTelegram } from "../utils/logError";
-import { cacheTelegramAvatar } from "../lib/cacheTelegramAvatar";
 
 interface UserContextType {
   user: User | null;
@@ -71,13 +70,6 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
                 .eq("id", telegramUser.id)
                 .single();
             if (fetchCreatedError) throw fetchCreatedError;
-            // Если avatar_url отсутствует или это ссылка Telegram (t.me) – пробуем кешировать
-            if (!createdUser.avatar_url || createdUser.avatar_url.includes('t.me')) {
-              const cached = await cacheTelegramAvatar(telegramUser.id);
-              if (cached) {
-                createdUser = { ...createdUser, avatar_url: cached };
-              }
-            }
             setUser(createdUser);
             setError(null);
             return;
@@ -85,14 +77,6 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
 
           if (userError) throw userError;
           if (!data) throw new Error("User not found");
-
-          // Если avatar_url отсутствует или это ссылка Telegram (t.me) – пробуем кешировать
-          if (!data.avatar_url || data.avatar_url.includes('t.me')) {
-            const cached = await cacheTelegramAvatar(telegramUser.id);
-            if (cached) {
-              data = { ...data, avatar_url: cached };
-            }
-          }
 
           setUser(data);
           setError(null);
@@ -159,13 +143,6 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         .eq("id", telegramUser.id)
         .single();
       if (userError) throw userError;
-      // Если avatar_url отсутствует или это ссылка Telegram (t.me) – пробуем кешировать
-      if (!data.avatar_url || data.avatar_url.includes('t.me')) {
-        const cached = await cacheTelegramAvatar(telegramUser.id);
-        if (cached) {
-          data = { ...data, avatar_url: cached };
-        }
-      }
       setUser(data);
       setError(null);
     } catch (err) {
