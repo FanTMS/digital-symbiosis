@@ -186,57 +186,50 @@ const HomePage: React.FC = () => {
       </div>
 
       {/* Header */}
-      <div className="px-2 sm:px-4 mb-4 sm:mb-6">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 sm:mb-4 gap-2 sm:gap-0">
-          <div className="flex items-center gap-3 mb-1">
+      <div className="px-4 mb-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
+          <div className="flex items-center gap-3">
             <img
               src="/logo.svg"
               alt="WL Blend"
-              className="w-10 h-10 hidden sm:block"
+              className="w-10 h-10"
             />
-
-            <h1 className="text-3xl sm:text-4xl font-extrabold bg-gradient-to-r from-cyan-400 via-sky-400 to-blue-500 bg-clip-text text-transparent drop-shadow-sm tracking-tight animate-fade-in">
+            <h1 className="text-3xl sm:text-4xl font-extrabold bg-gradient-to-r from-primary-400 to-primary-600 bg-clip-text text-transparent">
               WL Blend
             </h1>
           </div>
-          <div className="flex flex-col items-end gap-2 w-full sm:w-auto">
+          <div className="flex flex-col items-stretch gap-3 w-full sm:w-auto">
             <button
-              className="relative p-2 bg-gray-100 rounded-full self-end"
+              className="relative p-2.5 bg-white rounded-xl shadow-card self-end hover:shadow-card-hover transition-shadow duration-200"
               onClick={() => navigate("/notifications")}
             >
-              <Bell size={20} />
+              <Bell size={20} className="text-gray-700" />
               {unreadCount > 0 && (
-                <span
-                  className="absolute top-0 right-0 w-2.5 h-2.5 bg-accent-500 rounded-full border-2 border-white flex items-center justify-center text-[10px] font-bold text-white"
-                  style={{ minWidth: 16, minHeight: 16, padding: "0 4px" }}
-                >
+                <span className="absolute -top-1 -right-1 min-w-[20px] h-5 px-1 bg-accent-500 rounded-full flex items-center justify-center text-xs font-bold text-white">
                   {unreadCount}
                 </span>
               )}
             </button>
             <div className="w-full sm:w-auto">
-              <div className="relative flex items-center gap-3 px-5 py-3 rounded-xl shadow-card bg-gray-light min-w-[220px]">
-                <img
-                  src="/logo.svg"
-                  alt="WL Blend"
-                  className="w-8 h-8 mr-2 hidden sm:block"
-                />
-
+              <div className="relative flex items-center gap-3 px-4 py-3 rounded-xl shadow-card bg-white border border-gray-200">
                 <div className="flex-1">
-                  <div className="text-xs text-gray-500 font-medium mb-0.5">
+                  <div className="text-xs text-gray-500 font-medium">
                     Баланс
                   </div>
-                  <div className="text-2xl font-extrabold text-cyan-600 drop-shadow-sm">
+                  <div className="text-2xl font-bold text-primary-600">
                     {user && "credits" in user ? (user as any).credits : 0}{" "}
-                    <span className="text-base font-semibold text-gray-500">
+                    <span className="text-sm font-normal text-gray-500">
                       кредитов
                     </span>
                   </div>
                 </div>
                 <Button
+                  variant="primary"
                   size="sm"
                   onClick={() => {
-                    const btn = document.querySelector('.balance-topup-bar button');
+                    const btn = document.querySelector(
+                      ".balance-topup-bar button",
+                    );
                     if (btn && btn instanceof HTMLButtonElement) btn.click();
                   }}
                 >
@@ -248,15 +241,17 @@ const HomePage: React.FC = () => {
         </div>
 
         {/* Search bar */}
-        <div
-          className="relative bg-gray-100 rounded-lg p-2 sm:p-3 flex items-center cursor-pointer"
+        <motion.div
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="relative bg-white rounded-xl shadow-card p-3 flex items-center cursor-pointer hover:shadow-card-hover transition-all duration-200"
           onClick={() => navigate("/services")}
         >
-          <Search size={18} className="text-gray-500 mr-2" />
-          <span className="text-gray-500 text-sm sm:text-base">
+          <Search size={20} className="text-gray-500 mr-3" />
+          <span className="text-gray-500">
             Поиск услуг и специалистов...
           </span>
-        </div>
+        </motion.div>
       </div>
 
       {/* Quick actions */}
@@ -264,71 +259,75 @@ const HomePage: React.FC = () => {
         variants={container}
         initial="hidden"
         animate="show"
-        className="px-2 sm:px-4 mb-4 sm:mb-6"
+        className="px-4 mb-6"
       >
-        <h2 className="text-base sm:text-lg font-semibold mb-2 sm:mb-3">
+        <h2 className="text-lg font-semibold mb-3">
           Быстрые действия
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-3">
           <motion.div
             variants={item}
-            whileTap={{ scale: 0.97 }}
-            className="group bg-primary-500/95 p-5 rounded-xl shadow-card cursor-pointer hover:scale-[1.03] active:scale-95 transition-transform duration-200 relative overflow-hidden text-white"
+            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.03 }}
+            className="group bg-gradient-to-br from-primary-400 to-primary-600 p-4 sm:p-5 rounded-xl shadow-card cursor-pointer transition-all duration-200 relative overflow-hidden"
             onClick={() => navigate("/services")}
           >
-            <div className="absolute right-4 top-4 opacity-10 text-black text-6xl pointer-events-none select-none">
-              <Search size={64} />
+            <div className="absolute right-2 top-2 opacity-20 text-white">
+              <Search size={48} className="sm:w-16 sm:h-16" />
             </div>
-            <div className="flex items-center gap-3 mb-2">
-              <Search size={28} className="text-black" />
-              <h3 className="font-bold text-gray-800 text-lg">Найти услугу</h3>
+            <div className="relative z-10">
+              <Search size={24} className="text-white mb-2" />
+              <h3 className="font-bold text-white text-sm sm:text-base">Найти услугу</h3>
+              <p className="text-white/80 text-xs mt-1 hidden sm:block">Выберите из каталога</p>
             </div>
-            <p className="text-gray-500 text-sm">Выберите из каталога</p>
           </motion.div>
           <motion.div
             variants={item}
-            whileTap={{ scale: 0.97 }}
-            className="group bg-accent-500/95 p-5 rounded-xl shadow-card cursor-pointer hover:scale-[1.03] active:scale-95 transition-transform duration-200 relative overflow-hidden text-white"
+            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.03 }}
+            className="group bg-gradient-to-br from-accent-400 to-accent-600 p-4 sm:p-5 rounded-xl shadow-card cursor-pointer transition-all duration-200 relative overflow-hidden"
             onClick={handleCreateService}
           >
-            <div className="absolute right-4 top-4 opacity-10 text-black text-6xl pointer-events-none select-none">
-              <Plus size={64} />
+            <div className="absolute right-2 top-2 opacity-20 text-white">
+              <Plus size={48} className="sm:w-16 sm:h-16" />
             </div>
-            <div className="flex items-center gap-3 mb-2">
-              <Plus size={28} className="text-black" />
-              <h3 className="font-bold text-gray-800 text-lg">Предложить услугу</h3>
+            <div className="relative z-10">
+              <Plus size={24} className="text-white mb-2" />
+              <h3 className="font-bold text-white text-sm sm:text-base">Предложить услугу</h3>
+              <p className="text-white/80 text-xs mt-1 hidden sm:block">Поделитесь навыками</p>
             </div>
-            <p className="text-gray-500 text-sm">Поделитесь своими навыками</p>
           </motion.div>
           <motion.div
             variants={item}
-            whileTap={{ scale: 0.97 }}
-            className="group bg-success-500/95 p-5 rounded-xl shadow-card cursor-pointer hover:scale-[1.03] active:scale-95 transition-transform duration-200 relative overflow-hidden text-white"
+            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.03 }}
+            className="group bg-gradient-to-br from-success-400 to-success-600 p-4 sm:p-5 rounded-xl shadow-card cursor-pointer transition-all duration-200 relative overflow-hidden"
             onClick={() => navigate("/referrals")}
           >
-            <div className="absolute right-4 top-4 opacity-10 text-black text-6xl pointer-events-none select-none">
-              <Gift size={64} />
+            <div className="absolute right-2 top-2 opacity-20 text-white">
+              <Gift size={48} className="sm:w-16 sm:h-16" />
             </div>
-            <div className="flex items-center gap-3 mb-2">
-              <Gift size={28} className="text-black" />
-              <h3 className="font-bold text-gray-800 text-lg">Пригласить друга</h3>
+            <div className="relative z-10">
+              <Gift size={24} className="text-white mb-2" />
+              <h3 className="font-bold text-white text-sm sm:text-base">Пригласить друга</h3>
+              <p className="text-white/80 text-xs mt-1 hidden sm:block">+5 кредитов за каждого</p>
             </div>
-            <p className="text-gray-500 text-sm">+5 кредитов за каждого</p>
           </motion.div>
           <motion.div
             variants={item}
-            whileTap={{ scale: 0.97 }}
-            className="group bg-warning-500/90 p-5 rounded-xl shadow-card cursor-pointer hover:scale-[1.03] active:scale-95 transition-transform duration-200 relative overflow-hidden text-white"
+            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.03 }}
+            className="group bg-gradient-to-br from-warning-400 to-warning-600 p-4 sm:p-5 rounded-xl shadow-card cursor-pointer transition-all duration-200 relative overflow-hidden"
             onClick={() => navigate("/profile")}
           >
-            <div className="absolute right-4 top-4 opacity-10 text-black text-6xl pointer-events-none select-none">
-              <Award size={64} />
+            <div className="absolute right-2 top-2 opacity-20 text-white">
+              <Award size={48} className="sm:w-16 sm:h-16" />
             </div>
-            <div className="flex items-center gap-3 mb-2">
-              <Award size={28} className="text-black" />
-              <h3 className="font-bold text-gray-800 text-lg">Мои достижения</h3>
+            <div className="relative z-10">
+              <Award size={24} className="text-white mb-2" />
+              <h3 className="font-bold text-white text-sm sm:text-base">Мои достижения</h3>
+              <p className="text-white/80 text-xs mt-1 hidden sm:block">Проверьте уровень</p>
             </div>
-            <p className="text-gray-500 text-sm">Проверьте уровень</p>
           </motion.div>
         </div>
       </motion.div>
@@ -337,7 +336,7 @@ const HomePage: React.FC = () => {
       <div className="px-4 mb-6">
         <div className="flex justify-between items-center mb-3">
           <h2 className="text-lg font-semibold">Рекомендации для вас</h2>
-          <TrendingUp size={18} className="text-primary-500" />
+          <TrendingUp size={20} className="text-primary-500" />
         </div>
 
         {loading ? (
@@ -345,7 +344,7 @@ const HomePage: React.FC = () => {
             {[1, 2, 3].map((i) => (
               <div
                 key={i}
-                className="bg-gray-100 animate-pulse h-32 rounded-lg"
+                className="bg-gray-100 animate-pulse h-32 rounded-xl"
               ></div>
             ))}
           </div>
@@ -362,12 +361,12 @@ const HomePage: React.FC = () => {
               Пока для вас нет персональных рекомендаций. Попробуйте
               воспользоваться поиском или создайте свою первую услугу!
             </p>
-            <button
-              className="bg-primary-500 hover:bg-primary-600 text-white font-medium px-4 py-2 rounded-lg transition"
+            <Button
+              variant="primary"
               onClick={() => navigate("/create-service")}
             >
               Создать услугу
-            </button>
+            </Button>
           </motion.div>
         ) : (
           <motion.div
@@ -381,38 +380,42 @@ const HomePage: React.FC = () => {
                 <ServiceCard service={service} />
               </motion.div>
             ))}
-            <motion.div variants={item} whileHover={{ y: -2 }}>
-              <Button
-                variant="outline"
-                fullWidth
-                onClick={() => navigate('/services')}
-                className="font-medium"
-              >
-                Показать все услуги
-              </Button>
-            </motion.div>
+            <Button
+              variant="outline"
+              fullWidth
+              onClick={() => navigate("/services")}
+              className="mt-3"
+            >
+              Показать все услуги
+            </Button>
           </motion.div>
         )}
       </div>
 
       {/* Новости и акции */}
       <div className="px-4 mb-6">
-        <div className="bg-gradient-to-r from-cyan-100 via-blue-50 to-pink-100 rounded-2xl shadow-card p-6">
-          <h2 className="text-lg font-bold mb-4 text-blue-900 flex items-center gap-2">
-            <Gift size={22} className="text-pink-400" /> Актуальные акции и новости
+        <div className="bg-white rounded-xl shadow-card p-4 sm:p-6">
+          <h2 className="text-lg font-bold mb-4 text-gray-900 flex items-center gap-2">
+            <Gift size={22} className="text-accent-500" /> Актуальные акции и новости
           </h2>
           <ul className="space-y-3">
-            <li className="bg-white/80 rounded-xl p-4 shadow flex flex-col sm:flex-row sm:items-center gap-2">
-              <span className="font-semibold text-blue-700">🎉 Приведи друга — получи 5 кредитов!</span>
-              <span className="text-gray-500 text-sm">За каждого приглашённого друга вы получаете бонус.</span>
+            <li className="bg-gray-50 rounded-xl p-3 sm:p-4 shadow-sm">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                <span className="font-semibold text-primary-600">🎉 Приведи друга — получи 5 кредитов!</span>
+                <span className="text-gray-600 text-sm">За каждого приглашённого друга вы получаете бонус.</span>
+              </div>
             </li>
-            <li className="bg-white/80 rounded-xl p-4 shadow flex flex-col sm:flex-row sm:items-center gap-2">
-              <span className="font-semibold text-pink-600">🔥 Новые категории услуг!</span>
-              <span className="text-gray-500 text-sm">Появились новые направления — IT, языки, дизайн и многое другое.</span>
+            <li className="bg-gray-50 rounded-xl p-3 sm:p-4 shadow-sm">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                <span className="font-semibold text-accent-600">🔥 Новые категории услуг!</span>
+                <span className="text-gray-600 text-sm">Появились новые направления — IT, языки, дизайн и многое другое.</span>
+              </div>
             </li>
-            <li className="bg-white/80 rounded-xl p-4 shadow flex flex-col sm:flex-row sm:items-center gap-2">
-              <span className="font-semibold text-green-600">💡 Советы по безопасности</span>
-              <span className="text-gray-500 text-sm">Никогда не переводите деньги вне платформы — это безопаснее для всех.</span>
+            <li className="bg-gray-50 rounded-xl p-3 sm:p-4 shadow-sm">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                <span className="font-semibold text-success-600">💡 Советы по безопасности</span>
+                <span className="text-gray-600 text-sm">Никогда не переводите деньги вне платформы — это безопаснее для всех.</span>
+              </div>
             </li>
           </ul>
         </div>

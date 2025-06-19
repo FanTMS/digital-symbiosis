@@ -215,7 +215,7 @@ const HomePage: React.FC = () => {
               )}
             </button>
             <div className="w-full sm:w-auto">
-              <div className="relative flex items-center gap-3 px-5 py-3 rounded-xl shadow-card bg-gray-light min-w-[220px]">
+              <div className="relative flex items-center gap-3 px-5 py-3 rounded-2xl shadow-lg bg-gradient-to-r from-cyan-50 via-sky-50 to-blue-50 border border-cyan-200 min-w-[220px]">
                 <img
                   src="/logo.svg"
                   alt="WL Blend"
@@ -233,15 +233,17 @@ const HomePage: React.FC = () => {
                     </span>
                   </div>
                 </div>
-                <Button
-                  size="sm"
+                <button
+                  className="ml-2 px-4 py-2 bg-gradient-to-r from-cyan-400 to-blue-500 text-white rounded-xl font-bold shadow hover:from-cyan-500 hover:to-blue-600 transition text-sm"
                   onClick={() => {
-                    const btn = document.querySelector('.balance-topup-bar button');
+                    const btn = document.querySelector(
+                      ".balance-topup-bar button",
+                    );
                     if (btn && btn instanceof HTMLButtonElement) btn.click();
                   }}
                 >
                   Пополнить
-                </Button>
+                </button>
               </div>
             </div>
           </div>
@@ -273,7 +275,7 @@ const HomePage: React.FC = () => {
           <motion.div
             variants={item}
             whileTap={{ scale: 0.97 }}
-            className="group bg-primary-500/95 p-5 rounded-xl shadow-card cursor-pointer hover:scale-[1.03] active:scale-95 transition-transform duration-200 relative overflow-hidden text-white"
+            className="group bg-gradient-to-br from-cyan-400 via-sky-400 to-blue-500 p-5 rounded-2xl shadow-xl border-0 cursor-pointer hover:scale-[1.03] active:scale-95 transition-transform duration-200 relative overflow-hidden"
             onClick={() => navigate("/services")}
           >
             <div className="absolute right-4 top-4 opacity-10 text-black text-6xl pointer-events-none select-none">
@@ -288,7 +290,7 @@ const HomePage: React.FC = () => {
           <motion.div
             variants={item}
             whileTap={{ scale: 0.97 }}
-            className="group bg-accent-500/95 p-5 rounded-xl shadow-card cursor-pointer hover:scale-[1.03] active:scale-95 transition-transform duration-200 relative overflow-hidden text-white"
+            className="group bg-gradient-to-br from-pink-400 via-fuchsia-400 to-purple-500 p-5 rounded-2xl shadow-xl border-0 cursor-pointer hover:scale-[1.03] active:scale-95 transition-transform duration-200 relative overflow-hidden"
             onClick={handleCreateService}
           >
             <div className="absolute right-4 top-4 opacity-10 text-black text-6xl pointer-events-none select-none">
@@ -303,7 +305,7 @@ const HomePage: React.FC = () => {
           <motion.div
             variants={item}
             whileTap={{ scale: 0.97 }}
-            className="group bg-success-500/95 p-5 rounded-xl shadow-card cursor-pointer hover:scale-[1.03] active:scale-95 transition-transform duration-200 relative overflow-hidden text-white"
+            className="group bg-gradient-to-br from-green-400 via-emerald-400 to-teal-500 p-5 rounded-2xl shadow-xl border-0 cursor-pointer hover:scale-[1.03] active:scale-95 transition-transform duration-200 relative overflow-hidden"
             onClick={() => navigate("/referrals")}
           >
             <div className="absolute right-4 top-4 opacity-10 text-black text-6xl pointer-events-none select-none">
@@ -318,7 +320,7 @@ const HomePage: React.FC = () => {
           <motion.div
             variants={item}
             whileTap={{ scale: 0.97 }}
-            className="group bg-warning-500/90 p-5 rounded-xl shadow-card cursor-pointer hover:scale-[1.03] active:scale-95 transition-transform duration-200 relative overflow-hidden text-white"
+            className="group bg-gradient-to-br from-yellow-300 via-amber-400 to-orange-400 p-5 rounded-2xl shadow-xl border-0 cursor-pointer hover:scale-[1.03] active:scale-95 transition-transform duration-200 relative overflow-hidden"
             onClick={() => navigate("/profile")}
           >
             <div className="absolute right-4 top-4 opacity-10 text-black text-6xl pointer-events-none select-none">
@@ -381,15 +383,13 @@ const HomePage: React.FC = () => {
                 <ServiceCard service={service} />
               </motion.div>
             ))}
-            <motion.div variants={item} whileHover={{ y: -2 }}>
-              <Button
-                variant="outline"
-                fullWidth
-                onClick={() => navigate('/services')}
-                className="font-medium"
-              >
-                Показать все услуги
-              </Button>
+            <motion.div
+              variants={item}
+              whileHover={{ y: -2 }}
+              onClick={() => navigate("/services")}
+              className="flex justify-center items-center p-3 bg-gray-50 rounded-lg text-primary-500 font-medium"
+            >
+              Показать все услуги
             </motion.div>
           </motion.div>
         )}
