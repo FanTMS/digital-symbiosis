@@ -7,7 +7,6 @@ import { supabase } from "../../lib/supabase";
 import { useTelegram } from "../../hooks/useTelegram";
 import { useUser } from "../../contexts/UserContext";
 import { Avatar } from "../ui/Avatar";
-import { addToFavoritesViaAPI, removeFromFavoritesViaAPI } from "../../lib/initializeFavorites";
 
 type ServiceWithUser = Database["public"]["Tables"]["services"]["Row"] & {
   user: Database["public"]["Tables"]["users"]["Row"];
@@ -31,15 +30,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
   const user = Array.isArray(service.user) ? service.user[0] : service.user;
 
   React.useEffect(() => {
-    if (!currentUser?.id) {
-      console.log('Нет пользователя для проверки избранного:', currentUser);
-      return;
-    }
-
-    console.log('Проверка избранного для:', {
-      userId: currentUser.id,
-      serviceId: service.id
-    });
+    if (!currentUser?.id) return;
 
     (async () => {
       const { data, error } = await supabase
@@ -49,8 +40,6 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
         .eq("service_id", service.id)
         .maybeSingle();
 
-      console.log('Результат проверки избранного:', { data, error });
-
       if (!error) {
         setIsFavorite(!!data);
       }
@@ -59,7 +48,6 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 
   const handleFavorite = async (e: React.MouseEvent) => {
     e.stopPropagation();
-
     if (!currentUser?.id) {
       console.error('Нет ID пользователя для избранного');
       return;
@@ -76,7 +64,6 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 
     try {
       if (isFavorite) {
-        // Удаляем из избранного
         const { error } = await supabase
           .from("favorites")
           .delete()
@@ -85,23 +72,11 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 
         if (error) {
           console.error('Ошибка удаления из избранного:', error);
-
-          // Пробуем удалить через прямой API
-          try {
-            await removeFromFavoritesViaAPI(currentUser.id, service.id);
-            console.log('Успешно удалено через API');
-            setIsFavorite(false);
-          } catch (apiErr) {
-            console.error('API ошибка при удалении:', apiErr);
-            // Локально обновляем состояние
-            setIsFavorite(false);
-          }
         } else {
           console.log('Успешно удалено из избранного');
           setIsFavorite(false);
         }
       } else {
-        // Добавляем в избранное
         const { data, error } = await supabase
           .from("favorites")
           .insert({ user_id: currentUser.id, service_id: service.id })
@@ -109,28 +84,13 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 
         if (error) {
           console.error('Ошибка добавления в избранное:', error);
-
-          // Пробуем альтернативный способ через прямой API
-          try {
-            const result = await addToFavoritesViaAPI(currentUser.id, service.id);
-            console.log('Успешно добавлено через API:', result);
-            setIsFavorite(true);
-          } catch (apiErr) {
-            console.error('API ошибка:', apiErr);
-            // Если все способы не работают, просто обновляем состояние локально
-            console.log('Используем локальное обновление состояния');
-            setIsFavorite(true);
-          }
         } else {
           console.log('Успешно добавлено в избранное:', data);
           setIsFavorite(true);
         }
       }
     } catch (error) {
-      console.error('Общая ошибка при обновлении избранного:', error);
-
-      // Если все способы не работают, просто обновляем состояние
-      setIsFavorite(!isFavorite);
+      console.error('Ошибка при обновлении избранного:', error);
     }
 
     setLoading(false);

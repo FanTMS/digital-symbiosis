@@ -75,11 +75,6 @@ function App() {
     }
   }, [tg]);
 
-  // Инициализируем таблицу favorites при загрузке приложения
-  useEffect(() => {
-    initializeFavorites();
-  }, []);
-
   useEffect(() => {
     document.documentElement.classList.remove("dark");
     document.body.classList.remove("dark");

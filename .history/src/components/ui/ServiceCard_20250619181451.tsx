@@ -85,17 +85,6 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 
         if (error) {
           console.error('Ошибка удаления из избранного:', error);
-
-          // Пробуем удалить через прямой API
-          try {
-            await removeFromFavoritesViaAPI(currentUser.id, service.id);
-            console.log('Успешно удалено через API');
-            setIsFavorite(false);
-          } catch (apiErr) {
-            console.error('API ошибка при удалении:', apiErr);
-            // Локально обновляем состояние
-            setIsFavorite(false);
-          }
         } else {
           console.log('Успешно удалено из избранного');
           setIsFavorite(false);
