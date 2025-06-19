@@ -11,7 +11,6 @@ import {
   ChevronLeft,
   X,
   Loader2,
-  Heart,
 } from "lucide-react";
 import Button from "../components/ui/Button";
 import { servicesApi } from "../lib/api/services";
@@ -242,42 +241,24 @@ const ServiceDetailPage: React.FC = () => {
     }
   };
 
-  const handleToggleFavorite = async (e?: React.MouseEvent | React.TouchEvent) => {
-    if (e) {
-      e.stopPropagation();
-      e.preventDefault();
-    }
-
-    if (!user?.id || !service?.id || favoriteLoading) return;
-
+  const handleToggleFavorite = async () => {
+    if (!user?.id || !service?.id) return;
     setFavoriteLoading(true);
-
-    try {
-      if (isFavorite) {
-        const { error } = await supabase
-          .from("favorites")
-          .delete()
-          .eq("user_id", user.id)
-          .eq("service_id", service.id);
-
-        if (!error) {
-          setIsFavorite(false);
-          alert("Услуга удалена из избранного");
-        }
-      } else {
-        const { error } = await supabase
-          .from("favorites")
-          .insert({ user_id: user.id, service_id: service.id });
-
-        if (!error) {
-          setIsFavorite(true);
-          alert("Услуга добавлена в избранное");
-        }
-      }
-    } catch (error) {
-      console.error('Ошибка при обновлении избранного:', error);
+    if (isFavorite) {
+      await supabase
+        .from("favorites")
+        .delete()
+        .eq("user_id", user.id)
+        .eq("service_id", service.id);
+      setIsFavorite(false);
+      alert("Услуга удалена из избранного");
+    } else {
+      await supabase
+        .from("favorites")
+        .insert({ user_id: user.id, service_id: service.id });
+      setIsFavorite(true);
+      alert("Услуга добавлена в избранное");
     }
-
     setFavoriteLoading(false);
   };
 
@@ -415,11 +396,11 @@ const ServiceDetailPage: React.FC = () => {
                 onClick={handleToggleFavorite}
                 onTouchStart={handleToggleFavorite}
                 disabled={favoriteLoading}
-                className={`favorite-button mobile-touch-target ml-3 p-2 rounded-full transition-all duration-200 flex items-center justify-center
+                className={`ml-3 p-2 min-w-[44px] min-h-[44px] rounded-full transition-all duration-200 flex items-center justify-center touch-manipulation select-none
                   ${isFavorite
                     ? "bg-red-50 text-red-500 hover:bg-red-100 active:bg-red-200"
                     : "bg-gray-50 text-gray-400 hover:bg-red-50 hover:text-red-400 active:bg-red-100"
-                  } hover:scale-105`}
+                  } hover:scale-105 active:scale-95`}
                 aria-label={
                   isFavorite ? "Удалить из избранного" : "Добавить в избранное"
                 }

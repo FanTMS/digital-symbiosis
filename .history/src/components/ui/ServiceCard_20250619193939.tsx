@@ -67,14 +67,6 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
     }
 
     if (loading) return; // Предотвращаем повторные клики
-
-    console.log('Клик по избранному на мобильном устройстве');
-
-    // Haptic feedback для iOS
-    if (window.navigator.vibrate) {
-      window.navigator.vibrate(50);
-    }
-
     setLoading(true);
 
     try {
@@ -192,21 +184,14 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
         )}
         {/* Избранное */}
         <button
-          className={`favorite-button mobile-touch-target absolute top-1 right-1 p-2 rounded-full bg-white/95 shadow-lg transition-all duration-200 flex items-center justify-center
-            ${isFavorite ? 'text-red-500 bg-red-50/95' : 'text-gray-400 hover:text-red-400'} 
-            hover:bg-red-50/95 hover:scale-105 active:bg-red-100/95`}
+          className={`absolute top-2 right-2 z-20 p-1.5 rounded-full bg-white/90 shadow transition-all duration-200 group-hover:scale-110 group-active:scale-95 ${isFavorite ? 'text-red-500' : 'text-gray-300'} hover:bg-red-50`}
           onClick={handleFavorite}
-          onTouchStart={handleFavorite}
           aria-label={isFavorite ? 'Удалить из избранного' : 'Добавить в избранное'}
           disabled={loading}
           tabIndex={0}
+          style={{ minWidth: 0 }}
         >
-          <Heart
-            size={20}
-            fill={isFavorite ? '#ef4444' : 'none'}
-            strokeWidth={isFavorite ? 0 : 2}
-            className={`transition-all duration-200 ${loading ? 'animate-pulse' : ''}`}
-          />
+          <Heart size={18} fill={isFavorite ? '#ef4444' : 'none'} />
         </button>
         {/* Редактировать */}
         {currentUser?.id === service.user_id && (

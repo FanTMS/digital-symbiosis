@@ -415,11 +415,11 @@ const ServiceDetailPage: React.FC = () => {
                 onClick={handleToggleFavorite}
                 onTouchStart={handleToggleFavorite}
                 disabled={favoriteLoading}
-                className={`favorite-button mobile-touch-target ml-3 p-2 rounded-full transition-all duration-200 flex items-center justify-center
+                className={`ml-3 p-2 min-w-[44px] min-h-[44px] rounded-full transition-all duration-200 flex items-center justify-center touch-manipulation select-none
                   ${isFavorite
                     ? "bg-red-50 text-red-500 hover:bg-red-100 active:bg-red-200"
                     : "bg-gray-50 text-gray-400 hover:bg-red-50 hover:text-red-400 active:bg-red-100"
-                  } hover:scale-105`}
+                  } hover:scale-105 active:scale-95`}
                 aria-label={
                   isFavorite ? "Удалить из избранного" : "Добавить в избранное"
                 }

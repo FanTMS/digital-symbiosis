@@ -69,12 +69,6 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
     if (loading) return; // Предотвращаем повторные клики
 
     console.log('Клик по избранному на мобильном устройстве');
-
-    // Haptic feedback для iOS
-    if (window.navigator.vibrate) {
-      window.navigator.vibrate(50);
-    }
-
     setLoading(true);
 
     try {
