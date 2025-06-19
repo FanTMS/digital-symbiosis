@@ -251,6 +251,27 @@ app.post('/api/auth/telegram', async (req, res) => {
   }
 });
 
+// ======== Логирование ошибок с фронтенда ========
+app.post('/api/log-error', async (req, res) => {
+  try {
+    const { message } = req.body;
+    if (!message) {
+      return res.status(400).json({ error: 'Message is required' });
+    }
+    const token = process.env.TELEGRAM_BOT_TOKEN;
+    const chatId = process.env.TELEGRAM_CHAT_ID;
+    await axios.post(`https://api.telegram.org/bot${token}/sendMessage`, {
+      chat_id: chatId,
+      text: message,
+      parse_mode: 'HTML',
+    });
+    res.status(200).json({ ok: true });
+  } catch (e) {
+    console.error('[LOG ERROR] Ошибка отправки лога в Telegram', e);
+    res.status(500).json({ error: 'Failed to send log' });
+  }
+});
+
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   console.log(`YooKassa backend listening on port ${PORT}`);
