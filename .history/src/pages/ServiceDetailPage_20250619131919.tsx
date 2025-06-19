@@ -170,7 +170,6 @@ const ServiceDetailPage: React.FC = () => {
         provider_id: provider.id,
         status: "pending",
         price: service.price,
-        max_price: service.price,
         deadline_at: deadlineIso,
       });
 
@@ -197,7 +196,6 @@ const ServiceDetailPage: React.FC = () => {
           clientName: user.name,
           serviceTitle: service.title,
           price: service.price,
-          max_price: service.price,
           providerId: provider.id,
         },
       );
@@ -296,7 +294,6 @@ const ServiceDetailPage: React.FC = () => {
         provider_id: provider.id,
         status: 'pending',
         price: service.price,
-        max_price: service.price,
         quiz_answers: answers,
         deadline_at: dlIso,
       });
@@ -318,7 +315,6 @@ const ServiceDetailPage: React.FC = () => {
           clientName: user.name,
           serviceTitle: service.title,
           price: service.price,
-          max_price: service.price,
           providerId: provider.id,
         },
       );

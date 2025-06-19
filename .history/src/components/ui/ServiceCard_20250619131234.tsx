@@ -121,7 +121,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 
   return (
     <motion.div
-      whileHover={{ y: -2, scale: 1.01, boxShadow: '0 8px 24px rgba(51,207,247,0.15)' }}
+      whileHover={{ y: -2, scale: 1.01, boxShadow: '0 8px 24px rgba(34,197,246,0.15)' }}
       whileTap={{ scale: 0.98 }}
       className="bg-white rounded-xl shadow-card hover:shadow-card transition-all duration-200 overflow-hidden relative group cursor-pointer border border-gray-100 flex flex-col min-h-[180px]"
       onClick={handleClick}

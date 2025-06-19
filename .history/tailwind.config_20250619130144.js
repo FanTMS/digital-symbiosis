@@ -23,7 +23,7 @@ export default {
           200: '#99E7FB',
           300: '#66DBF9',
           400: '#33CFF7',
-          500: '#0BBBEF',
+          500: '#0BBBEF', // Primary color
           600: '#0896BF',
           700: '#06708F',
           800: '#044B60',
