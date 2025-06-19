@@ -31,12 +31,12 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
   React.useEffect(() => {
     if (!currentUser?.id) return;
     (async () => {
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from("favorites")
         .select("*")
         .eq("user_id", currentUser.id)
         .eq("service_id", service.id)
-        .maybeSingle();
+        .single();
       setIsFavorite(!!data);
     })();
   }, [currentUser?.id, service.id]);
@@ -45,7 +45,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
     e.stopPropagation();
     if (!currentUser?.id) return;
     setLoading(true);
-
+    
     try {
       if (isFavorite) {
         const { error } = await supabase
@@ -53,7 +53,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
           .delete()
           .eq("user_id", currentUser.id)
           .eq("service_id", service.id);
-
+        
         if (!error) {
           setIsFavorite(false);
         }
@@ -61,7 +61,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
         const { error } = await supabase
           .from("favorites")
           .insert({ user_id: currentUser.id, service_id: service.id });
-
+        
         if (!error) {
           setIsFavorite(true);
         }
@@ -69,9 +69,9 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
     } catch (error) {
       console.error('Ошибка при обновлении избранного:', error);
     }
-
+    
     setLoading(false);
-
+    
     // Вызываем колбэк для обновления списка избранного
     if (typeof onFavoriteChange === "function") {
       onFavoriteChange();

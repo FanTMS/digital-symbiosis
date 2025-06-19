@@ -49,7 +49,7 @@ const ServicesPage: React.FC = () => {
     | "rating_desc"
   >("date_desc");
   const [activeTab, setActiveTab] = useState<'all' | 'my'>('all');
-
+  const [favoriteServices, setFavoriteServices] = useState<any[]>([]);
   const [showSortModal, setShowSortModal] = useState(false);
   const [page, setPage] = useState(0);
   const [allServices, setAllServices] = useState<any[]>([]);

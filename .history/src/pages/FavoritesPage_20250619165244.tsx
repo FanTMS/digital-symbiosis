@@ -36,10 +36,7 @@ const FavoritesPage: React.FC = () => {
           .from("favorites")
           .select("service_id")
           .eq("user_id", user.id);
-        if (favsError) {
-          console.error("Ошибка загрузки избранного:", favsError);
-          return;
-        }
+        if (favsError) throw favsError;
         const ids = favs?.map((f: any) => f.service_id) || [];
         let services = [];
         if (ids.length > 0) {
@@ -47,15 +44,12 @@ const FavoritesPage: React.FC = () => {
             .from("services")
             .select("*, user:users(*)")
             .in("id", ids);
-          if (servicesError) {
-            console.error("Ошибка загрузки услуг:", servicesError);
-            return;
-          }
+          if (servicesError) throw servicesError;
           services = servicesData || [];
         }
         setFavorites(services);
       } catch (e) {
-        console.error("Ошибка загрузки избранного:", e);
+        alert("Ошибка загрузки избранного: " + (e.message || e));
       } finally {
         setLoading(false);
       }
@@ -96,7 +90,7 @@ const FavoritesPage: React.FC = () => {
         <h1 className="text-2xl font-bold mb-4 flex items-center gap-2">
           <Star className="text-yellow-400" /> Избранное
         </h1>
-
+        
         {loading ? (
           <div className="space-y-3">
             {[1, 2, 3, 4].map((i) => (

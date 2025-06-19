@@ -31,12 +31,12 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
   React.useEffect(() => {
     if (!currentUser?.id) return;
     (async () => {
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from("favorites")
         .select("*")
         .eq("user_id", currentUser.id)
         .eq("service_id", service.id)
-        .maybeSingle();
+        .single();
       setIsFavorite(!!data);
     })();
   }, [currentUser?.id, service.id]);

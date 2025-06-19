@@ -47,15 +47,12 @@ const FavoritesPage: React.FC = () => {
             .from("services")
             .select("*, user:users(*)")
             .in("id", ids);
-          if (servicesError) {
-            console.error("Ошибка загрузки услуг:", servicesError);
-            return;
-          }
+          if (servicesError) throw servicesError;
           services = servicesData || [];
         }
         setFavorites(services);
       } catch (e) {
-        console.error("Ошибка загрузки избранного:", e);
+        alert("Ошибка загрузки избранного: " + (e.message || e));
       } finally {
         setLoading(false);
       }

@@ -55,7 +55,7 @@ const FavoritesPage: React.FC = () => {
         }
         setFavorites(services);
       } catch (e) {
-        console.error("Ошибка загрузки избранного:", e);
+        alert("Ошибка загрузки избранного: " + (e.message || e));
       } finally {
         setLoading(false);
       }

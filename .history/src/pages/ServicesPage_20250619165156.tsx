@@ -48,8 +48,8 @@ const ServicesPage: React.FC = () => {
     | "rating_asc"
     | "rating_desc"
   >("date_desc");
-  const [activeTab, setActiveTab] = useState<'all' | 'my'>('all');
-
+  const [activeTab, setActiveTab] = useState<'all' | 'favorites' | 'my'>('all');
+  const [favoriteServices, setFavoriteServices] = useState<any[]>([]);
   const [showSortModal, setShowSortModal] = useState(false);
   const [page, setPage] = useState(0);
   const [allServices, setAllServices] = useState<any[]>([]);
@@ -82,9 +82,32 @@ const ServicesPage: React.FC = () => {
   }, [tg, navigate]);
 
   useEffect(() => {
+    if (activeTab !== "favorites" || !user?.id) return;
+    const fetchFavorites = async () => {
+      // Получаем id избранных услуг
+      const { data: favs, error: favsError } = await supabase
+        .from("favorites")
+        .select("service_id")
+        .eq("user_id", user.id);
+      const ids = favs?.map((f: any) => f.service_id) || [];
+      let services = [];
+      if (ids.length > 0) {
+        const { data: servicesData, error: servicesError } = await supabase
+          .from("services")
+          .select("*, user:users(*)")
+          .in("id", ids);
+        services = servicesData || [];
+      }
+      setFavoriteServices(services);
+    };
+    fetchFavorites();
+    (window as any).refetchFavorites = fetchFavorites;
+  }, [activeTab, user?.id]);
+
+  useEffect(() => {
     const params = new URLSearchParams(location.search);
     const tab = params.get("tab");
-    if (tab === "all" || tab === "my") {
+    if (tab === "favorites" || tab === "all" || tab === "my") {
       setActiveTab(tab);
     }
   }, [location.search]);
@@ -258,6 +281,12 @@ const ServicesPage: React.FC = () => {
           >
             Мои услуги
           </button>
+          <button
+            className={`flex-1 py-2 rounded-md text-center ${activeTab === 'favorites' ? 'bg-white text-primary-500 shadow-sm' : 'text-gray-600'}`}
+            onClick={() => setActiveTab('favorites')}
+          >
+            Избранные
+          </button>
         </div>
 
         {/* Фильтр роли */}
@@ -374,7 +403,62 @@ const ServicesPage: React.FC = () => {
               </Button>
             </motion.div>
           )
-        )
+        ) : // Вкладка избранное
+          favoriteServices.length > 0 ? (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
+              className="grid grid-cols-2 gap-4"
+            >
+              {favoriteServices.map((service) => (
+                <ServiceCard
+                  key={service.id}
+                  service={service}
+                  onFavoriteChange={() => {
+                    // Обновляем список избранного после изменения
+                    const fetchFavorites = async () => {
+                      if (!user?.id) return;
+                      const { data: favs } = await supabase
+                        .from("favorites")
+                        .select("service_id")
+                        .eq("user_id", user.id);
+                      const ids = favs?.map((f: any) => f.service_id) || [];
+                      let services = [];
+                      if (ids.length > 0) {
+                        const { data: servicesData } = await supabase
+                          .from("services")
+                          .select("*, user:users(*)")
+                          .in("id", ids);
+                        services = servicesData || [];
+                      }
+                      setFavoriteServices(services);
+                    };
+                    fetchFavorites();
+                  }}
+                />
+              ))}
+            </motion.div>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex flex-col items-center justify-center py-8 text-center"
+            >
+              <div className="text-4xl mb-2">💖</div>
+              <h3 className="text-lg font-medium mb-1">Нет избранных услуг</h3>
+              <p className="text-gray-500 mb-4 max-w-xs">
+                Нажмите на сердечко ❤️ на карточке услуги, чтобы добавить её в избранное
+              </p>
+              <Button
+                variant="outline"
+                onClick={() => setActiveTab('all')}
+                className="mt-2"
+              >
+                Посмотреть все услуги
+              </Button>
+            </motion.div>
+          )}
       </div>
       {/* Модальное окно сортировки */}
       <Modal isOpen={showSortModal} onClose={() => setShowSortModal(false)}>
