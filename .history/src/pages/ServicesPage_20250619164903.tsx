@@ -204,43 +204,28 @@ const ServicesPage: React.FC = () => {
   return (
     <div className="pb-16 pt-2">
       <div className="px-4 mb-6">
-        {/* Заголовок */}
         <div className="flex justify-between items-center mb-4">
-          <h1 className="text-2xl font-bold">Услуги</h1>
-          <Button variant="icon" size="icon" onClick={() => setShowSortModal(true)} aria-label="Фильтры">
-            <Filter size={20} />
-          </Button>
-        </div>
-
-        {/* Быстрые действия */}
-        <div className="flex gap-2 mb-4">
-          <Button
-            variant="primary"
-            size="sm"
-            leftIcon={<Plus size={16} />}
-            onClick={handleCreateService}
-            className="flex-1"
-          >
-            Создать
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            leftIcon={<FileText size={16} />}
-            onClick={() => navigate('/orders')}
-            className="flex-1"
-          >
-            Заказы
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            leftIcon={<StarIcon size={16} />}
-            onClick={() => navigate("/favorites")}
-            className="flex-1"
-          >
-            Избранное
-          </Button>
+          <h1 className="text-2xl font-bold flex items-center gap-2">
+            Услуги
+            <button
+              className="ml-2 p-1 rounded-full hover:bg-yellow-100 transition text-yellow-400"
+              onClick={() => navigate("/favorites")}
+              title="Избранное"
+            >
+              <StarIcon size={24} />
+            </button>
+          </h1>
+          <div className="flex items-center gap-3">
+            <Button variant="icon" size="icon" onClick={handleCreateService} aria-label="Создать услугу">
+              <Plus size={20} />
+            </Button>
+            <Button variant="outline" size="md" leftIcon={<FileText size={18} />} onClick={() => navigate('/orders')}>
+              Мои заказы
+            </Button>
+            <Button variant="icon" size="icon" onClick={() => setShowSortModal(true)} aria-label="Сортировать">
+              <Filter size={20} />
+            </Button>
+          </div>
         </div>
 
         {/* Search bar */}
@@ -289,22 +274,21 @@ const ServicesPage: React.FC = () => {
           </button>
         </div>
 
-        {/* Фильтр роли */}
-        <div className="flex mb-4 bg-gray-100 rounded-lg p-1">
+        <div className="flex gap-2 mb-4 justify-center">
           <button
-            className={`flex-1 py-2 rounded-md text-center text-sm font-medium transition ${roleFilter === 'all' ? 'bg-white text-primary-500 shadow-sm' : 'text-gray-600'}`}
+            className={`px-4 py-2 rounded-full font-semibold transition border ${roleFilter === 'all' ? 'bg-primary-500 text-white' : 'bg-gray-100 text-gray-700'}`}
             onClick={() => setRoleFilter('all')}
           >
             Все
           </button>
           <button
-            className={`flex-1 py-2 rounded-md text-center text-sm font-medium transition ${roleFilter === 'provider' ? 'bg-white text-primary-500 shadow-sm' : 'text-gray-600'}`}
+            className={`px-4 py-2 rounded-full font-semibold transition border ${roleFilter === 'provider' ? 'bg-primary-500 text-white' : 'bg-gray-100 text-gray-700'}`}
             onClick={() => setRoleFilter('provider')}
           >
             Исполнители
           </button>
           <button
-            className={`flex-1 py-2 rounded-md text-center text-sm font-medium transition ${roleFilter === 'client' ? 'bg-white text-primary-500 shadow-sm' : 'text-gray-600'}`}
+            className={`px-4 py-2 rounded-full font-semibold transition border ${roleFilter === 'client' ? 'bg-primary-500 text-white' : 'bg-gray-100 text-gray-700'}`}
             onClick={() => setRoleFilter('client')}
           >
             Заказчики

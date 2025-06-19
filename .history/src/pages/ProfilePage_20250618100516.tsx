@@ -21,7 +21,6 @@ import {
   MessageSquare,
   Copy,
   Users,
-  AlertTriangle,
 } from "lucide-react";
 import ProfileCard from "../components/ui/ProfileCard";
 import Button from "../components/ui/Button";
@@ -215,11 +214,6 @@ const ProfilePage: React.FC = () => {
       icon: FileText,
       label: "Мои услуги",
       onClick: () => navigate("/services"),
-    },
-    {
-      icon: AlertTriangle,
-      label: "Мои споры",
-      onClick: () => navigate("/orders?status=disputed"),
     },
     {
       icon: Award,

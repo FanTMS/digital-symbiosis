@@ -289,22 +289,21 @@ const ServicesPage: React.FC = () => {
           </button>
         </div>
 
-        {/* Фильтр роли */}
-        <div className="flex mb-4 bg-gray-100 rounded-lg p-1">
+        <div className="flex gap-2 mb-4 justify-center">
           <button
-            className={`flex-1 py-2 rounded-md text-center text-sm font-medium transition ${roleFilter === 'all' ? 'bg-white text-primary-500 shadow-sm' : 'text-gray-600'}`}
+            className={`px-4 py-2 rounded-full font-semibold transition border ${roleFilter === 'all' ? 'bg-primary-500 text-white' : 'bg-gray-100 text-gray-700'}`}
             onClick={() => setRoleFilter('all')}
           >
             Все
           </button>
           <button
-            className={`flex-1 py-2 rounded-md text-center text-sm font-medium transition ${roleFilter === 'provider' ? 'bg-white text-primary-500 shadow-sm' : 'text-gray-600'}`}
+            className={`px-4 py-2 rounded-full font-semibold transition border ${roleFilter === 'provider' ? 'bg-primary-500 text-white' : 'bg-gray-100 text-gray-700'}`}
             onClick={() => setRoleFilter('provider')}
           >
             Исполнители
           </button>
           <button
-            className={`flex-1 py-2 rounded-md text-center text-sm font-medium transition ${roleFilter === 'client' ? 'bg-white text-primary-500 shadow-sm' : 'text-gray-600'}`}
+            className={`px-4 py-2 rounded-full font-semibold transition border ${roleFilter === 'client' ? 'bg-primary-500 text-white' : 'bg-gray-100 text-gray-700'}`}
             onClick={() => setRoleFilter('client')}
           >
             Заказчики

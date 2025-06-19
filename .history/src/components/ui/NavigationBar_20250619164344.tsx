@@ -10,8 +10,9 @@ import {
   MessageCircle,
   Shield,
   Star,
+  AlertTriangle,
 } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useUser } from "../../contexts/UserContext";
 
 const NavigationBar: React.FC = () => {

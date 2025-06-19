@@ -10,6 +10,7 @@ import {
   MessageCircle,
   Shield,
   Star,
+  AlertTriangle,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useUser } from "../../contexts/UserContext";

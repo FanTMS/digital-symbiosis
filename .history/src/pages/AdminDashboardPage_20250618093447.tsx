@@ -31,7 +31,6 @@ import ReferralsAdminPanel from "../components/admin/ReferralsAdminPanel";
 import UserGrowthChart from "../components/admin/UserGrowthChart";
 import Modal from "../components/ui/Modal";
 import ChallengesAdminPanel from "../components/admin/ChallengesAdminPanel";
-import AdminDisputesPage from "./AdminDisputesPage";
 
 const TABS = [
   { key: "stats", label: "Статистика", icon: BarChart2 },
@@ -44,7 +43,6 @@ const TABS = [
   { key: "promo_banner", label: "Промо-баннер", icon: Gift },
   { key: "promo_codes", label: "Промокоды", icon: Award },
   { key: "challenges", label: "Челленджи", icon: Gift },
-  { key: "disputes", label: "Споры", icon: AlertTriangle },
   // Можно добавить "orders", "settings" и т.д.
 ];
 
@@ -719,9 +717,6 @@ const AdminDashboardPage: React.FC = () => {
           )}
           {activeTab === "challenges" && (
             <ChallengesAdminPanel />
-          )}
-          {activeTab === "disputes" && (
-            <AdminDisputesPage />
           )}
         </motion.div>
       </AnimatePresence>
