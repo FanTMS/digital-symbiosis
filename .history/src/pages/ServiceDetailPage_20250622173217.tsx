@@ -69,8 +69,6 @@ const ServiceDetailPage: React.FC = () => {
   const [deadlineValue, setDeadlineValue] = useState('');
   const [deadlineError, setDeadlineError] = useState<string | null>(null);
 
-  const [hasOrdered, setHasOrdered] = useState(false);
-
   useEffect(() => {
     if (tg) {
       tg.setHeaderColor("#0BBBEF");
@@ -143,19 +141,6 @@ const ServiceDetailPage: React.FC = () => {
       setQuizQuestions(null);
     }
   }, [service?.quiz_id]);
-
-  useEffect(() => {
-    (async () => {
-      if (!user?.id || !provider?.id || user.id === provider.id) return;
-      const { data } = await supabase
-        .from('orders')
-        .select('id')
-        .eq('client_id', user.id)
-        .eq('provider_id', provider.id)
-        .in('status', ['pending', 'accepted', 'in_progress', 'completed']);
-      setHasOrdered((data?.length || 0) > 0);
-    })();
-  }, [user?.id, provider?.id]);
 
   const handleCreateOrder = async (deadlineIso: string) => {
     if (service && provider?.id && user?.id) {
@@ -566,7 +551,7 @@ const ServiceDetailPage: React.FC = () => {
             {service.quiz_id ? 'Пройти квиз для заказа' : 'Заказать услугу'}
           </Button>
         </div>
-        {user && provider && user.id !== provider.id && hasOrdered && (
+        {user && provider && user.id !== provider.id && (
           <Button
             variant="outline"
             fullWidth

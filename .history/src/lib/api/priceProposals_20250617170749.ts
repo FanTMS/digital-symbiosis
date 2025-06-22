@@ -53,14 +53,6 @@ export const priceProposalsApi = {
             .select()
             .single();
         if (error) throw error;
-
-        // Если принято – обновляем цену и статус заказа на accepted (если ещё pending)
-        if (status === 'accepted' && data?.order_id) {
-            await supabase
-                .from('orders')
-                .update({ price: data.proposed_price, status: 'accepted' })
-                .eq('id', data.order_id);
-        }
         return data;
     },
 }; 
