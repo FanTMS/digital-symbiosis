@@ -103,13 +103,8 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
             }
           }
 
-          // Если в схеме уже есть credits_available/locked — суммируем их для совместимости
-          if (data && (data as any).credits_available !== undefined) {
-            const ca = Number((data as any).credits_available ?? 0);
-            const cl = Number((data as any).credits_locked ?? 0);
-            data = { ...data, credits: ca + cl } as any;
-          } else if (data && data.credits === null) {
-            // Гарантируем, что credits никогда не равен null
+          // Гарантируем, что credits никогда не равен null, чтобы не ломались проверки на баланс
+          if (data && data.credits === null) {
             data = { ...data, credits: 0 } as any;
           }
 
@@ -197,13 +192,8 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
           data = { ...data, auth_uid: currentUid } as any;
         }
       }
-      // Если в схеме уже есть credits_available/locked — суммируем их для совместимости
-      if (data && (data as any).credits_available !== undefined) {
-        const ca = Number((data as any).credits_available ?? 0);
-        const cl = Number((data as any).credits_locked ?? 0);
-        data = { ...data, credits: ca + cl } as any;
-      } else if (data && data.credits === null) {
-        // Гарантируем, что credits никогда не равен null
+      // Гарантируем, что credits никогда не равен null, чтобы не ломались проверки на баланс
+      if (data && data.credits === null) {
         data = { ...data, credits: 0 } as any;
       }
       setUser(data);
