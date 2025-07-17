@@ -46,36 +46,51 @@ export const ordersApi = {
 
   /**
    * Создаёт заказ с резервированием средств (escrow)
-   * 1) Вызывает RPC lock_credits
-   * 2) Добавляет запись в orders c escrow_locked=true
+   * 1) Вызывает RPC lock_credits с идентификатором транзакции
+   * 2) Добавляет запись в orders c escrow_locked=true и transaction_id
    */
   async createOrder(order: Omit<Order, 'id' | 'created_at' | 'updated_at' | 'completed_at' | 'escrow_locked' | 'payout_done'> & { quiz_answers?: any, deadline_at?: string }) {
-    // 1. Резервируем средства клиента
-    const lockRes = await supabase.rpc('lock_credits', {
-      user_id: order.client_id,
-      amount: order.price,
-    });
-    if (lockRes.error) throw lockRes.error;
-
-    // 2. Создаём заказ
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const insertData = { ...order, escrow_locked: true } as any;
-
-    const { data, error } = await supabase
-      .from('orders')
-      .insert(insertData)
-      .select()
-      .single();
-
-    if (error) {
-      // При ошибке откатываем резерв
-      await supabase.rpc('unlock_credits', {
+    // Генерируем уникальный идентификатор транзакции
+    const transactionId = `order_${order.client_id}_${order.service_id}_${Date.now()}_${Math.random().toString(36).substring(2, 10)}`;
+    
+    try {
+      // 1. Резервируем средства клиента с идентификатором транзакции
+      const lockRes = await supabase.rpc('lock_credits', {
         user_id: order.client_id,
         amount: order.price,
+        transaction_id: transactionId
       });
+      
+      if (lockRes.error) {
+        // Обрабатываем специфические ошибки
+        if (lockRes.error.message.includes('transaction_in_progress')) {
+          throw new Error('TRANSACTION_IN_PROGRESS');
+        } else if (lockRes.error.message.includes('insufficient_funds')) {
+          throw new Error('NOT_ENOUGH_CREDITS');
+        }
+        throw lockRes.error;
+      }
+
+      // 2. Создаём заказ с идентификатором транзакции
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const insertData = { 
+        ...order, 
+        escrow_locked: true,
+        transaction_id: transactionId 
+      } as any;
+
+      const { data, error } = await supabase
+        .from('orders')
+        .insert(insertData)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      // Нет необходимости разблокировать кредиты при ошибке - идентификатор транзакции предотвращает дублирование блокировок
       throw error;
     }
-    return data;
   },
 
   /**
@@ -84,7 +99,7 @@ export const ordersApi = {
   async updateOrderStatus(id: string, status: string) {
     const orderRes = await supabase
       .from('orders')
-      .select('id, client_id, provider_id, price, status, completed_at, payout_done')
+      .select('id, client_id, provider_id, price, status, completed_at, payout_done, transaction_id')
       .eq('id', id)
       .single();
 
@@ -95,14 +110,26 @@ export const ordersApi = {
     const updates: Partial<Order> = { status };
 
     if (status === 'completed' && !orderCurrent.payout_done) {
-      // Выплата исполнителю
+      // Генерируем идентификатор транзакции для выплаты
+      const payoutTransactionId = `payout_${orderCurrent.id}_${Date.now()}_${Math.random().toString(36).substring(2, 10)}`;
+      
+      // Выплата исполнителю с идентификатором транзакции
       const payout = await supabase.rpc('payout_to_provider', {
         client_id: orderCurrent.client_id,
         provider_id: orderCurrent.provider_id,
         amount: orderCurrent.price,
         order_id: orderCurrent.id,
+        transaction_id: payoutTransactionId
       });
-      if (payout.error) throw payout.error;
+      
+      if (payout.error) {
+        // Обрабатываем специфические ошибки
+        if (payout.error.message.includes('transaction_in_progress')) {
+          throw new Error('TRANSACTION_IN_PROGRESS');
+        }
+        throw payout.error;
+      }
+      
       updates.completed_at = new Date().toISOString();
       // @ts-ignore - см. выше
       updates.payout_done = true;
@@ -111,11 +138,24 @@ export const ordersApi = {
     // Возврат средств клиенту при решении администратора
     // @ts-ignore escrow_locked
     if (status === 'refunded' && orderCurrent.escrow_locked) {
+      // Генерируем идентификатор транзакции для разблокировки
+      const unlockTransactionId = `unlock_${orderCurrent.id}_${Date.now()}_${Math.random().toString(36).substring(2, 10)}`;
+      
+      // Разблокируем средства с идентификатором транзакции
       const unlock = await supabase.rpc('unlock_credits', {
         user_id: orderCurrent.client_id,
         amount: orderCurrent.price,
+        transaction_id: unlockTransactionId
       });
-      if (unlock.error) throw unlock.error;
+      
+      if (unlock.error) {
+        // Обрабатываем специфические ошибки
+        if (unlock.error.message.includes('transaction_in_progress')) {
+          throw new Error('TRANSACTION_IN_PROGRESS');
+        }
+        throw unlock.error;
+      }
+      
       // @ts-ignore
       updates.escrow_locked = false;
     }

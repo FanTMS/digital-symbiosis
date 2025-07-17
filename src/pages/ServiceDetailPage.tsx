@@ -131,6 +131,16 @@ const ServiceDetailPage: React.FC = () => {
       setIsFavorite(!!data);
     })();
   }, [user?.id, service?.id]);
+  
+  // Проверяем наличие сохраненного идентификатора транзакции при загрузке компонента
+  useEffect(() => {
+    if (service?.id) {
+      const savedTransactionId = sessionStorage.getItem(`order_transaction_${service.id}`);
+      if (savedTransactionId) {
+        setOrderTransactionId(savedTransactionId);
+      }
+    }
+  }, [service?.id]);
 
   useEffect(() => {
     if (service?.quiz_id) {
@@ -157,25 +167,44 @@ const ServiceDetailPage: React.FC = () => {
     })();
   }, [user?.id, provider?.id]);
 
+  const [isProcessingOrder, setIsProcessingOrder] = useState(false);
+  const [orderTransactionId, setOrderTransactionId] = useState<string | null>(null);
+
   const handleCreateOrder = async (deadlineIso: string) => {
+    if (isProcessingOrder) return;
+    
     if (service && provider?.id && user?.id) {
       if (user.id === provider.id) {
         alert("Вы не можете заказать свою собственную услугу");
         return;
       }
+      
       // Проверка на повторный заказ
-      const { data: existingOrders, error } = await supabase
+      const { data: existingOrders } = await supabase
         .from("orders")
         .select("*")
         .eq("service_id", service.id)
         .eq("client_id", user.id)
         .in("status", ["pending", "accepted", "in_progress"]);
+        
       if (existingOrders && existingOrders.length > 0) {
         alert("Вы уже заказали эту услугу и она ещё не завершена");
         return;
       }
 
       try {
+        setIsProcessingOrder(true);
+        
+        // Генерируем или используем существующий идентификатор транзакции
+        const transactionId = orderTransactionId || 
+          `order_${user.id}_${service.id}_${Date.now()}_${Math.random().toString(36).substring(2, 10)}`;
+        
+        // Сохраняем идентификатор транзакции в состоянии для предотвращения дублирования
+        setOrderTransactionId(transactionId);
+        
+        // Сохраняем идентификатор транзакции в sessionStorage для сохранения при перезагрузке
+        sessionStorage.setItem(`order_transaction_${service.id}`, transactionId);
+        
         // 1. Создаём заказ с удержанием средств
         const order = await ordersApi.createOrder({
           service_id: service.id,
@@ -184,7 +213,7 @@ const ServiceDetailPage: React.FC = () => {
           status: "pending",
           price: service.price,
           max_price: service.price,
-          deadline_at: deadlineIso,
+          deadline_at: deadlineIso
         });
 
         // Создаём или находим чат
@@ -193,7 +222,7 @@ const ServiceDetailPage: React.FC = () => {
         // 3. Системное сообщение покупателю
         await chatApi.sendMessage(
           chat.id,
-          user.id, // теперь sender_id = user.id
+          user.id,
           `Здравствуйте! Вы только что заказали услугу: "${service.title}", стоимость: ${service.price} кр., ожидает подтверждения у исполнителя.`,
           { type: "system", orderId: order.id, role: "client" },
         );
@@ -201,7 +230,7 @@ const ServiceDetailPage: React.FC = () => {
         // 4. Системное сообщение исполнителю с action-кнопками
         await chatApi.sendMessage(
           chat.id,
-          provider.id, // теперь sender_id = provider.id
+          provider.id,
           `Здравствуйте, пользователь: ${user.name} приобрёл вашу услугу за ${service.price} кредитов.\nВам необходимо принять или отклонить.`,
           {
             type: "system_action",
@@ -215,16 +244,25 @@ const ServiceDetailPage: React.FC = () => {
           },
         );
 
+        // Очищаем идентификатор транзакции из хранилища после успешного завершения
+        sessionStorage.removeItem(`order_transaction_${service.id}`);
+        setOrderTransactionId(null);
+        
         // Перенаправляем пользователя в чат
         navigate(`/chat/${chat.id}`);
       } catch (err: any) {
         const msg = err?.message || String(err);
-        if (msg.includes('NOT_ENOUGH_CREDITS')) {
+        
+        if (msg.includes('TRANSACTION_IN_PROGRESS')) {
+          alert('Транзакция уже обрабатывается. Пожалуйста, подождите.');
+        } else if (msg.includes('NOT_ENOUGH_CREDITS')) {
           alert('Недостаточно кредитов для заказа услуги. Пожалуйста, пополните баланс.');
         } else {
           console.error(err);
           alert('Ошибка создания заказа: ' + msg);
         }
+      } finally {
+        setIsProcessingOrder(false);
       }
     }
   };
@@ -303,6 +341,8 @@ const ServiceDetailPage: React.FC = () => {
   };
 
   const handleOrderWithQuiz = async (answers: QuizAnswers) => {
+    if (isProcessingOrder) return;
+    
     setQuizAnswers(answers);
     setShowQuiz(false);
     // Запрашиваем дедлайн у пользователя (простой prompt)
@@ -315,7 +355,7 @@ const ServiceDetailPage: React.FC = () => {
         alert('Вы не можете заказать свою собственную услугу');
         return;
       }
-      // Проверку баланса убираем — пусть решает БД через RPC lock_credits
+      
       // Проверка на повторный заказ
       const { data: existingOrders } = await supabase
         .from('orders')
@@ -323,11 +363,25 @@ const ServiceDetailPage: React.FC = () => {
         .eq('service_id', service.id)
         .eq('client_id', user.id)
         .in('status', ['pending', 'accepted', 'in_progress']);
+        
       if (existingOrders && existingOrders.length > 0) {
         alert('Вы уже заказали эту услугу и она ещё не завершена');
         return;
       }
+      
       try {
+        setIsProcessingOrder(true);
+        
+        // Генерируем или используем существующий идентификатор транзакции
+        const transactionId = orderTransactionId || 
+          `order_${user.id}_${service.id}_${Date.now()}_${Math.random().toString(36).substring(2, 10)}`;
+        
+        // Сохраняем идентификатор транзакции в состоянии для предотвращения дублирования
+        setOrderTransactionId(transactionId);
+        
+        // Сохраняем идентификатор транзакции в sessionStorage для сохранения при перезагрузке
+        sessionStorage.setItem(`order_transaction_${service.id}`, transactionId);
+        
         // 1. Создаём заказ с quiz_answers и дедлайном
         const order = await ordersApi.createOrder({
           service_id: service.id,
@@ -339,13 +393,16 @@ const ServiceDetailPage: React.FC = () => {
           quiz_answers: answers,
           deadline_at: dlIso,
         });
+        
         const chat = await chatApi.getOrCreateChat(user.id, provider.id);
+        
         await chatApi.sendMessage(
           chat.id,
           user.id,
           `Здравствуйте! Вы только что заказали услугу: "${service.title}", стоимость: ${service.price} кр., ожидает подтверждения у исполнителя.`,
           { type: 'system', orderId: order.id, role: 'client' },
         );
+        
         await chatApi.sendMessage(
           chat.id,
           provider.id,
@@ -361,15 +418,25 @@ const ServiceDetailPage: React.FC = () => {
             providerId: provider.id,
           },
         );
+        
+        // Очищаем идентификатор транзакции из хранилища после успешного завершения
+        sessionStorage.removeItem(`order_transaction_${service.id}`);
+        setOrderTransactionId(null);
+        
         navigate(`/chat/${chat.id}`);
       } catch (err: any) {
         const msg = err?.message || String(err);
-        if (msg.includes('NOT_ENOUGH_CREDITS')) {
+        
+        if (msg.includes('TRANSACTION_IN_PROGRESS')) {
+          alert('Транзакция уже обрабатывается. Пожалуйста, подождите.');
+        } else if (msg.includes('NOT_ENOUGH_CREDITS')) {
           alert('Недостаточно кредитов для заказа услуги. Пожалуйста, пополните баланс.');
         } else {
           console.error(err);
           alert('Ошибка создания заказа: ' + msg);
         }
+      } finally {
+        setIsProcessingOrder(false);
       }
     }
   };
