@@ -78,7 +78,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
                 createdUser = { ...createdUser, avatar_url: cached };
               }
             }
-            setUser(prev => ({ ...prev, ...createdUser } as User));
+            setUser(createdUser);
             setError(null);
             return;
           }
