@@ -226,19 +226,17 @@ app.post('/api/auth/telegram', async (req, res) => {
       if (userJson) tgUser = JSON.parse(userJson);
     } catch (e) { /* ignore */ }
     if (tgUser) {
+      // Добавляем пользователя, если его нет.  ignoreDuplicates → существующая запись не изменится.
       await supabase.from('users').upsert({
         id: telegramId,
         name: [tgUser.first_name, tgUser.last_name].filter(Boolean).join(' '),
         username: tgUser.username || `user_${telegramId}`,
-        skills: [],
-        portfolio: [],
-        level: '',
-        rating: 0,
-        credits: 0,
-        completed_tasks: 0,
         joined_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
         avatar_url: tgUser.photo_url || null
+      }, {
+        onConflict: 'id',
+        ignoreDuplicates: true
       });
     }
     // --- КОНЕЦ ДОБАВЛЕНИЯ ---
