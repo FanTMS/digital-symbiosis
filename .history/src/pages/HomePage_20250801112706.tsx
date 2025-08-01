@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useTelegram } from "../hooks/useTelegram";
-import { Search, TrendingUp, Award, Gift, Plus, Bell } from "lucide-react";
+import { useUser } from "../contexts/UserContext";
+import { Search, TrendingUp, Award, Gift, Plus } from "lucide-react";
 import { notificationsApi } from "../lib/api/notifications";
 import { supabase } from "../lib/supabase";
 import ServiceCard from "../components/ui/ServiceCard";
@@ -11,6 +12,7 @@ import BalanceTopupBar from "../components/ui/BalanceTopupBar";
 import PromoBanner from "../components/ui/PromoBanner";
 import Modal from "../components/ui/Modal";
 import Button from "../components/ui/Button";
+import StatsBlock from '../components/ui/StatsBlock';
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
@@ -55,7 +57,7 @@ const HomePage: React.FC = () => {
 
       const defaultTitle = document.querySelector("[data-default]");
       if (defaultTitle) {
-        document.title = "WL Blend";
+        document.title = "БртЦ";
       }
     }
   }, [tg]);
@@ -187,63 +189,34 @@ const HomePage: React.FC = () => {
       {/* Header */}
       <div className="px-2 sm:px-4 mb-4 sm:mb-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 sm:mb-4 gap-2 sm:gap-0">
-          <div className="flex items-center gap-3 mb-1">
-            <img
-              src="/logo.svg"
-              alt="WL Blend"
-              className="w-10 h-10 hidden sm:block"
-            />
+          <div className="w-full sm:w-auto">
+            <div className="relative flex items-center gap-3 px-5 py-3 rounded-xl shadow-card bg-gray-light min-w-[220px]">
+              <img
+                src="/logo.svg"
+                alt="БртЦ"
+                className="w-8 h-8 mr-2 hidden sm:block"
+              />
 
-            <h1 className="text-3xl sm:text-4xl font-extrabold bg-gradient-to-r from-cyan-400 via-sky-400 to-blue-500 bg-clip-text text-transparent drop-shadow-sm tracking-tight animate-fade-in">
-              WL Blend
-            </h1>
-          </div>
-          <div className="flex flex-col items-end gap-2 w-full sm:w-auto">
-            <button
-              className="relative p-2 bg-gray-100 rounded-full self-end"
-              onClick={() => navigate("/notifications")}
-            >
-              <Bell size={20} />
-              {unreadCount > 0 && (
-                <span
-                  className="absolute top-0 right-0 w-2.5 h-2.5 bg-accent-500 rounded-full border-2 border-white flex items-center justify-center text-[10px] font-bold text-white"
-                  style={{ minWidth: 16, minHeight: 16, padding: "0 4px" }}
-                >
-                  {unreadCount}
-                </span>
-              )}
-            </button>
-            <div className="w-full sm:w-auto">
-              <div className="relative flex items-center gap-3 px-5 py-3 rounded-2xl shadow-lg bg-gradient-to-r from-cyan-50 via-sky-50 to-blue-50 border border-cyan-200 min-w-[220px]">
-                <img
-                  src="/logo.svg"
-                  alt="WL Blend"
-                  className="w-8 h-8 mr-2 hidden sm:block"
-                />
-
-                <div className="flex-1">
-                  <div className="text-xs text-gray-500 font-medium mb-0.5">
-                    Баланс
-                  </div>
-                  <div className="text-2xl font-extrabold text-cyan-600 drop-shadow-sm">
-                    {user && "credits" in user ? (user as any).credits : 0}{" "}
-                    <span className="text-base font-semibold text-gray-500">
-                      кредитов
-                    </span>
-                  </div>
+              <div className="flex-1">
+                <div className="text-xs text-gray-500 font-medium mb-0.5">
+                  Баланс
                 </div>
-                <button
-                  className="ml-2 px-4 py-2 bg-gradient-to-r from-cyan-400 to-blue-500 text-white rounded-xl font-bold shadow hover:from-cyan-500 hover:to-blue-600 transition text-sm"
-                  onClick={() => {
-                    const btn = document.querySelector(
-                      ".balance-topup-bar button",
-                    );
-                    if (btn && btn instanceof HTMLButtonElement) btn.click();
-                  }}
-                >
-                  Пополнить
-                </button>
+                <div className="text-2xl font-extrabold text-cyan-600 drop-shadow-sm">
+                  {user ? (user.credits ?? 0) : 0}{" "}
+                  <span className="text-base font-semibold text-gray-500">
+                    кредитов
+                  </span>
+                </div>
               </div>
+              <Button
+                size="sm"
+                onClick={() => {
+                  const btn = document.querySelector('.balance-topup-bar button');
+                  if (btn && btn instanceof HTMLButtonElement) btn.click();
+                }}
+              >
+                Пополнить
+              </Button>
             </div>
           </div>
         </div>
@@ -274,7 +247,7 @@ const HomePage: React.FC = () => {
           <motion.div
             variants={item}
             whileTap={{ scale: 0.97 }}
-            className="group bg-gradient-to-br from-cyan-400 via-sky-400 to-blue-500 p-5 rounded-2xl shadow-xl border-0 cursor-pointer hover:scale-[1.03] active:scale-95 transition-transform duration-200 relative overflow-hidden"
+            className="group bg-primary-500/95 p-5 rounded-xl shadow-card cursor-pointer hover:scale-[1.03] active:scale-95 transition-transform duration-200 relative overflow-hidden text-white"
             onClick={() => navigate("/services")}
           >
             <div className="absolute right-4 top-4 opacity-10 text-black text-6xl pointer-events-none select-none">
@@ -289,7 +262,7 @@ const HomePage: React.FC = () => {
           <motion.div
             variants={item}
             whileTap={{ scale: 0.97 }}
-            className="group bg-gradient-to-br from-pink-400 via-fuchsia-400 to-purple-500 p-5 rounded-2xl shadow-xl border-0 cursor-pointer hover:scale-[1.03] active:scale-95 transition-transform duration-200 relative overflow-hidden"
+            className="group bg-accent-500/95 p-5 rounded-xl shadow-card cursor-pointer hover:scale-[1.03] active:scale-95 transition-transform duration-200 relative overflow-hidden text-white"
             onClick={handleCreateService}
           >
             <div className="absolute right-4 top-4 opacity-10 text-black text-6xl pointer-events-none select-none">
@@ -304,7 +277,7 @@ const HomePage: React.FC = () => {
           <motion.div
             variants={item}
             whileTap={{ scale: 0.97 }}
-            className="group bg-gradient-to-br from-green-400 via-emerald-400 to-teal-500 p-5 rounded-2xl shadow-xl border-0 cursor-pointer hover:scale-[1.03] active:scale-95 transition-transform duration-200 relative overflow-hidden"
+            className="group bg-success-500/95 p-5 rounded-xl shadow-card cursor-pointer hover:scale-[1.03] active:scale-95 transition-transform duration-200 relative overflow-hidden text-white"
             onClick={() => navigate("/referrals")}
           >
             <div className="absolute right-4 top-4 opacity-10 text-black text-6xl pointer-events-none select-none">
@@ -319,7 +292,7 @@ const HomePage: React.FC = () => {
           <motion.div
             variants={item}
             whileTap={{ scale: 0.97 }}
-            className="group bg-gradient-to-br from-yellow-300 via-amber-400 to-orange-400 p-5 rounded-2xl shadow-xl border-0 cursor-pointer hover:scale-[1.03] active:scale-95 transition-transform duration-200 relative overflow-hidden"
+            className="group bg-warning-500/90 p-5 rounded-xl shadow-card cursor-pointer hover:scale-[1.03] active:scale-95 transition-transform duration-200 relative overflow-hidden text-white"
             onClick={() => navigate("/profile")}
           >
             <div className="absolute right-4 top-4 opacity-10 text-black text-6xl pointer-events-none select-none">
@@ -382,13 +355,15 @@ const HomePage: React.FC = () => {
                 <ServiceCard service={service} />
               </motion.div>
             ))}
-            <motion.div
-              variants={item}
-              whileHover={{ y: -2 }}
-              onClick={() => navigate("/services")}
-              className="flex justify-center items-center p-3 bg-gray-50 rounded-lg text-primary-500 font-medium"
-            >
-              Показать все услуги
+            <motion.div variants={item} whileHover={{ y: -2 }}>
+              <Button
+                variant="outline"
+                fullWidth
+                onClick={() => navigate('/services')}
+                className="font-medium"
+              >
+                Показать все услуги
+              </Button>
             </motion.div>
           </motion.div>
         )}
@@ -418,63 +393,9 @@ const HomePage: React.FC = () => {
       </div>
 
       {/* Stats */}
-      <div className="px-4">
+      <div className="px-4 mb-8">
         <h2 className="text-lg font-semibold mb-3">Статистика платформы</h2>
-        <div className="bg-white rounded-lg shadow-card p-4">
-          <div className="grid grid-cols-2 gap-4">
-            {stats.users === 0 &&
-              stats.completedOrders === 0 &&
-              stats.categories === 0 &&
-              stats.avgRating === 0 ? (
-              // Skeleton
-              <>
-                {[1, 2, 3, 4].map((i) => (
-                  <div className="text-center" key={i}>
-                    <div className="h-8 w-16 mx-auto bg-gray-200 rounded mb-2 animate-pulse" />
-
-                    <div className="h-4 w-24 mx-auto bg-gray-200 rounded animate-pulse" />
-                  </div>
-                ))}
-              </>
-            ) : (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, ease: "easeOut" }}
-                className="contents"
-              >
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-primary-500">
-                    {stats.users}
-                  </div>
-                  <div className="text-sm text-gray-500">
-                    Активных пользователей
-                  </div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-accent-500">
-                    {stats.completedOrders}
-                  </div>
-                  <div className="text-sm text-gray-500">
-                    Завершённых заданий
-                  </div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-green-500">
-                    {stats.categories}
-                  </div>
-                  <div className="text-sm text-gray-500">Категорий услуг</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-yellow-500">
-                    {stats.avgRating}
-                  </div>
-                  <div className="text-sm text-gray-500">Средний рейтинг</div>
-                </div>
-              </motion.div>
-            )}
-          </div>
-        </div>
+        <StatsBlock stats={stats} loading={stats.users === 0 && stats.completedOrders === 0 && stats.categories === 0 && stats.avgRating === 0} />
       </div>
     </div>
   );

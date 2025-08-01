@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useTelegram } from "../hooks/useTelegram";
+import { useUser } from "../contexts/UserContext";
 import { Search, TrendingUp, Award, Gift, Plus } from "lucide-react";
 import { notificationsApi } from "../lib/api/notifications";
 import { supabase } from "../lib/supabase";
@@ -15,7 +16,8 @@ import StatsBlock from '../components/ui/StatsBlock';
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
-  const { user, tg } = useTelegram();
+  const { tg } = useTelegram();
+  const { user } = useUser();
   const [recommendedServices, setRecommendedServices] = useState<
     ServiceWithUser[]
   >([]);
