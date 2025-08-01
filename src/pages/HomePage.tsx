@@ -201,7 +201,7 @@ const HomePage: React.FC = () => {
                   Баланс
                 </div>
                 <div className="text-2xl font-extrabold text-cyan-600 drop-shadow-sm">
-                  {user && "credits" in user ? (user as any).credits : 0}{" "}
+                  {user ? (user.credits ?? 0) : 0}{" "}
                   <span className="text-base font-semibold text-gray-500">
                     кредитов
                   </span>

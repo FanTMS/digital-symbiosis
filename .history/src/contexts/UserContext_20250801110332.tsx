@@ -94,8 +94,23 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
             }
           }
 
-          // Гарантируем, что credits никогда не равен null, чтобы не ломались проверки на баланс
-          if (data && data.credits === null) {
+          // Если auth_uid отсутствует — записываем текущий uid и перезапрашиваем строку
+          if (data && !data.auth_uid) {
+            const currentUid = (await supabase.auth.getSession()).data.session?.user.id;
+            if (currentUid) {
+              await supabase.from('users').update({ auth_uid: currentUid }).eq('id', data.id);
+              data = { ...data, auth_uid: currentUid } as any;
+            }
+          }
+
+          // Поддерживаем старую схему с полями credits_available/credits_locked,
+          // но только если поле credits отсутствует или равно null.
+          if (data && (data.credits === null || data.credits === undefined) && (data as any).credits_available !== undefined) {
+            const ca = Number((data as any).credits_available ?? 0);
+            const cl = Number((data as any).credits_locked ?? 0);
+            data = { ...data, credits: ca + cl } as any;
+          } else if (data && (data.credits === null || data.credits === undefined)) {
+            // Гарантируем, что credits никогда не равен null/undefined
             data = { ...data, credits: 0 } as any;
           }
 
@@ -129,7 +144,12 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
           (payload) => {
             if (payload.new) {
               let newUser = payload.new as User;
-              if (newUser.credits === null) {
+              // Поддержка старой схемы credits_available/credits_locked
+              if ((newUser.credits === null || newUser.credits === undefined) && (newUser as any).credits_available !== undefined) {
+                const ca = Number((newUser as any).credits_available ?? 0);
+                const cl = Number((newUser as any).credits_locked ?? 0);
+                newUser = { ...newUser, credits: ca + cl } as any;
+              } else if (newUser.credits === null || newUser.credits === undefined) {
                 newUser = { ...newUser, credits: 0 } as any;
               }
               setUser(newUser);
@@ -175,8 +195,22 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
           data = { ...data, avatar_url: cached };
         }
       }
-      // Гарантируем, что credits никогда не равен null, чтобы не ломались проверки на баланс
-      if (data && data.credits === null) {
+      // Если auth_uid отсутствует — записываем текущий uid и перезапрашиваем строку
+      if (data && !data.auth_uid) {
+        const currentUid = (await supabase.auth.getSession()).data.session?.user.id;
+        if (currentUid) {
+          await supabase.from('users').update({ auth_uid: currentUid }).eq('id', data.id);
+          data = { ...data, auth_uid: currentUid } as any;
+        }
+      }
+      // Поддерживаем старую схему credits_available/credits_locked,
+      // но только если поле credits отсутствует или null
+      if (data && (data.credits === null || data.credits === undefined) && (data as any).credits_available !== undefined) {
+        const ca = Number((data as any).credits_available ?? 0);
+        const cl = Number((data as any).credits_locked ?? 0);
+        data = { ...data, credits: ca + cl } as any;
+      } else if (data && (data.credits === null || data.credits === undefined)) {
+        // Гарантируем, что credits никогда не равен null/undefined
         data = { ...data, credits: 0 } as any;
       }
       setUser(data);

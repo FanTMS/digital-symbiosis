@@ -103,13 +103,14 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
             }
           }
 
-          // Если в схеме уже есть credits_available/locked — суммируем их для совместимости
-          if (data && (data as any).credits_available !== undefined) {
+          // Поддерживаем старую схему с полями credits_available/credits_locked,
+          // но только если поле credits отсутствует или равно null.
+          if (data && (data.credits === null || data.credits === undefined) && (data as any).credits_available !== undefined) {
             const ca = Number((data as any).credits_available ?? 0);
             const cl = Number((data as any).credits_locked ?? 0);
             data = { ...data, credits: ca + cl } as any;
-          } else if (data && data.credits === null) {
-            // Гарантируем, что credits никогда не равен null
+          } else if (data && (data.credits === null || data.credits === undefined)) {
+            // Гарантируем, что credits никогда не равен null/undefined
             data = { ...data, credits: 0 } as any;
           }
 
@@ -143,11 +144,12 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
           (payload) => {
             if (payload.new) {
               let newUser = payload.new as User;
-              if ((newUser as any).credits_available !== undefined) {
+              // Поддержка старой схемы credits_available/credits_locked
+              if ((newUser.credits === null || newUser.credits === undefined) && (newUser as any).credits_available !== undefined) {
                 const ca = Number((newUser as any).credits_available ?? 0);
                 const cl = Number((newUser as any).credits_locked ?? 0);
                 newUser = { ...newUser, credits: ca + cl } as any;
-              } else if (newUser.credits === null) {
+              } else if (newUser.credits === null || newUser.credits === undefined) {
                 newUser = { ...newUser, credits: 0 } as any;
               }
               setUser(newUser);
@@ -201,13 +203,14 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
           data = { ...data, auth_uid: currentUid } as any;
         }
       }
-      // Если в схеме уже есть credits_available/locked — суммируем их для совместимости
-      if (data && (data as any).credits_available !== undefined) {
+      // Поддерживаем старую схему credits_available/credits_locked,
+      // но только если поле credits отсутствует или null
+      if (data && (data.credits === null || data.credits === undefined) && (data as any).credits_available !== undefined) {
         const ca = Number((data as any).credits_available ?? 0);
         const cl = Number((data as any).credits_locked ?? 0);
         data = { ...data, credits: ca + cl } as any;
-      } else if (data && data.credits === null) {
-        // Гарантируем, что credits никогда не равен null
+      } else if (data && (data.credits === null || data.credits === undefined)) {
+        // Гарантируем, что credits никогда не равен null/undefined
         data = { ...data, credits: 0 } as any;
       }
       setUser(data);

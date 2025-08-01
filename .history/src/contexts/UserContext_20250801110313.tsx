@@ -3,6 +3,7 @@ import { useTelegram } from "../hooks/useTelegram";
 import { supabase } from "../lib/supabase";
 import type { User } from "../types/models";
 import { logErrorToTelegram } from "../utils/logError";
+import { cacheTelegramAvatar } from "../lib/cacheTelegramAvatar";
 
 interface UserContextType {
   user: User | null;
@@ -70,6 +71,13 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
                 .eq("id", telegramUser.id)
                 .single();
             if (fetchCreatedError) throw fetchCreatedError;
+            // Если avatar_url отсутствует или это ссылка Telegram (t.me) – пробуем кешировать
+            if (!createdUser.avatar_url || createdUser.avatar_url.includes('t.me')) {
+              const cached = await cacheTelegramAvatar(telegramUser.id);
+              if (cached) {
+                createdUser = { ...createdUser, avatar_url: cached };
+              }
+            }
             setUser(createdUser);
             setError(null);
             return;
@@ -77,6 +85,34 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
 
           if (userError) throw userError;
           if (!data) throw new Error("User not found");
+
+          // Если avatar_url отсутствует или это ссылка Telegram (t.me) – пробуем кешировать
+          if (!data.avatar_url || data.avatar_url.includes('t.me')) {
+            const cached = await cacheTelegramAvatar(telegramUser.id);
+            if (cached) {
+              data = { ...data, avatar_url: cached };
+            }
+          }
+
+          // Если auth_uid отсутствует — записываем текущий uid и перезапрашиваем строку
+          if (data && !data.auth_uid) {
+            const currentUid = (await supabase.auth.getSession()).data.session?.user.id;
+            if (currentUid) {
+              await supabase.from('users').update({ auth_uid: currentUid }).eq('id', data.id);
+              data = { ...data, auth_uid: currentUid } as any;
+            }
+          }
+
+          // Поддерживаем старую схему с полями credits_available/credits_locked,
+          // но только если поле credits отсутствует или равно null.
+          if (data && (data.credits === null || data.credits === undefined) && (data as any).credits_available !== undefined) {
+            const ca = Number((data as any).credits_available ?? 0);
+            const cl = Number((data as any).credits_locked ?? 0);
+            data = { ...data, credits: ca + cl } as any;
+          } else if (data && (data.credits === null || data.credits === undefined)) {
+            // Гарантируем, что credits никогда не равен null/undefined
+            data = { ...data, credits: 0 } as any;
+          }
 
           setUser(data);
           setError(null);
@@ -107,7 +143,15 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
           },
           (payload) => {
             if (payload.new) {
-              setUser(payload.new as User);
+              let newUser = payload.new as User;
+              if ((newUser as any).credits_available !== undefined) {
+                const ca = Number((newUser as any).credits_available ?? 0);
+                const cl = Number((newUser as any).credits_locked ?? 0);
+                newUser = { ...newUser, credits: ca + cl } as any;
+              } else if (newUser.credits === null) {
+                newUser = { ...newUser, credits: 0 } as any;
+              }
+              setUser(newUser);
             }
           },
         )
@@ -143,6 +187,30 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         .eq("id", telegramUser.id)
         .single();
       if (userError) throw userError;
+      // Если avatar_url отсутствует или это ссылка Telegram (t.me) – пробуем кешировать
+      if (!data.avatar_url || data.avatar_url.includes('t.me')) {
+        const cached = await cacheTelegramAvatar(telegramUser.id);
+        if (cached) {
+          data = { ...data, avatar_url: cached };
+        }
+      }
+      // Если auth_uid отсутствует — записываем текущий uid и перезапрашиваем строку
+      if (data && !data.auth_uid) {
+        const currentUid = (await supabase.auth.getSession()).data.session?.user.id;
+        if (currentUid) {
+          await supabase.from('users').update({ auth_uid: currentUid }).eq('id', data.id);
+          data = { ...data, auth_uid: currentUid } as any;
+        }
+      }
+      // Если в схеме уже есть credits_available/locked — суммируем их для совместимости
+      if (data && (data as any).credits_available !== undefined) {
+        const ca = Number((data as any).credits_available ?? 0);
+        const cl = Number((data as any).credits_locked ?? 0);
+        data = { ...data, credits: ca + cl } as any;
+      } else if (data && data.credits === null) {
+        // Гарантируем, что credits никогда не равен null
+        data = { ...data, credits: 0 } as any;
+      }
       setUser(data);
       setError(null);
     } catch (err) {
