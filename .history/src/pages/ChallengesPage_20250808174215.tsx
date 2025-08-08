@@ -147,27 +147,25 @@ const ChallengesPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 pb-20">
-            <div className="max-w-7xl mx-auto px-4 py-6">
+        <div className="pb-20 sm:pb-24 pt-2">
+            <div className="px-2 sm:px-4 py-4">
                 {/* Заголовок страницы */}
                 <motion.div
-                    initial={{ opacity: 0, y: -20 }}
+                    initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="mb-8"
+                    className="mb-4 sm:mb-6"
                 >
                     <div className="flex justify-between items-center">
                         <div>
-                            <h1 className="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-primary-500 via-primary-400 to-accent-500 bg-clip-text text-transparent mb-2">
-                                Челленджи
-                            </h1>
-                            <p className="text-gray-600">Участвуйте в конкурсах и выигрывайте призы</p>
+                            <h1 className="text-2xl sm:text-3xl font-bold mb-1">Челленджи</h1>
+                            <p className="text-gray-600 text-sm sm:text-base">Участвуйте в конкурсах и выигрывайте призы</p>
                         </div>
 
                         {isAdmin && (
-                            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                            <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
                                 <Button
                                     variant="primary"
-                                    className="bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 shadow-lg"
+                                    className="shadow-card"
                                     onClick={() => setShowCreate(true)}
                                 >
                                     <Plus size={20} className="mr-2" />
@@ -183,9 +181,9 @@ const ChallengesPage: React.FC = () => {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.1 }}
-                    className="mb-6"
+                    className="mb-4 sm:mb-6"
                 >
-                    <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm p-1.5">
+                    <div className="bg-white rounded-xl shadow-card p-1.5">
                         <div className="flex gap-1">
                             {TABS.map(tabItem => {
                                 const Icon = tabItem.icon;
@@ -199,7 +197,7 @@ const ChallengesPage: React.FC = () => {
                                             flex-1 py-3 px-4 rounded-xl font-medium transition-all duration-200
                                             flex items-center justify-center gap-2
                                             ${isActive
-                                                ? 'bg-gradient-to-r from-primary-500 to-accent-500 text-white shadow-md'
+                                                ? 'bg-primary-500 text-white shadow-md'
                                                 : 'text-gray-600 hover:bg-gray-100'
                                             }
                                         `}
@@ -210,7 +208,7 @@ const ChallengesPage: React.FC = () => {
                                         {count > 0 && (
                                             <span className={`
                                                 ml-1 px-2 py-0.5 rounded-full text-xs font-bold
-                                                ${isActive ? 'bg-white/20 text-white' : 'bg-gray-200 text-gray-600'}
+                                                ${isActive ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-600'}
                                             `}>
                                                 {count}
                                             </span>
@@ -227,7 +225,7 @@ const ChallengesPage: React.FC = () => {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.2 }}
-                    className="mb-8"
+                    className="mb-6"
                 >
                     <div className="flex items-center gap-3 mb-3">
                         <Filter size={18} className="text-gray-500" />
@@ -241,10 +239,10 @@ const ChallengesPage: React.FC = () => {
                                 whileTap={{ scale: 0.95 }}
                                 className={`
                                     flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium
-                                    transition-all duration-200 shadow-sm
+                                    transition-all duration-200 shadow-card
                                     ${filter === f.id
-                                        ? 'bg-gradient-to-r from-primary-500 to-accent-500 text-white shadow-md'
-                                        : 'bg-white text-gray-700 hover:shadow-md'
+                                        ? 'bg-primary-500 text-white shadow-md'
+                                        : 'bg-white text-gray-700 hover:shadow-card'
                                     }
                                 `}
                                 onClick={() => setFilter(f.id)}
@@ -263,7 +261,7 @@ const ChallengesPage: React.FC = () => {
                     animate="show"
                 >
                     {isLoading ? (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
                             {Array.from({ length: 8 }).map((_, idx) => (
                                 <motion.div key={idx} variants={item}>
                                     <ChallengeSkeleton />
@@ -273,7 +271,7 @@ const ChallengesPage: React.FC = () => {
                     ) : filteredChallenges.length === 0 ? (
                         <motion.div
                             variants={item}
-                            className="text-center py-20 bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl max-w-2xl mx-auto"
+                            className="text-center py-16 bg-white rounded-2xl shadow-card max-w-2xl mx-auto"
                         >
                             <Trophy size={80} className="mx-auto text-gray-300 mb-6" />
                             <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
@@ -289,7 +287,7 @@ const ChallengesPage: React.FC = () => {
                                 <Button
                                     variant="primary"
                                     onClick={() => setShowCreate(true)}
-                                    className="bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600"
+                                    className=""
                                 >
                                     <Plus size={20} className="mr-2" />
                                     Создать первый челлендж
@@ -297,7 +295,7 @@ const ChallengesPage: React.FC = () => {
                             )}
                         </motion.div>
                     ) : (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
                             {filteredChallenges.map((challenge: Challenge) => (
                                 <motion.div key={challenge.id} variants={item}>
                                     <ChallengeCard
@@ -321,7 +319,7 @@ const ChallengesPage: React.FC = () => {
                 {/* Модальное окно создания челленджа */}
                 <Modal isOpen={showCreate} onClose={() => setShowCreate(false)}>
                     <div className="p-6 md:p-8 max-w-2xl w-full">
-                        <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary-500 to-accent-500 bg-clip-text text-transparent mb-6 text-center">
+                        <h2 className="text-2xl md:text-3xl font-bold mb-6 text-center">
                             Создать новый челлендж
                         </h2>
 
@@ -333,7 +331,7 @@ const ChallengesPage: React.FC = () => {
                                     </label>
                                     <input
                                         type="text"
-                                        className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:ring-2 focus:ring-primary-200 focus:border-primary-400 outline-none transition-all"
+                                        className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white focus:ring-2 focus:ring-primary-200 focus:border-primary-400 outline-none transition-all"
                                         placeholder="Введите название челленджа"
                                         value={title}
                                         onChange={e => setTitle(e.target.value)}
@@ -345,7 +343,7 @@ const ChallengesPage: React.FC = () => {
                                         Описание челленджа
                                     </label>
                                     <textarea
-                                        className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:ring-2 focus:ring-primary-200 focus:border-primary-400 outline-none min-h-[120px] resize-none transition-all"
+                                        className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white focus:ring-2 focus:ring-primary-200 focus:border-primary-400 outline-none min-h-[120px] resize-none transition-all"
                                         placeholder="Опишите условия участия и требования"
                                         rows={4}
                                         value={description}
@@ -359,7 +357,7 @@ const ChallengesPage: React.FC = () => {
                                     </label>
                                     <input
                                         type="text"
-                                        className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:ring-2 focus:ring-primary-200 focus:border-primary-400 outline-none transition-all"
+                                        className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white focus:ring-2 focus:ring-primary-200 focus:border-primary-400 outline-none transition-all"
                                         placeholder="Название бренда"
                                         value={brand}
                                         onChange={e => setBrand(e.target.value)}
@@ -373,7 +371,7 @@ const ChallengesPage: React.FC = () => {
                                     <div className="flex items-center gap-3">
                                         <button
                                             type="button"
-                                            className="px-4 py-2 rounded-xl bg-gradient-to-r from-primary-100 to-accent-100 text-primary-700 font-medium hover:from-primary-200 hover:to-accent-200 transition-all flex items-center gap-2"
+                                            className="px-4 py-2 rounded-xl bg-primary-50 text-primary-700 font-medium hover:bg-primary-100 transition-all flex items-center gap-2"
                                             onClick={() => fileInputRef.current?.click()}
                                         >
                                             <Upload size={18} />
@@ -401,7 +399,7 @@ const ChallengesPage: React.FC = () => {
                                         Тип приза
                                     </label>
                                     <select
-                                        className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:ring-2 focus:ring-primary-200 focus:border-primary-400 outline-none transition-all"
+                                        className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white focus:ring-2 focus:ring-primary-200 focus:border-primary-400 outline-none transition-all"
                                         value={prizeType}
                                         onChange={e => setPrizeType(e.target.value as any)}
                                     >
@@ -418,7 +416,7 @@ const ChallengesPage: React.FC = () => {
                                     </label>
                                     <input
                                         type="text"
-                                        className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:ring-2 focus:ring-primary-200 focus:border-primary-400 outline-none transition-all"
+                                        className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white focus:ring-2 focus:ring-primary-200 focus:border-primary-400 outline-none transition-all"
                                         placeholder="500₽, iPhone 15, и т.д."
                                         value={prize}
                                         onChange={e => setPrize(e.target.value)}
@@ -432,7 +430,7 @@ const ChallengesPage: React.FC = () => {
                                     <div className="relative">
                                         <input
                                             type="date"
-                                            className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:ring-2 focus:ring-primary-200 focus:border-primary-400 outline-none transition-all"
+                                            className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white focus:ring-2 focus:ring-primary-200 focus:border-primary-400 outline-none transition-all"
                                             value={endsAt}
                                             onChange={e => setEndsAt(e.target.value)}
                                         />
@@ -448,7 +446,7 @@ const ChallengesPage: React.FC = () => {
                                         <input
                                             type="number"
                                             min="1"
-                                            className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:ring-2 focus:ring-primary-200 focus:border-primary-400 outline-none transition-all"
+                                            className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white focus:ring-2 focus:ring-primary-200 focus:border-primary-400 outline-none transition-all"
                                             placeholder="Без ограничений"
                                             value={participantsLimit}
                                             onChange={e => setParticipantsLimit(e.target.value)}
@@ -479,7 +477,7 @@ const ChallengesPage: React.FC = () => {
                                 <Button
                                     type="submit"
                                     variant="primary"
-                                    className="flex-1 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600"
+                                    className="flex-1"
                                     isLoading={creating}
                                 >
                                     Создать челлендж
