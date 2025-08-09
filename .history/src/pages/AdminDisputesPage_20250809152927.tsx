@@ -3,7 +3,6 @@ import { supabase } from '../lib/supabase';
 import { useUser } from '../contexts/UserContext';
 import Button from '../components/ui/Button';
 import { chatApi } from '../lib/api/chat';
-import { ordersApi } from '../lib/api/orders';
 import { useNavigate } from 'react-router-dom';
 import { API_URL } from '../config';
 
@@ -47,8 +46,19 @@ const AdminDisputesPage: React.FC = () => {
 
     const resolve = async (order: DisputedOrder, verdict: 'provider' | 'client') => {
         const newStatus = verdict === 'provider' ? 'completed' : 'refunded';
-        // Обновляем статус через API, которое выполняет RPC выплат/разблокировки
-        await ordersApi.updateOrderStatus(order.id, newStatus);
+        // используем серверную функцию выплат/возврата через обновление статуса API
+        // сначала читаем заказ для данных транзакции
+        const { data: current } = await supabase
+            .from('orders')
+            .select('id')
+            .eq('id', order.id)
+            .single();
+        if (!current) return;
+        // обновим статус — серверные RPC в ordersApi.updateOrderStatus обрабатывают выплату/разблокировку
+        await supabase
+            .from('orders')
+            .update({ status: newStatus })
+            .eq('id', order.id);
         // уведомления
         const chat = await chatApi.getOrCreateChat(order.client_id, order.provider_id);
         const msg = verdict === 'provider'

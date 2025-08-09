@@ -49,9 +49,18 @@ export const ordersApi = {
    * 1) Вызывает RPC lock_credits с идентификатором транзакции
    * 2) Добавляет запись в orders c escrow_locked=true и transaction_id
    */
-  async createOrder(order: Omit<Order, 'id' | 'created_at' | 'updated_at' | 'completed_at' | 'escrow_locked' | 'payout_done'> & { quiz_answers?: any, deadline_at?: string }) {
-    // Генерируем уникальный идентификатор транзакции
-    const transactionId = `order_${order.client_id}_${order.service_id}_${Date.now()}_${Math.random().toString(36).substring(2, 10)}`;
+  async createOrder(
+    order: Omit<
+      Order,
+      'id' | 'created_at' | 'updated_at' | 'completed_at' | 'escrow_locked' | 'payout_done'
+    > & { quiz_answers?: any; deadline_at?: string; transaction_id?: string }
+  ) {
+    // Используем переданный transaction_id, либо генерируем новый
+    const transactionId =
+      order.transaction_id ||
+      `order_${order.client_id}_${order.service_id}_${Date.now()}_${Math.random()
+        .toString(36)
+        .substring(2, 10)}`;
     
     try {
       // 1. Резервируем средства клиента с идентификатором транзакции
@@ -135,9 +144,9 @@ export const ordersApi = {
       updates.payout_done = true;
     }
 
-    // Возврат средств клиенту при решении администратора
+    // Возврат средств клиенту
     // @ts-ignore escrow_locked
-    if (status === 'refunded' && orderCurrent.escrow_locked) {
+    if ((status === 'refunded' || status === 'cancelled') && orderCurrent.escrow_locked) {
       // Генерируем идентификатор транзакции для разблокировки
       const unlockTransactionId = `unlock_${orderCurrent.id}_${Date.now()}_${Math.random().toString(36).substring(2, 10)}`;
       

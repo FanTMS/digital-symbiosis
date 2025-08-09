@@ -8,6 +8,7 @@ export function useServices(category?: string, limit: number = 20, offset: numbe
   return useQuery({
     queryKey: ['services', category, limit, offset],
     queryFn: () => servicesApi.listServices(category, limit, offset),
+    keepPreviousData: true,
   });
 }
 
@@ -16,6 +17,7 @@ export function useService(id: string) {
     queryKey: ['service', id],
     queryFn: () => servicesApi.getService(id),
     enabled: !!id,
+    staleTime: 1000 * 60 * 5,
   });
 }
 
