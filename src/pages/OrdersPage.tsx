@@ -64,7 +64,7 @@ const OrdersPage: React.FC = () => {
     data: userOrders = [],
     isLoading,
     isFetching,
-  } = useOrders(userId ?? 0, "client", PAGE_SIZE, page * PAGE_SIZE);
+  } = useOrders(userId ?? 0, activeTab, PAGE_SIZE, page * PAGE_SIZE);
   const updateOrderStatus = useUpdateOrderStatus();
   const [hasMore, setHasMore] = useState(true);
   const [activeTab, setActiveTab] = useState<"client" | "provider">("client");
@@ -75,6 +75,9 @@ const OrdersPage: React.FC = () => {
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [currentOrder, setCurrentOrder] = useState<any | null>(null);
   const createProposal = useCreatePriceProposal();
+  const [showFinishModal, setShowFinishModal] = useState(false);
+  const [finishOrder, setFinishOrder] = useState<any | null>(null);
+  const [finishReason, setFinishReason] = useState('');
 
   useEffect(() => {
     if (tg) {
@@ -104,7 +107,7 @@ const OrdersPage: React.FC = () => {
 
   useEffect(() => {
     setPage(0);
-  }, []);
+  }, [activeTab]);
 
   const getOrderStatusInfo = (status: string) => {
     switch (status) {
@@ -136,12 +139,26 @@ const OrdersPage: React.FC = () => {
           bgColor: "bg-green-100",
           label: "Завершен",
         };
+      case "completed_by_provider":
+        return {
+          icon: AlertCircle,
+          color: "text-blue-500",
+          bgColor: "bg-blue-100",
+          label: "Ожидает подтверждения",
+        };
       case "cancelled":
         return {
           icon: XCircle,
           color: "text-red-500",
           bgColor: "bg-red-100",
           label: "Отклонено",
+        };
+      case "disputed":
+        return {
+          icon: AlertCircle,
+          color: "text-red-500",
+          bgColor: "bg-red-100",
+          label: "Спор",
         };
       default:
         return {
@@ -202,25 +219,23 @@ const OrdersPage: React.FC = () => {
     await notifyBot(order.client_id, `Ваш заказ по услуге "${order.service?.title}" был отклонён исполнителем.`);
   };
 
-  // Модифицирую handleCompleteOrder для уведомления в бота
-  const handleCompleteOrder = async (orderId: number) => {
-    await updateOrderStatus.mutateAsync({ id: orderId, status: "completed_by_provider" });
+  // Завершение работы исполнителем с указанием причины
+  const handleCompleteOrder = async (order: any, reason: string) => {
+    await updateOrderStatus.mutateAsync({ id: order.id, status: "completed_by_provider" });
     if (userId) {
       queryClient.invalidateQueries({ queryKey: ["orders", userId, "client"] });
+      queryClient.invalidateQueries({ queryKey: ["orders", userId, "provider"] });
     }
-    const order = userOrders.find((o) => o.id === orderId);
-    if (order) {
-      // @ts-ignore
-      const chat = await chatApi.getOrCreateChat(order.client_id, order.provider_id);
-      await chatApi.sendMessage(
-        chat.id,
-        userId ?? order.provider_id,
-        `Исполнитель завершил заказ по услуге "${order.service?.title}". Пожалуйста, подтвердите выполнение или обратитесь к администратору, если есть вопросы.`,
-        { type: "system_action_client", orderId: orderId, role: "client", status: "completed_by_provider" }
-      );
-      await notifyBot(order.client_id, `Ваш заказ по услуге "${order.service?.title}" был завершён исполнителем. Пожалуйста, подтвердите выполнение!`);
-      await notifyBot(order.provider_id, `Вы завершили заказ по услуге "${order.service?.title}". Ожидайте подтверждения от клиента.`);
-    }
+    // @ts-ignore
+    const chat = await chatApi.getOrCreateChat(order.client_id, order.provider_id);
+    await chatApi.sendMessage(
+      chat.id,
+      userId ?? order.provider_id,
+      `Исполнитель завершил заказ по услуге "${order.service?.title}". Причина: ${reason || "выполнено"}. Пожалуйста, подтвердите выполнение или обратитесь к администратору, если есть вопросы.`,
+      { type: "system_action_client", orderId: order.id, role: "client", status: "completed_by_provider", reason }
+    );
+    await notifyBot(order.client_id, `Ваш заказ по услуге "${order.service?.title}" был завершён исполнителем. Причина: ${reason || "выполнено"}. Пожалуйста, подтвердите выполнение!`);
+    await notifyBot(order.provider_id, `Вы завершили заказ по услуге "${order.service?.title}". Ожидайте подтверждения от клиента.`);
   };
 
   // Подтверждение заказчиком выполнения
@@ -387,7 +402,7 @@ const OrdersPage: React.FC = () => {
                             >
                               Связаться
                             </Button>
-                            {user && otherUser && user.id !== otherUser.id && (
+                            {user && otherUser && user.id !== otherUser.id && order.status === 'pending' && (
                               <Button
                                 variant="outline"
                                 size="sm"
@@ -426,6 +441,16 @@ const OrdersPage: React.FC = () => {
                                 className="flex-1 transition-all duration-200 hover:scale-105 active:scale-95 rounded-2xl"
                               >
                                 Редактировать
+                              </Button>
+                            )}
+                            {activeTab === 'provider' && (order.status === 'accepted' || order.status === 'in_progress') && (
+                              <Button
+                                variant="success"
+                                size="sm"
+                                className="flex-1 transition-all duration-200 hover:scale-105 active:scale-95 rounded-2xl"
+                                onClick={() => { setFinishOrder(order); setShowFinishModal(true); }}
+                              >
+                                Завершить
                               </Button>
                             )}
                             {/* Кнопки для клиентского подтверждения или спора */}
@@ -580,7 +605,47 @@ const OrdersPage: React.FC = () => {
           <button className="ml-2 text-green-700 font-bold" onClick={() => setSuccessMsg(null)}>×</button>
         </div>
       )}
+
+      {/* Модалка завершения для исполнителя */}
+      <FinishOrderModal
+        isOpen={showFinishModal}
+        onClose={() => { setShowFinishModal(false); setFinishReason(''); setFinishOrder(null); }}
+        onSubmit={async (reason) => {
+          if (finishOrder) {
+            await handleCompleteOrder(finishOrder, reason);
+            setShowFinishModal(false);
+            setFinishReason('');
+            setFinishOrder(null);
+          }
+        }}
+        value={finishReason}
+        onChange={setFinishReason}
+      />
     </div>
+  );
+};
+
+// Локальный компонент-модалка для указания причины завершения
+const FinishOrderModal: React.FC<{
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (reason: string) => void;
+  value: string;
+  onChange: (v: string) => void;
+}> = ({ isOpen, onClose, onSubmit, value, onChange }) => {
+  if (!isOpen) return null;
+  return (
+    <Modal isOpen={isOpen} onClose={onClose}>
+      <div className="p-4">
+        <h2 className="text-xl font-bold mb-3">Завершить заказ</h2>
+        <p className="text-sm text-gray-600 mb-2">Укажите причину завершения (например, выполнено):</p>
+        <textarea className="w-full border rounded p-2 min-h-[80px]" value={value} onChange={(e) => onChange(e.target.value)} placeholder="Причина..." />
+        <div className="flex gap-2 mt-3">
+          <Button variant="outline" className="flex-1" onClick={onClose}>Отмена</Button>
+          <Button variant="success" className="flex-1" onClick={() => onSubmit(value)}>Завершить</Button>
+        </div>
+      </div>
+    </Modal>
   );
 };
 
