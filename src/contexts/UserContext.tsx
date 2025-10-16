@@ -75,11 +75,12 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
             if (!createdUser.avatar_url || createdUser.avatar_url.includes('t.me')) {
               const cached = await cacheTelegramAvatar(telegramUser.id);
               if (cached) {
-                createdUser = { ...createdUser, avatar_url: cached };
+                createdUser.avatar_url = cached;
               }
             }
-            setUser(prev => ({ ...prev, ...createdUser } as User));
+            setUser(createdUser as User);
             setError(null);
+            setLoading(false);
             return;
           }
 
@@ -90,7 +91,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
           if (!data.avatar_url || data.avatar_url.includes('t.me')) {
             const cached = await cacheTelegramAvatar(telegramUser.id);
             if (cached) {
-              data = { ...data, avatar_url: cached };
+              data.avatar_url = cached;
             }
           }
 
@@ -99,7 +100,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
             const currentUid = (await supabase.auth.getSession()).data.session?.user.id;
             if (currentUid) {
               await supabase.from('users').update({ auth_uid: currentUid }).eq('id', data.id);
-              data = { ...data, auth_uid: currentUid } as any;
+              data.auth_uid = currentUid;
             }
           }
 
@@ -108,13 +109,13 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
           if (data && (data.credits === null || data.credits === undefined) && (data as any).credits_available !== undefined) {
             const ca = Number((data as any).credits_available ?? 0);
             const cl = Number((data as any).credits_locked ?? 0);
-            data = { ...data, credits: ca + cl } as any;
+            data.credits = ca + cl;
           } else if (data && (data.credits === null || data.credits === undefined)) {
             // Гарантируем, что credits никогда не равен null/undefined
-            data = { ...data, credits: 0 } as any;
+            data.credits = 0;
           }
 
-          setUser(prev => ({ ...prev, ...data } as User));
+          setUser(data as User);
           setError(null);
         } catch (err) {
           const error =
@@ -143,18 +144,18 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
           },
           (payload) => {
             if (payload.new) {
-              // payload.new содержит только новые данные строки.
-              // Чтобы не потерять существующие поля (например, credits), мержим с предыдущим состоянием.
               setUser(prev => {
+                if (!prev) return payload.new as User;
+                
                 let merged = { ...prev, ...(payload.new as User) } as User;
                 // Поддержка старой схемы credits_available/credits_locked
                 if ((merged.credits === null || merged.credits === undefined) && (merged as any).credits_available !== undefined) {
                   const ca = Number((merged as any).credits_available ?? 0);
                   const cl = Number((merged as any).credits_locked ?? 0);
-                  merged = { ...merged, credits: ca + cl } as any;
+                  merged.credits = ca + cl;
                 } else if (merged.credits === null || merged.credits === undefined) {
                   // Если поле credits отсутствует – сохраняем прежнее значение
-                  merged = { ...merged, credits: prev?.credits ?? 0 } as any;
+                  merged.credits = prev?.credits ?? 0;
                 }
                 return merged;
               });
@@ -197,7 +198,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
       if (!data.avatar_url || data.avatar_url.includes('t.me')) {
         const cached = await cacheTelegramAvatar(telegramUser.id);
         if (cached) {
-          data = { ...data, avatar_url: cached };
+          data.avatar_url = cached;
         }
       }
       // Если auth_uid отсутствует — записываем текущий uid и перезапрашиваем строку
@@ -205,7 +206,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         const currentUid = (await supabase.auth.getSession()).data.session?.user.id;
         if (currentUid) {
           await supabase.from('users').update({ auth_uid: currentUid }).eq('id', data.id);
-          data = { ...data, auth_uid: currentUid } as any;
+          data.auth_uid = currentUid;
         }
       }
       // Поддерживаем старую схему credits_available/credits_locked,
@@ -213,12 +214,12 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
       if (data && (data.credits === null || data.credits === undefined) && (data as any).credits_available !== undefined) {
         const ca = Number((data as any).credits_available ?? 0);
         const cl = Number((data as any).credits_locked ?? 0);
-        data = { ...data, credits: ca + cl } as any;
+        data.credits = ca + cl;
       } else if (data && (data.credits === null || data.credits === undefined)) {
         // Гарантируем, что credits никогда не равен null/undefined
-        data = { ...data, credits: 0 } as any;
+        data.credits = 0;
       }
-      setUser(prev => ({ ...prev, ...data } as User));
+      setUser(data as User);
       setError(null);
     } catch (err) {
       const error =

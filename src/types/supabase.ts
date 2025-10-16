@@ -19,7 +19,8 @@ export interface Database {
           description: string | null
           level: string | null
           rating: number | null
-          credits: number | null
+          credits: number
+          locked_credits: number
           completed_tasks: number | null
           avatar_url: string | null
           joined_at: string
@@ -27,6 +28,8 @@ export interface Database {
           role: string | null
           referral_code: string | null
           used_referral_code: string | null
+          auth_uid: string | null
+          onboarding_done: boolean
         }
         Insert: {
           id: number
@@ -37,11 +40,14 @@ export interface Database {
           description?: string | null
           level?: string | null
           rating?: number | null
-          credits?: number | null
+          credits?: number
+          locked_credits?: number
           completed_tasks?: number | null
           avatar_url?: string | null
           joined_at?: string
           updated_at?: string
+          auth_uid?: string | null
+          onboarding_done?: boolean
         }
         Update: {
           id?: number
@@ -52,11 +58,14 @@ export interface Database {
           description?: string | null
           level?: string | null
           rating?: number | null
-          credits?: number | null
+          credits?: number
+          locked_credits?: number
           completed_tasks?: number | null
           avatar_url?: string | null
           joined_at?: string
           updated_at?: string
+          auth_uid?: string | null
+          onboarding_done?: boolean
         }
       }
       badges: {
