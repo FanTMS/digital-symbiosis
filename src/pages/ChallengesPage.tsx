@@ -10,7 +10,7 @@ import ChallengeSkeleton from '../components/ui/ChallengeSkeleton';
 import { supabase } from '../lib/supabase';
 import type { Challenge } from '../types/models';
 import { motion } from 'framer-motion';
-import { Trophy, Flame, CheckCircle, User, Filter, Plus, Upload, Calendar, Users, Gift } from 'lucide-react';
+import { Trophy, Flame, CheckCircle, User, Filter, Plus, Upload, Calendar, Users, Gift, Sparkles, Zap } from 'lucide-react';
 
 const TABS = [
     { id: 'active', label: 'Активные', icon: Flame },
@@ -147,33 +147,31 @@ const ChallengesPage: React.FC = () => {
     };
 
     return (
-        <div className="pb-20 sm:pb-24 pt-2 min-h-screen bg-gradient-to-br from-orange-50 via-white to-pink-50">
+        <div className="pb-20 sm:pb-24 pt-2 min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50">
             {/* Hero Section */}
             <motion.div
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="relative overflow-hidden"
             >
-                <div className="absolute inset-0 bg-gradient-to-br from-warning-500/10 via-transparent to-accent-500/10 pointer-events-none" />
-                <div className="absolute top-0 right-0 w-64 h-64 bg-warning-200/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+                <div className="absolute inset-0 bg-gradient-to-br from-primary-500/10 via-transparent to-accent-500/10 pointer-events-none" />
+                <div className="absolute top-0 right-0 w-64 h-64 bg-primary-200/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
                 
                 <div className="relative px-4 sm:px-6 pt-6 pb-6">
                     <div className="flex justify-between items-center mb-6">
-                        <div className="flex items-center gap-3">
-                            <div className="p-3 bg-gradient-to-br from-warning-500 to-warning-600 rounded-2xl shadow-lg">
-                                <Trophy size={28} className="text-white" />
+                        <div>
+                            <div className="flex items-center gap-2 mb-2">
+                                <Trophy size={28} className="text-primary-600" />
+                                <h1 className="text-3xl font-bold text-gray-900">Челленджи</h1>
                             </div>
-                            <div>
-                                <h1 className="text-3xl font-bold text-gray-900 mb-1">Челленджи</h1>
-                                <p className="text-gray-600 text-sm">Участвуйте в конкурсах и выигрывайте призы</p>
-                            </div>
+                            <p className="text-gray-600 text-sm">Участвуйте в конкурсах и выигрывайте призы</p>
                         </div>
 
                         {isAdmin && (
                             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                                 <Button
                                     variant="primary"
-                                    className="bg-gradient-to-r from-primary-500 to-primary-600 shadow-lg font-bold"
+                                    className="bg-gradient-to-r from-primary-500 to-primary-600 shadow-lg"
                                     onClick={() => setShowCreate(true)}
                                 >
                                     <Plus size={20} className="mr-2" />
@@ -185,12 +183,12 @@ const ChallengesPage: React.FC = () => {
                 </div>
             </motion.div>
 
-            <div className="px-4 sm:px-6">
+            <div className="px-2 sm:px-4 py-4">
 
                 {/* Вкладки - Enhanced */}
                 <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 }}
                     className="mb-6"
                 >
@@ -210,7 +208,7 @@ const ChallengesPage: React.FC = () => {
                                             flex-1 py-3 px-4 rounded-xl font-semibold transition-all duration-200
                                             flex items-center justify-center gap-2
                                             ${isActive
-                                                ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-md'
+                                                ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg'
                                                 : 'text-gray-600 hover:bg-gray-50'
                                             }
                                         `}
@@ -220,8 +218,8 @@ const ChallengesPage: React.FC = () => {
                                         <span>{tabItem.label}</span>
                                         {count > 0 && (
                                             <span className={`
-                                                ml-1 px-2.5 py-0.5 rounded-full text-xs font-bold
-                                                ${isActive ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-600'}
+                                                ml-1 px-2 py-0.5 rounded-full text-xs font-bold
+                                                ${isActive ? 'bg-white/30 text-white' : 'bg-gray-100 text-gray-600'}
                                             `}>
                                                 {count}
                                             </span>
@@ -235,16 +233,16 @@ const ChallengesPage: React.FC = () => {
 
                 {/* Фильтры - Enhanced */}
                 <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2 }}
                     className="mb-6"
                 >
-                    <div className="flex items-center gap-3 mb-4">
+                    <div className="flex items-center gap-2 mb-4">
                         <div className="p-2 bg-primary-50 rounded-xl">
                             <Filter size={18} className="text-primary-600" />
                         </div>
-                        <span className="text-sm font-semibold text-gray-700">Фильтр по призам:</span>
+                        <span className="text-sm font-semibold text-gray-700">Фильтр по призам</span>
                     </div>
                     <div className="flex flex-wrap gap-2">
                         {FILTERS.map(f => (
@@ -253,11 +251,11 @@ const ChallengesPage: React.FC = () => {
                                 whileHover={{ scale: 1.05, y: -2 }}
                                 whileTap={{ scale: 0.95 }}
                                 className={`
-                                    flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium
+                                    flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-semibold
                                     transition-all duration-200 shadow-md
                                     ${filter === f.id
                                         ? 'bg-gradient-to-r from-accent-500 to-accent-600 text-white shadow-lg'
-                                        : 'bg-white text-gray-700 hover:shadow-lg border-2 border-gray-100'
+                                        : 'bg-white text-gray-700 hover:shadow-lg border border-gray-200'
                                     }
                                 `}
                                 onClick={() => setFilter(f.id)}
@@ -288,8 +286,8 @@ const ChallengesPage: React.FC = () => {
                             variants={item}
                             className="text-center py-16 bg-white rounded-3xl shadow-lg border border-gray-100 max-w-2xl mx-auto"
                         >
-                            <div className="w-24 h-24 bg-warning-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                                <Trophy size={48} className="text-warning-500" />
+                            <div className="w-24 h-24 bg-primary-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <Trophy size={48} className="text-primary-500" />
                             </div>
                             <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
                                 Нет челленджей
@@ -304,7 +302,7 @@ const ChallengesPage: React.FC = () => {
                                 <Button
                                     variant="primary"
                                     onClick={() => setShowCreate(true)}
-                                    className="bg-gradient-to-r from-primary-500 to-primary-600 shadow-lg font-bold"
+                                    className="bg-gradient-to-r from-primary-500 to-primary-600 shadow-lg"
                                 >
                                     <Plus size={20} className="mr-2" />
                                     Создать первый челлендж

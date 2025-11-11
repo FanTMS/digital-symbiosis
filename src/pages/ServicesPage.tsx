@@ -196,11 +196,12 @@ const ServicesPage: React.FC = () => {
         <div className="relative px-4 sm:px-6 pt-6 pb-6">
           {/* Заголовок */}
           <div className="flex justify-between items-center mb-6">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-primary-50 rounded-xl">
+            <div>
+              <div className="flex items-center gap-2 mb-2">
                 <Sparkles size={24} className="text-primary-600" />
+                <h1 className="text-3xl font-bold text-gray-900">Услуги</h1>
               </div>
-              <h1 className="text-3xl font-bold text-gray-900">Услуги</h1>
+              <p className="text-gray-600 text-sm">Найдите нужного специалиста</p>
             </div>
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button variant="icon" size="icon" onClick={() => setShowSortModal(true)} aria-label="Фильтры" className="bg-white shadow-lg">
@@ -209,7 +210,7 @@ const ServicesPage: React.FC = () => {
             </motion.div>
           </div>
 
-          {/* Быстрые действия - Redesigned */}
+          {/* Быстрые действия */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -220,9 +221,9 @@ const ServicesPage: React.FC = () => {
               <Button
                 variant="primary"
                 size="sm"
-                leftIcon={<Plus size={18} />}
+                leftIcon={<Plus size={16} />}
                 onClick={handleCreateService}
-                className="w-full bg-gradient-to-r from-primary-500 to-primary-600 shadow-lg font-bold"
+                className="w-full bg-gradient-to-r from-primary-500 to-primary-600 shadow-lg"
               >
                 Создать
               </Button>
@@ -231,7 +232,7 @@ const ServicesPage: React.FC = () => {
               <Button
                 variant="outline"
                 size="sm"
-                leftIcon={<FileText size={18} />}
+                leftIcon={<FileText size={16} />}
                 onClick={() => navigate('/orders')}
                 className="w-full bg-white shadow-md border-2 border-primary-200 hover:bg-primary-50"
               >
@@ -242,7 +243,7 @@ const ServicesPage: React.FC = () => {
               <Button
                 variant="outline"
                 size="sm"
-                leftIcon={<StarIcon size={18} />}
+                leftIcon={<StarIcon size={16} />}
                 onClick={() => navigate("/favorites")}
                 className="w-full bg-white shadow-md border-2 border-primary-200 hover:bg-primary-50"
               >
@@ -256,144 +257,130 @@ const ServicesPage: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="relative mb-6"
+            className="relative"
           >
             <motion.div
               whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.99 }}
-              className="relative bg-white rounded-2xl p-4 shadow-lg border border-gray-100"
+              className="relative bg-white rounded-2xl p-4 shadow-lg border border-gray-100 flex items-center gap-3"
             >
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-primary-50 rounded-xl">
-                  <Search size={20} className="text-primary-600" />
-                </div>
-                <input
-                  type="text"
-                  placeholder="Поиск услуг и специалистов..."
-                  className="bg-transparent w-full outline-none text-gray-700 placeholder-gray-400"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-                {searchTerm && (
-                  <motion.button
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    className="p-1 text-gray-400 hover:text-gray-600"
-                    onClick={() => setSearchTerm("")}
-                  >
-                    <X size={18} />
-                  </motion.button>
-                )}
+              <div className="p-2 bg-primary-50 rounded-xl">
+                <Search size={20} className="text-primary-600" />
               </div>
-            </motion.div>
-          </motion.div>
-
-          {/* Вкладки - Enhanced */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            className="bg-white rounded-2xl p-1.5 shadow-lg mb-4"
-          >
-            <div className="flex gap-2">
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className={`flex-1 py-3 rounded-xl text-center font-semibold transition-all ${
-                  activeTab === 'all'
-                    ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-md'
-                    : 'text-gray-600 hover:bg-gray-50'
-                }`}
-                onClick={() => setActiveTab('all')}
-              >
-                Все услуги
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className={`flex-1 py-3 rounded-xl text-center font-semibold transition-all ${
-                  activeTab === 'my'
-                    ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-md'
-                    : 'text-gray-600 hover:bg-gray-50'
-                }`}
-                onClick={() => setActiveTab('my')}
-              >
-                Мои услуги
-              </motion.button>
-            </div>
-          </motion.div>
-
-          {/* Фильтр роли - Enhanced */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
-            className="bg-white rounded-2xl p-1.5 shadow-lg mb-6"
-          >
-            <div className="flex gap-2">
-              {(['all', 'provider', 'client'] as const).map((role) => (
+              <input
+                type="text"
+                placeholder="Поиск услуг и специалистов..."
+                className="bg-transparent w-full outline-none text-gray-700 placeholder-gray-400"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              {searchTerm && (
                 <motion.button
-                  key={role}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className={`flex-1 py-2.5 rounded-xl text-center text-sm font-medium transition-all ${
-                    roleFilter === role
-                      ? 'bg-gradient-to-r from-accent-500 to-accent-600 text-white shadow-md'
-                      : 'text-gray-600 hover:bg-gray-50'
-                  }`}
-                  onClick={() => setRoleFilter(role)}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
+                  onClick={() => setSearchTerm("")}
                 >
-                  {role === 'all' ? 'Все' : role === 'provider' ? 'Исполнители' : 'Заказчики'}
+                  <X size={18} />
                 </motion.button>
-              ))}
-            </div>
+              )}
+            </motion.div>
           </motion.div>
         </div>
       </motion.div>
 
       <div className="px-4 sm:px-6">
 
+        {/* Categories chips убраны, фильтрация теперь через модальное окно */}
+
+        {/* Вкладки - Enhanced */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="mb-4"
+        >
+          <div className="bg-white rounded-2xl shadow-lg p-1.5 flex gap-2">
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className={`flex-1 py-3 rounded-xl text-center font-semibold transition-all ${
+                activeTab === 'all'
+                  ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg'
+                  : 'text-gray-600 hover:bg-gray-50'
+              }`}
+              onClick={() => setActiveTab('all')}
+            >
+              Все услуги
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className={`flex-1 py-3 rounded-xl text-center font-semibold transition-all ${
+                activeTab === 'my'
+                  ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg'
+                  : 'text-gray-600 hover:bg-gray-50'
+              }`}
+              onClick={() => setActiveTab('my')}
+            >
+              Мои услуги
+            </motion.button>
+          </div>
+        </motion.div>
+
+        {/* Фильтр роли - Enhanced */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="mb-6"
+        >
+          <div className="bg-white rounded-2xl shadow-lg p-1.5 flex gap-2">
+            {(['all', 'provider', 'client'] as const).map((filter) => (
+              <motion.button
+                key={filter}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className={`flex-1 py-2.5 rounded-xl text-center text-sm font-semibold transition-all ${
+                  roleFilter === filter
+                    ? 'bg-gradient-to-r from-accent-500 to-accent-600 text-white shadow-md'
+                    : 'text-gray-600 hover:bg-gray-50'
+                }`}
+                onClick={() => setRoleFilter(filter)}
+              >
+                {filter === 'all' ? 'Все' : filter === 'provider' ? 'Исполнители' : 'Заказчики'}
+              </motion.button>
+            ))}
+          </div>
+        </motion.div>
+
         {/* Services list */}
         {isLoading && page === 0 && activeTab === "all" ? (
-          <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-3">
             {[1, 2, 3, 4].map((i) => (
-              <motion.div
+              <div
                 key={i}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: i * 0.1 }}
-                className="bg-gray-100 animate-pulse h-64 rounded-2xl"
-              />
+                className="bg-gray-100 animate-pulse h-32 rounded-lg"
+              ></div>
             ))}
           </div>
         ) : activeTab === "all" ? (
           filteredServices.length > 0 ? (
             <>
-              <motion.div
-                variants={container}
-                initial="hidden"
-                animate="show"
-                className="grid grid-cols-2 gap-4"
-              >
-                {filteredServices.map((service: any, index: number) => (
-                  <motion.div key={service.id} variants={item} custom={index}>
-                    <ServiceCard service={service} />
-                  </motion.div>
+              <div className="grid grid-cols-2 gap-4">
+                {filteredServices.map((service: any) => (
+                  <ServiceCard key={service.id} service={service} />
                 ))}
-              </motion.div>
+              </div>
               {hasMore && (
-                <div className="flex justify-center mt-6">
-                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                    <Button
-                      variant="outline"
-                      onClick={() => setPage((p) => p + 1)}
-                      disabled={isFetching}
-                      className="border-2 border-primary-200 text-primary-600 hover:bg-primary-50 font-semibold"
-                      rightIcon={!isFetching ? <ArrowRight size={18} /> : undefined}
-                    >
-                      {isFetching ? "Загрузка..." : "Показать ещё"}
-                    </Button>
-                  </motion.div>
+                <div className="flex justify-center mt-4">
+                  <Button
+                    variant="outline"
+                    onClick={() => setPage((p) => p + 1)}
+                    disabled={isFetching}
+                  >
+                    {isFetching ? "Загрузка..." : "Показать ещё"}
+                  </Button>
                 </div>
               )}
             </>
@@ -401,6 +388,7 @@ const ServicesPage: React.FC = () => {
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3 }}
               className="bg-white rounded-3xl p-8 text-center shadow-lg border border-gray-100"
             >
               <div className="w-20 h-20 bg-primary-50 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -414,7 +402,7 @@ const ServicesPage: React.FC = () => {
                 variant="primary"
                 leftIcon={<Plus size={18} />}
                 onClick={handleCreateService}
-                className="mx-auto"
+                className="bg-gradient-to-r from-primary-500 to-primary-600 shadow-lg"
               >
                 Создать услугу
               </Button>
@@ -423,31 +411,20 @@ const ServicesPage: React.FC = () => {
         ) : activeTab === "my" ? (
           filteredServices.length > 0 ? (
             <>
-              <motion.div
-                variants={container}
-                initial="hidden"
-                animate="show"
-                className="grid grid-cols-2 gap-4"
-              >
-                {filteredServices.map((service: any, index: number) => (
-                  <motion.div key={service.id} variants={item} custom={index}>
-                    <ServiceCard service={service} />
-                  </motion.div>
+              <div className="grid grid-cols-2 gap-4">
+                {filteredServices.map((service: any) => (
+                  <ServiceCard key={service.id} service={service} />
                 ))}
-              </motion.div>
+              </div>
               {hasMore && (
-                <div className="flex justify-center mt-6">
-                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                    <Button
-                      variant="outline"
-                      onClick={() => setPage((p) => p + 1)}
-                      disabled={isFetching}
-                      className="border-2 border-primary-200 text-primary-600 hover:bg-primary-50 font-semibold"
-                      rightIcon={!isFetching ? <ArrowRight size={18} /> : undefined}
-                    >
-                      {isFetching ? "Загрузка..." : "Показать ещё"}
-                    </Button>
-                  </motion.div>
+                <div className="flex justify-center mt-4">
+                  <Button
+                    variant="outline"
+                    onClick={() => setPage((p) => p + 1)}
+                    disabled={isFetching}
+                  >
+                    {isFetching ? "Загрузка..." : "Показать ещё"}
+                  </Button>
                 </div>
               )}
             </>
@@ -455,10 +432,11 @@ const ServicesPage: React.FC = () => {
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3 }}
               className="bg-white rounded-3xl p-8 text-center shadow-lg border border-gray-100"
             >
-              <div className="w-20 h-20 bg-primary-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Zap size={40} className="text-primary-500" />
+              <div className="w-20 h-20 bg-accent-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Zap size={40} className="text-accent-500" />
               </div>
               <h3 className="text-xl font-bold mb-2 text-gray-900">У вас пока нет своих услуг</h3>
               <p className="text-gray-600 mb-6 max-w-sm mx-auto">
@@ -468,7 +446,7 @@ const ServicesPage: React.FC = () => {
                 variant="primary"
                 leftIcon={<Plus size={18} />}
                 onClick={handleCreateService}
-                className="mx-auto"
+                className="bg-gradient-to-r from-accent-500 to-accent-600 shadow-lg"
               >
                 Создать услугу
               </Button>
@@ -478,45 +456,65 @@ const ServicesPage: React.FC = () => {
       </div>
       {/* Модальное окно сортировки - Enhanced */}
       <Modal isOpen={showSortModal} onClose={() => setShowSortModal(false)}>
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="p-6 w-[90vw] max-w-md bg-white rounded-3xl"
-        >
-          <div className="flex items-center gap-3 mb-6">
+        <div className="p-6 w-[90vw] max-w-md bg-white rounded-3xl">
+          <div className="flex items-center gap-2 mb-6">
             <div className="p-2 bg-primary-50 rounded-xl">
               <Filter size={24} className="text-primary-600" />
             </div>
             <h2 className="text-2xl font-bold text-gray-900">Фильтры и сортировка</h2>
           </div>
+          
           <div className="space-y-4 mb-6">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-3">Сортировка</label>
-              <div className="space-y-2">
-                {[
-                  { value: 'date_desc', label: 'Сначала новые' },
-                  { value: 'date_asc', label: 'Сначала старые' },
-                  { value: 'price_asc', label: 'Дешевле' },
-                  { value: 'price_desc', label: 'Дороже' },
-                  { value: 'rating_desc', label: 'По рейтингу' },
-                ].map((option) => (
-                  <motion.div key={option.value} whileHover={{ x: 4 }}>
-                    <Button
-                      variant={sortBy === option.value ? 'primary' : 'outline'}
-                      fullWidth
-                      onClick={() => { setSortBy(option.value as any); setShowSortModal(false); }}
-                      className={sortBy === option.value ? 'bg-gradient-to-r from-primary-500 to-primary-600' : 'border-2 border-primary-200 hover:bg-primary-50'}
-                    >
-                      {option.label}
-                    </Button>
-                  </motion.div>
-                ))}
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Сортировка</label>
+              <div className="grid grid-cols-2 gap-2">
+                <Button 
+                  variant={sortBy === 'date_desc' ? 'primary' : 'outline'} 
+                  size="sm"
+                  className={sortBy === 'date_desc' ? 'bg-gradient-to-r from-primary-500 to-primary-600' : ''}
+                  onClick={() => { setSortBy('date_desc'); setShowSortModal(false); }}
+                >
+                  Новые
+                </Button>
+                <Button 
+                  variant={sortBy === 'date_asc' ? 'primary' : 'outline'} 
+                  size="sm"
+                  className={sortBy === 'date_asc' ? 'bg-gradient-to-r from-primary-500 to-primary-600' : ''}
+                  onClick={() => { setSortBy('date_asc'); setShowSortModal(false); }}
+                >
+                  Старые
+                </Button>
+                <Button 
+                  variant={sortBy === 'price_asc' ? 'primary' : 'outline'} 
+                  size="sm"
+                  className={sortBy === 'price_asc' ? 'bg-gradient-to-r from-primary-500 to-primary-600' : ''}
+                  onClick={() => { setSortBy('price_asc'); setShowSortModal(false); }}
+                >
+                  Дешевле
+                </Button>
+                <Button 
+                  variant={sortBy === 'price_desc' ? 'primary' : 'outline'} 
+                  size="sm"
+                  className={sortBy === 'price_desc' ? 'bg-gradient-to-r from-primary-500 to-primary-600' : ''}
+                  onClick={() => { setSortBy('price_desc'); setShowSortModal(false); }}
+                >
+                  Дороже
+                </Button>
+                <Button 
+                  variant={sortBy === 'rating_desc' ? 'primary' : 'outline'} 
+                  size="sm"
+                  className={`${sortBy === 'rating_desc' ? 'bg-gradient-to-r from-primary-500 to-primary-600' : ''} col-span-2`}
+                  onClick={() => { setSortBy('rating_desc'); setShowSortModal(false); }}
+                >
+                  По рейтингу
+                </Button>
               </div>
             </div>
+            
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-3">Категория услуги</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Категория услуги</label>
               <select
-                className="w-full border-2 border-primary-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary-400 focus:border-primary-400 bg-white"
+                className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary-400 focus:border-primary-400 outline-none transition-all bg-white"
                 value={selectedCategory}
                 onChange={e => setSelectedCategory(e.target.value as ServiceCategory | 'all')}
               >
@@ -532,7 +530,16 @@ const ServicesPage: React.FC = () => {
               </select>
             </div>
           </div>
-        </motion.div>
+          
+          <Button 
+            variant="primary" 
+            fullWidth 
+            onClick={() => setShowSortModal(false)}
+            className="bg-gradient-to-r from-primary-500 to-primary-600 shadow-lg"
+          >
+            Применить
+          </Button>
+        </div>
       </Modal>
     </div>
   );
