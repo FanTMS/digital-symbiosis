@@ -12,6 +12,21 @@ import { motion } from "framer-motion";
 import { BadgeCheck, Circle } from "lucide-react";
 import { Avatar } from "../components/ui/Avatar";
 
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const item = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0 },
+};
+
 // Типы для чата и пользователя
 import type { Database } from "../types/supabase";
 type Chat = Database["public"]["Tables"]["chats"]["Row"];
@@ -88,24 +103,23 @@ const ChatsPage: React.FC = () => {
   if (loading) return <div className="p-4">Загрузка...</div>;
 
   return (
-    <div className="p-4 sm:p-6 w-full max-w-2xl mx-auto pb-20 sm:pb-8 bg-gradient-to-br from-cyan-50 via-blue-50 to-white min-h-screen">
+    <div className="p-4 sm:p-6 w-full max-w-2xl mx-auto pb-20 sm:pb-8 min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50">
       {/* Hero Section */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative mb-8"
+        className="relative overflow-hidden mb-6"
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-primary-500/10 via-transparent to-accent-500/10 pointer-events-none rounded-3xl" />
-        <div className="relative bg-gradient-to-br from-primary-500 via-primary-600 to-primary-700 rounded-3xl p-6 shadow-2xl overflow-hidden">
-          <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-2xl" />
-          <div className="relative z-10">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
-                <MessageCircle size={28} className="text-white" />
-              </div>
-              <h1 className="text-3xl font-bold text-white">Чаты</h1>
+        <div className="absolute inset-0 bg-gradient-to-br from-primary-500/10 via-transparent to-accent-500/10 pointer-events-none" />
+        <div className="relative">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="p-3 bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl shadow-lg">
+              <MessageCircle size={28} className="text-white" />
             </div>
-            <p className="text-white/80 text-sm">Ваши активные диалоги</p>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Чаты</h1>
+              <p className="text-gray-600 text-sm">Ваши сообщения и диалоги</p>
+            </div>
           </div>
         </div>
       </motion.div>
@@ -116,19 +130,19 @@ const ChatsPage: React.FC = () => {
           animate={{ opacity: 1, scale: 1 }}
           className="bg-white rounded-3xl p-12 text-center shadow-lg border border-gray-100 mt-8"
         >
-          <div className="w-24 h-24 bg-primary-50 rounded-full flex items-center justify-center mx-auto mb-6">
+          <div className="w-24 h-24 bg-primary-50 rounded-full flex items-center justify-center mx-auto mb-4">
             <MessageCircle size={48} className="text-primary-500" />
           </div>
           <h3 className="text-xl font-bold mb-2 text-gray-900">Нет активных чатов</h3>
-          <p className="text-gray-600">
-            Начните общение с исполнителями или заказчиками
+          <p className="text-gray-600 max-w-sm mx-auto">
+            Начните общение с другими пользователями через их профили или заказы
           </p>
         </motion.div>
       ) : (
         <motion.ul
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ staggerChildren: 0.1 }}
+          variants={container}
+          initial="hidden"
+          animate="show"
           className="space-y-4"
         >
           {chats.map((chat, index) => {
@@ -138,88 +152,87 @@ const ChatsPage: React.FC = () => {
             return (
               <motion.li
                 key={chat.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
+                variants={item}
                 whileHover={{
                   y: -4,
-                  scale: 1.02,
-                  boxShadow: "0 12px 40px 0 rgba(11, 187, 239, 0.15)",
+                  scale: 1.01,
                 }}
                 whileTap={{ scale: 0.98 }}
-                className={`group relative bg-white rounded-2xl shadow-lg border-2 ${
-                  unread ? "border-primary-300 ring-2 ring-primary-100" : "border-gray-100"
-                } p-5 flex items-center cursor-pointer hover:bg-gradient-to-r hover:from-primary-50 hover:to-blue-50 transition-all min-w-0`}
+                transition={{ type: "spring", stiffness: 300, damping: 22 }}
+                className={`group relative bg-white rounded-3xl shadow-lg border-2 flex items-center cursor-pointer transition-all overflow-hidden ${
+                  unread ? "border-primary-300 ring-2 ring-primary-100" : "border-gray-100 hover:border-primary-200"
+                }`}
                 onClick={() => navigate(`/chat/${chat.id}`)}
               >
-                {/* Decorative gradient */}
+                {/* Градиентный фон для непрочитанных */}
                 {unread && (
-                  <div className="absolute inset-0 bg-gradient-to-r from-primary-500/5 to-blue-500/5 rounded-2xl" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-primary-50/50 to-transparent pointer-events-none" />
                 )}
                 
-                <div className="relative z-10 flex items-center w-full gap-4">
+                <div className="relative z-10 flex items-center w-full p-4">
                   <div className="flex-shrink-0 relative">
-                    <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-400 to-blue-500 border-2 ${
-                      unread ? "border-primary-400 shadow-lg" : "border-white"
-                    } flex items-center justify-center overflow-hidden shadow-md`}>
+                    <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-100 to-primary-200 border-2 flex items-center justify-center overflow-hidden shadow-md ${
+                      unread ? "border-primary-400" : "border-gray-200"
+                    }`}>
                       <Avatar src={chat.otherUser?.avatar_url ?? ''} name={chat.otherUser?.name ?? ''} size={64} />
                     </div>
                     {unread && (
-                      <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full border-2 border-white shadow-lg animate-pulse" />
+                      <div className="absolute -top-1 -right-1 w-5 h-5 bg-primary-500 rounded-full border-2 border-white animate-pulse" />
                     )}
                   </div>
                   
-                  <div className="flex-1 min-w-0">
+                  <div className="flex-1 min-w-0 ml-4">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="font-bold text-lg text-gray-900 truncate max-w-[160px] sm:max-w-[220px]">
+                      <span className="font-bold text-lg text-gray-900 truncate">
                         {chat.otherUser?.name || "Пользователь"}
                       </span>
                       {unread && (
-                        <span className="px-2.5 py-1 rounded-full bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs font-bold shadow-md">
+                        <span className="px-2.5 py-1 rounded-full bg-gradient-to-r from-primary-500 to-primary-600 text-white text-xs font-bold shadow-md">
                           Новое
                         </span>
                       )}
                     </div>
-                    <div className="flex items-center gap-2 text-sm text-gray-600 truncate max-w-[220px]">
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
                       {lastMsg &&
                         lastMsg.attachments &&
                         lastMsg.attachments.length > 0 ? (
                         lastMsg.attachments[0].type === "image" ? (
-                          <>
-                            <ImageIcon size={16} className="text-primary-500 flex-shrink-0" />
-                            <span className="truncate">Фото</span>
-                          </>
+                          <ImageIcon size={16} className="text-primary-500" />
                         ) : (
-                          <>
-                            <FileIcon size={16} className="text-primary-500 flex-shrink-0" />
-                            <span className="truncate">Файл</span>
-                          </>
+                          <FileIcon size={16} className="text-primary-500" />
                         )
-                      ) : (
-                        <span className="truncate">
-                          {lastMsg && lastMsg.content
+                      ) : null}
+                      <span className="truncate">
+                        {lastMsg &&
+                        lastMsg.attachments &&
+                        lastMsg.attachments.length > 0
+                          ? lastMsg.attachments[0].type === "image"
+                            ? "Фото"
+                            : "Файл"
+                          : lastMsg && lastMsg.content
                             ? lastMsg.content
                             : "Нет сообщений"}
-                        </span>
-                      )}
+                      </span>
                     </div>
                   </div>
                   
-                  <div className="flex flex-col items-end gap-2 ml-4 min-w-[80px]">
-                    <span className="text-xs font-medium text-gray-400">
+                  <div className="flex flex-col items-end ml-4 min-w-[70px]">
+                    <span className="text-xs text-gray-500 mb-2 font-medium">
                       {formatTime(lastMsg?.created_at)}
                     </span>
-                    <Button
-                      size="sm"
-                      variant="primary"
-                      className="min-w-[80px] bg-gradient-to-r from-primary-500 to-primary-600 shadow-md hover:shadow-lg"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        navigate(`/chat/${chat.id}`);
-                      }}
-                    >
-                      Открыть
-                    </Button>
+                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                      <Button
+                        size="sm"
+                        variant="primary"
+                        className="bg-gradient-to-r from-primary-500 to-primary-600 shadow-md text-xs px-3 py-1.5"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/chat/${chat.id}`);
+                        }}
+                      >
+                        Открыть
+                      </Button>
+                    </motion.div>
                   </div>
                 </div>
               </motion.li>
