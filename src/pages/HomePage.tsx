@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useTelegram } from "../hooks/useTelegram";
 import { useUser } from "../contexts/UserContext";
-import { Search, TrendingUp, Award, Gift, Plus } from "lucide-react";
+import { Search, TrendingUp, Award, Gift, Plus, Sparkles, ArrowRight, Zap, Users, CheckCircle2, Star, ArrowUpRight } from "lucide-react";
 import { notificationsApi } from "../lib/api/notifications";
 import { supabase } from "../lib/supabase";
 import ServiceCard from "../components/ui/ServiceCard";
@@ -116,27 +116,92 @@ const HomePage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    // Загружаем активный промо-баннер
+    // Загружаем активный промо-баннер с таймаутом для мобильных устройств
     const fetchPromoBanner = async () => {
+      let timeoutId: NodeJS.Timeout | null = null;
+      
       try {
-        const { data, error } = await supabase
+        // Создаем промис с таймаутом
+        const timeoutPromise = new Promise<never>((_, reject) => {
+          timeoutId = setTimeout(() => reject(new Error('Timeout')), 10000); // 10 секунд таймаут
+        });
+
+        const queryPromise = supabase
           .from("promo_banners")
           .select("*")
           .eq("is_active", true)
           .order("updated_at", { ascending: false })
           .limit(1);
-        if (error) throw error;
-        if (data && data.length > 0) setPromoBanner(data[0]);
-        else setPromoBanner(null);
-      } catch (e) {
-        alert("Ошибка загрузки промо-баннера: " + (e.message || e));
+
+        // Ждем либо результат запроса, либо таймаут
+        const result = await Promise.race([
+          queryPromise.then(result => {
+            if (timeoutId) clearTimeout(timeoutId);
+            return result;
+          }),
+          timeoutPromise
+        ]);
+
+        const { data, error } = result as any;
+
+        if (error) {
+          console.error("Ошибка загрузки промо-баннера:", error);
+          setPromoBanner(null);
+          return;
+        }
+        if (data && data.length > 0) {
+          // Проверяем валидность данных баннера
+          const banner = data[0];
+          if (banner && (banner.title || banner.text || banner.image_url)) {
+            // Дополнительная проверка URL изображения
+            if (banner.image_url) {
+              try {
+                new URL(banner.image_url);
+              } catch {
+                // Если URL невалидный, убираем его
+                banner.image_url = null;
+              }
+            }
+            setPromoBanner(banner);
+          } else {
+            setPromoBanner(null);
+          }
+        } else {
+          setPromoBanner(null);
+        }
+      } catch (e: any) {
+        // Очищаем таймаут при ошибке
+        if (timeoutId) clearTimeout(timeoutId);
+        
+        // Тихая обработка ошибок - не показываем alert на мобильных
+        // Это может быть ошибка сети, таймаут или другая проблема
+        if (e?.message === 'Timeout') {
+          console.warn("Таймаут загрузки промо-баннера");
+        } else {
+          console.error("Ошибка загрузки промо-баннера:", e);
+        }
+        setPromoBanner(null);
+        // Логируем ошибку только в консоль для разработки
+        if (process.env.NODE_ENV === 'development') {
+          console.warn("Детали ошибки:", e?.message || e);
+        }
       }
     };
-    fetchPromoBanner();
+    
+    // Запускаем загрузку с небольшой задержкой, чтобы не блокировать основной рендер
+    const initTimeoutId = setTimeout(() => {
+      fetchPromoBanner();
+    }, 100);
+
     // Подписка на событие обновления баннера
-    const handler = () => fetchPromoBanner();
+    const handler = () => {
+      clearTimeout(initTimeoutId);
+      fetchPromoBanner();
+    };
     window.addEventListener('promoBannerUpdated', handler);
+    
     return () => {
+      clearTimeout(initTimeoutId);
       window.removeEventListener('promoBannerUpdated', handler);
     };
   }, []);
@@ -161,242 +226,371 @@ const HomePage: React.FC = () => {
   };
 
   return (
-    <div className="pb-20 sm:pb-24 pt-2">
-      {/* Промо-баннер */}
-      <div className="px-2 sm:px-4 mb-4">
-        {promoBanner && (
-          <>
-            <PromoBanner
-              title={promoBanner.title}
-              text={promoBanner.text}
-              image={promoBanner.image_url}
-              color={promoBanner.color}
-              onClick={() => setShowPromoModal(true)}
-            />
-            <Modal isOpen={showPromoModal} onClose={() => setShowPromoModal(false)}>
-              <div className="p-4" style={{ background: promoBanner.color || undefined }}>
-                {promoBanner.image_url && (
-                  <img src={promoBanner.image_url} alt={promoBanner.title} className="w-32 h-32 object-cover rounded-xl mx-auto mb-4" />
-                )}
-                <h2 className="text-2xl font-bold mb-2 text-center">{promoBanner.title}</h2>
-                <div className="text-base text-gray-700 mb-4 text-center">{promoBanner.text}</div>
-                <Button className="mt-2 mx-auto block" variant="primary" onClick={() => setShowPromoModal(false)}>Закрыть</Button>
-              </div>
-            </Modal>
-          </>
-        )}
-      </div>
-
-      {/* Header */}
-      <div className="px-2 sm:px-4 mb-4 sm:mb-6">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 sm:mb-4 gap-2 sm:gap-0">
-          <div className="w-full sm:w-auto">
-            <div className="relative flex items-center gap-3 px-5 py-3 rounded-xl shadow-card bg-gray-light min-w-[220px]">
-              <img
-                src="/logo.svg"
-                alt="БртЦ"
-                className="w-8 h-8 mr-2 hidden sm:block"
-              />
-
-              <div className="flex-1">
-                <div className="text-xs text-gray-500 font-medium mb-0.5">
-                  Баланс
-                </div>
-                <div className="text-2xl font-extrabold text-cyan-600 drop-shadow-sm">
-                  {user ? (user.credits ?? 0) : 0}{" "}
-                  <span className="text-base font-semibold text-gray-500">
-                    кредитов
-                  </span>
-                </div>
-              </div>
-              <Button
-                size="sm"
-                onClick={() => {
-                  const btn = document.querySelector('.balance-topup-bar button');
-                  if (btn && btn instanceof HTMLButtonElement) btn.click();
-                }}
-              >
-                Пополнить
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        {/* Search bar */}
-        <div
-          className="relative bg-gray-100 rounded-lg p-2 sm:p-3 flex items-center cursor-pointer"
-          onClick={() => navigate("/services")}
-        >
-          <Search size={18} className="text-gray-500 mr-2" />
-          <span className="text-gray-500 text-sm sm:text-base">
-            Поиск услуг и специалистов...
-          </span>
-        </div>
-      </div>
-
-      {/* Quick actions */}
+    <div className="pb-20 sm:pb-24 pt-2 min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50">
+      {/* Hero Section with Balance */}
       <motion.div
-        variants={container}
-        initial="hidden"
-        animate="show"
-        className="px-2 sm:px-4 mb-4 sm:mb-6"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="relative overflow-hidden"
       >
-        <h2 className="text-base sm:text-lg font-semibold mb-2 sm:mb-3">
-          Быстрые действия
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {/* Decorative background elements */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary-500/10 via-transparent to-accent-500/10 pointer-events-none" />
+        <div className="absolute top-0 right-0 w-64 h-64 bg-primary-200/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-accent-200/20 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
+
+        <div className="relative px-4 sm:px-6 pt-6 pb-8">
+          {/* Промо-баннер */}
+          {promoBanner && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.1 }}
+              className="mb-6"
+            >
+              <PromoBanner
+                title={promoBanner.title}
+                text={promoBanner.text}
+                image={promoBanner.image_url}
+                color={promoBanner.color}
+                onClick={() => setShowPromoModal(true)}
+              />
+              <Modal isOpen={showPromoModal} onClose={() => setShowPromoModal(false)}>
+                <div className="p-6 rounded-2xl" style={{ background: promoBanner.color || undefined }}>
+                  {promoBanner.image_url && (
+                    <img src={promoBanner.image_url} alt={promoBanner.title} className="w-32 h-32 object-cover rounded-xl mx-auto mb-4 shadow-lg" />
+                  )}
+                  <h2 className="text-2xl font-bold mb-2 text-center">{promoBanner.title}</h2>
+                  <div className="text-base text-gray-700 mb-4 text-center">{promoBanner.text}</div>
+                  <Button className="mt-2 mx-auto block" variant="primary" onClick={() => setShowPromoModal(false)}>Закрыть</Button>
+                </div>
+              </Modal>
+            </motion.div>
+          )}
+
+          {/* Balance Card - Modern Design */}
           <motion.div
-            variants={item}
-            whileTap={{ scale: 0.97 }}
-            className="group bg-primary-500/95 p-5 rounded-xl shadow-card cursor-pointer hover:scale-[1.03] active:scale-95 transition-transform duration-200 relative overflow-hidden text-white"
-            onClick={() => navigate("/services")}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="relative bg-gradient-to-br from-primary-500 via-primary-600 to-primary-700 rounded-3xl p-6 shadow-2xl overflow-hidden mb-6"
           >
-            <div className="absolute right-4 top-4 opacity-10 text-black text-6xl pointer-events-none select-none">
-              <Search size={64} />
+            <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-2xl" />
+            <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full blur-xl" />
+            
+            <div className="relative z-10 flex items-center justify-between">
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-2">
+                  <Sparkles size={20} className="text-white/90" />
+                  <span className="text-white/80 text-sm font-medium">Ваш баланс</span>
+                </div>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-4xl sm:text-5xl font-extrabold text-white drop-shadow-lg">
+                    {user ? (user.credits ?? 0) : 0}
+                  </span>
+                  <span className="text-lg font-semibold text-white/70">кредитов</span>
+                </div>
+              </div>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Button
+                  size="md"
+                  variant="primary"
+                  className="bg-white text-primary-600 hover:bg-white/90 shadow-lg font-bold"
+                  onClick={() => {
+                    const btn = document.querySelector('.balance-topup-bar button');
+                    if (btn && btn instanceof HTMLButtonElement) btn.click();
+                  }}
+                >
+                  <Zap size={18} className="mr-1" />
+                  Пополнить
+                </Button>
+              </motion.div>
             </div>
-            <div className="flex items-center gap-3 mb-2">
-              <Search size={28} className="text-black" />
-              <h3 className="font-bold text-gray-800 text-lg">Найти услугу</h3>
-            </div>
-            <p className="text-gray-500 text-sm">Выберите из каталога</p>
           </motion.div>
+
+          {/* Search bar - Enhanced */}
           <motion.div
-            variants={item}
-            whileTap={{ scale: 0.97 }}
-            className="group bg-accent-500/95 p-5 rounded-xl shadow-card cursor-pointer hover:scale-[1.03] active:scale-95 transition-transform duration-200 relative overflow-hidden text-white"
-            onClick={handleCreateService}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="relative"
           >
-            <div className="absolute right-4 top-4 opacity-10 text-black text-6xl pointer-events-none select-none">
-              <Plus size={64} />
-            </div>
-            <div className="flex items-center gap-3 mb-2">
-              <Plus size={28} className="text-black" />
-              <h3 className="font-bold text-gray-800 text-lg">Предложить услугу</h3>
-            </div>
-            <p className="text-gray-500 text-sm">Поделитесь своими навыками</p>
-          </motion.div>
-          <motion.div
-            variants={item}
-            whileTap={{ scale: 0.97 }}
-            className="group bg-success-500/95 p-5 rounded-xl shadow-card cursor-pointer hover:scale-[1.03] active:scale-95 transition-transform duration-200 relative overflow-hidden text-white"
-            onClick={() => navigate("/referrals")}
-          >
-            <div className="absolute right-4 top-4 opacity-10 text-black text-6xl pointer-events-none select-none">
-              <Gift size={64} />
-            </div>
-            <div className="flex items-center gap-3 mb-2">
-              <Gift size={28} className="text-black" />
-              <h3 className="font-bold text-gray-800 text-lg">Пригласить друга</h3>
-            </div>
-            <p className="text-gray-500 text-sm">+5 кредитов за каждого</p>
-          </motion.div>
-          <motion.div
-            variants={item}
-            whileTap={{ scale: 0.97 }}
-            className="group bg-warning-500/90 p-5 rounded-xl shadow-card cursor-pointer hover:scale-[1.03] active:scale-95 transition-transform duration-200 relative overflow-hidden text-white"
-            onClick={() => navigate("/profile")}
-          >
-            <div className="absolute right-4 top-4 opacity-10 text-black text-6xl pointer-events-none select-none">
-              <Award size={64} />
-            </div>
-            <div className="flex items-center gap-3 mb-2">
-              <Award size={28} className="text-black" />
-              <h3 className="font-bold text-gray-800 text-lg">Мои достижения</h3>
-            </div>
-            <p className="text-gray-500 text-sm">Проверьте уровень</p>
+            <motion.div
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.99 }}
+              className="relative bg-white rounded-2xl p-4 shadow-lg border border-gray-100 cursor-pointer group hover:shadow-xl transition-all duration-300"
+              onClick={() => navigate("/services")}
+            >
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-primary-50 rounded-xl group-hover:bg-primary-100 transition-colors">
+                  <Search size={20} className="text-primary-600" />
+                </div>
+                <span className="text-gray-500 text-sm sm:text-base flex-1">
+                  Поиск услуг и специалистов...
+                </span>
+                <ArrowRight size={18} className="text-gray-400 group-hover:text-primary-600 group-hover:translate-x-1 transition-all" />
+              </div>
+            </motion.div>
           </motion.div>
         </div>
       </motion.div>
 
-      {/* Recommended services */}
-      <div className="px-4 mb-6">
-        <div className="flex justify-between items-center mb-3">
-          <h2 className="text-lg font-semibold">Рекомендации для вас</h2>
-          <TrendingUp size={18} className="text-primary-500" />
+      {/* Quick actions - Redesigned */}
+      <motion.div
+        variants={container}
+        initial="hidden"
+        animate="show"
+        className="px-4 sm:px-6 mb-6"
+      >
+        <div className="flex items-center gap-2 mb-4">
+          <Zap size={20} className="text-primary-600" />
+          <h2 className="text-xl font-bold text-gray-900">Быстрые действия</h2>
         </div>
+        <div className="grid grid-cols-2 gap-3">
+          <motion.div
+            variants={item}
+            whileHover={{ y: -4, scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="group relative bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl p-5 shadow-lg cursor-pointer overflow-hidden"
+            onClick={() => navigate("/services")}
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="absolute top-2 right-2 w-16 h-16 bg-white/10 rounded-full blur-xl" />
+            <div className="relative z-10">
+              <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-3 backdrop-blur-sm">
+                <Search size={24} className="text-white" />
+              </div>
+              <h3 className="font-bold text-white text-base mb-1">Найти услугу</h3>
+              <p className="text-white/80 text-xs">Выберите из каталога</p>
+            </div>
+          </motion.div>
+
+          <motion.div
+            variants={item}
+            whileHover={{ y: -4, scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="group relative bg-gradient-to-br from-accent-500 to-accent-600 rounded-2xl p-5 shadow-lg cursor-pointer overflow-hidden"
+            onClick={handleCreateService}
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="absolute top-2 right-2 w-16 h-16 bg-white/10 rounded-full blur-xl" />
+            <div className="relative z-10">
+              <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-3 backdrop-blur-sm">
+                <Plus size={24} className="text-white" />
+              </div>
+              <h3 className="font-bold text-white text-base mb-1">Предложить услугу</h3>
+              <p className="text-white/80 text-xs">Поделитесь навыками</p>
+            </div>
+          </motion.div>
+
+          <motion.div
+            variants={item}
+            whileHover={{ y: -4, scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="group relative bg-gradient-to-br from-success-500 to-success-600 rounded-2xl p-5 shadow-lg cursor-pointer overflow-hidden"
+            onClick={() => navigate("/referrals")}
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="absolute top-2 right-2 w-16 h-16 bg-white/10 rounded-full blur-xl" />
+            <div className="relative z-10">
+              <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-3 backdrop-blur-sm">
+                <Gift size={24} className="text-white" />
+              </div>
+              <h3 className="font-bold text-white text-base mb-1">Пригласить друга</h3>
+              <p className="text-white/80 text-xs">+5 кредитов</p>
+            </div>
+          </motion.div>
+
+          <motion.div
+            variants={item}
+            whileHover={{ y: -4, scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="group relative bg-gradient-to-br from-warning-500 to-warning-600 rounded-2xl p-5 shadow-lg cursor-pointer overflow-hidden"
+            onClick={() => navigate("/profile")}
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="absolute top-2 right-2 w-16 h-16 bg-white/10 rounded-full blur-xl" />
+            <div className="relative z-10">
+              <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-3 backdrop-blur-sm">
+                <Award size={24} className="text-white" />
+              </div>
+              <h3 className="font-bold text-white text-base mb-1">Достижения</h3>
+              <p className="text-white/80 text-xs">Проверьте уровень</p>
+            </div>
+          </motion.div>
+        </div>
+      </motion.div>
+
+      {/* Recommended services - Enhanced */}
+      <div className="px-4 sm:px-6 mb-6">
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          className="flex items-center justify-between mb-4"
+        >
+          <div className="flex items-center gap-2">
+            <div className="p-2 bg-primary-50 rounded-xl">
+              <TrendingUp size={20} className="text-primary-600" />
+            </div>
+            <h2 className="text-xl font-bold text-gray-900">Рекомендации для вас</h2>
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate('/services')}
+            className="text-primary-600 hover:text-primary-700"
+          >
+            Все услуги
+            <ArrowRight size={16} />
+          </Button>
+        </motion.div>
 
         {loading ? (
-          <div className="space-y-3">
+          <div className="space-y-4">
             {[1, 2, 3].map((i) => (
-              <div
+              <motion.div
                 key={i}
-                className="bg-gray-100 animate-pulse h-32 rounded-lg"
-              ></div>
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: i * 0.1 }}
+                className="bg-gray-100 animate-pulse h-40 rounded-2xl"
+              />
             ))}
           </div>
         ) : recommendedServices.length === 0 ? (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.3 }}
-            className="flex flex-col items-center justify-center py-8 text-center"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white rounded-3xl p-8 text-center shadow-lg border border-gray-100"
           >
-            <div className="text-4xl mb-2">🔍</div>
-            <h3 className="text-lg font-medium mb-1">Нет рекомендаций</h3>
-            <p className="text-gray-500 mb-4 max-w-xs">
-              Пока для вас нет персональных рекомендаций. Попробуйте
-              воспользоваться поиском или создайте свою первую услугу!
+            <div className="w-20 h-20 bg-primary-50 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Search size={40} className="text-primary-500" />
+            </div>
+            <h3 className="text-xl font-bold mb-2 text-gray-900">Нет рекомендаций</h3>
+            <p className="text-gray-600 mb-6 max-w-sm mx-auto">
+              Пока для вас нет персональных рекомендаций. Попробуйте воспользоваться поиском или создайте свою первую услугу!
             </p>
-            <button
-              className="bg-primary-500 hover:bg-primary-600 text-white font-medium px-4 py-2 rounded-lg transition"
+            <Button
+              variant="primary"
               onClick={() => navigate("/create-service")}
+              className="mx-auto"
             >
+              <Plus size={18} className="mr-2" />
               Создать услугу
-            </button>
+            </Button>
           </motion.div>
         ) : (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, ease: "easeOut" }}
-            className="space-y-3"
+            transition={{ duration: 0.4 }}
+            className="space-y-4"
           >
-            {recommendedServices.map((service) => (
-              <motion.div key={service.id} variants={item}>
+            {recommendedServices.map((service, index) => (
+              <motion.div
+                key={service.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+              >
                 <ServiceCard service={service} />
               </motion.div>
             ))}
-            <motion.div variants={item} whileHover={{ y: -2 }}>
+            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
               <Button
                 variant="outline"
                 fullWidth
                 onClick={() => navigate('/services')}
-                className="font-medium"
+                className="font-semibold border-2 border-primary-200 text-primary-600 hover:bg-primary-50"
               >
                 Показать все услуги
+                <ArrowRight size={18} />
               </Button>
             </motion.div>
           </motion.div>
         )}
       </div>
 
-      {/* Новости и акции */}
-      <div className="px-4 mb-6">
-        <div className="bg-gradient-to-r from-cyan-100 via-blue-50 to-pink-100 rounded-2xl shadow-card p-6">
-          <h2 className="text-lg font-bold mb-4 text-blue-900 flex items-center gap-2">
-            <Gift size={22} className="text-pink-400" /> Актуальные акции и новости
-          </h2>
-          <ul className="space-y-3">
-            <li className="bg-white/80 rounded-xl p-4 shadow flex flex-col sm:flex-row sm:items-center gap-2">
-              <span className="font-semibold text-blue-700">🎉 Приведи друга — получи 5 кредитов!</span>
-              <span className="text-gray-500 text-sm">За каждого приглашённого друга вы получаете бонус.</span>
-            </li>
-            <li className="bg-white/80 rounded-xl p-4 shadow flex flex-col sm:flex-row sm:items-center gap-2">
-              <span className="font-semibold text-pink-600">🔥 Новые категории услуг!</span>
-              <span className="text-gray-500 text-sm">Появились новые направления — IT, языки, дизайн и многое другое.</span>
-            </li>
-            <li className="bg-white/80 rounded-xl p-4 shadow flex flex-col sm:flex-row sm:items-center gap-2">
-              <span className="font-semibold text-green-600">💡 Советы по безопасности</span>
-              <span className="text-gray-500 text-sm">Никогда не переводите деньги вне платформы — это безопаснее для всех.</span>
-            </li>
-          </ul>
-        </div>
+      {/* Новости и акции - Redesigned */}
+      <div className="px-4 sm:px-6 mb-6">
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          className="relative bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 rounded-3xl p-6 shadow-2xl overflow-hidden"
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent" />
+          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full blur-2xl" />
+          
+          <div className="relative z-10">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="p-2 bg-white/20 rounded-xl backdrop-blur-sm">
+                <Gift size={24} className="text-white" />
+              </div>
+              <h2 className="text-xl font-bold text-white">Актуальные акции и новости</h2>
+            </div>
+            <div className="space-y-3">
+              <motion.div
+                whileHover={{ x: 4 }}
+                className="bg-white/95 backdrop-blur-sm rounded-2xl p-4 shadow-lg flex items-start gap-3"
+              >
+                <div className="text-2xl">🎉</div>
+                <div className="flex-1">
+                  <div className="font-bold text-gray-900 mb-1">Приведи друга — получи 5 кредитов!</div>
+                  <div className="text-sm text-gray-600">За каждого приглашённого друга вы получаете бонус.</div>
+                </div>
+              </motion.div>
+              <motion.div
+                whileHover={{ x: 4 }}
+                className="bg-white/95 backdrop-blur-sm rounded-2xl p-4 shadow-lg flex items-start gap-3"
+              >
+                <div className="text-2xl">🔥</div>
+                <div className="flex-1">
+                  <div className="font-bold text-gray-900 mb-1">Новые категории услуг!</div>
+                  <div className="text-sm text-gray-600">Появились новые направления — IT, языки, дизайн и многое другое.</div>
+                </div>
+              </motion.div>
+              <motion.div
+                whileHover={{ x: 4 }}
+                className="bg-white/95 backdrop-blur-sm rounded-2xl p-4 shadow-lg flex items-start gap-3"
+              >
+                <div className="text-2xl">💡</div>
+                <div className="flex-1">
+                  <div className="font-bold text-gray-900 mb-1">Советы по безопасности</div>
+                  <div className="text-sm text-gray-600">Никогда не переводите деньги вне платформы — это безопаснее для всех.</div>
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        </motion.div>
       </div>
 
-      {/* Stats */}
-      <div className="px-4 mb-8">
-        <h2 className="text-lg font-semibold mb-3">Статистика платформы</h2>
+      {/* Stats - Enhanced */}
+      <div className="px-4 sm:px-6 mb-8">
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          className="mb-4"
+        >
+          <div className="flex items-center gap-2">
+            <div className="p-2 bg-primary-50 rounded-xl">
+              <Users size={20} className="text-primary-600" />
+            </div>
+            <h2 className="text-xl font-bold text-gray-900">Статистика платформы</h2>
+          </div>
+        </motion.div>
         <StatsBlock stats={stats} loading={stats.users === 0 && stats.completedOrders === 0 && stats.categories === 0 && stats.avgRating === 0} />
+      </div>
+
+      {/* Hidden BalanceTopupBar */}
+      <div className="hidden">
+        <BalanceTopupBar />
       </div>
     </div>
   );
