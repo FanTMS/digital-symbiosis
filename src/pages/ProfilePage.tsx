@@ -370,42 +370,86 @@ const ProfilePage: React.FC = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
-      className="pb-16 pt-2"
+      className="pb-16 pt-2 min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50"
     >
-      {/* Мобильный заголовок и кнопки */}
-      <div className="px-4 mb-4">
-        <h1 className="text-2xl font-bold mb-3">Профиль</h1>
+      {/* Hero Section */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="relative overflow-hidden"
+      >
+        <div className="absolute inset-0 bg-gradient-to-br from-primary-500/10 via-transparent to-accent-500/10 pointer-events-none" />
+        <div className="absolute top-0 right-0 w-64 h-64 bg-primary-200/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+        
+        <div className="relative px-4 sm:px-6 pt-6 pb-6">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-3 bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl shadow-lg">
+              <Award size={28} className="text-white" />
+            </div>
+            <h1 className="text-3xl font-bold text-gray-900">Профиль</h1>
+          </div>
 
-        {/* Кнопки действий - адаптивно под мобильные */}
-        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-          <button
-            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 text-sm font-medium shadow-sm transition touch-manipulation"
-            onClick={handleShareProfile}
-            title="Скопировать ссылку на профиль"
+          {/* Кнопки действий - Enhanced */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="flex flex-col sm:flex-row gap-3 mb-6"
           >
-            <Copy size={16} /> Поделиться
-          </button>
+            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+              <button
+                className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white hover:bg-primary-50 text-primary-700 text-sm font-semibold shadow-lg border-2 border-primary-200 transition touch-manipulation w-full sm:w-auto"
+                onClick={handleShareProfile}
+                title="Скопировать ссылку на профиль"
+              >
+                <Copy size={18} /> Поделиться
+              </button>
+            </motion.div>
 
-          {/* Кнопка подписки/отписки */}
-          {!isOwn && (
-            <button
-              className={`flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium shadow-sm transition touch-manipulation ${isFollowing ? 'bg-gray-100 text-gray-500 hover:bg-gray-200' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
-              onClick={isFollowing ? handleUnfollow : handleFollow}
-            >
-              <Users size={16} /> {isFollowing ? 'Отписаться' : 'Подписаться'}
-            </button>
-          )}
+            {/* Кнопка подписки/отписки */}
+            {!isOwn && (
+              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                <button
+                  className={`flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold shadow-lg transition touch-manipulation w-full sm:w-auto ${
+                    isFollowing
+                      ? 'bg-white text-gray-600 hover:bg-gray-50 border-2 border-gray-200'
+                      : 'bg-gradient-to-r from-primary-500 to-primary-600 text-white hover:from-primary-600 hover:to-primary-700'
+                  }`}
+                  onClick={isFollowing ? handleUnfollow : handleFollow}
+                >
+                  <Users size={18} /> {isFollowing ? 'Отписаться' : 'Подписаться'}
+                </button>
+              </motion.div>
+            )}
+          </motion.div>
         </div>
-      </div>
-      {/* Кол-во подписчиков и подписок */}
-      <div className="px-4 mb-4 flex gap-4">
-        <button className="text-sm text-blue-700 hover:underline" onClick={() => setSubsTab('followers')}>
-          Подписчики: <b>{followers.length}</b>
-        </button>
-        <button className="text-sm text-blue-700 hover:underline" onClick={() => setSubsTab('following')}>
-          Подписки: <b>{following.length}</b>
-        </button>
-      </div>
+      </motion.div>
+
+      <div className="px-4 sm:px-6">
+        {/* Кол-во подписчиков и подписок - Enhanced */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="mb-6 flex gap-3"
+        >
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="px-4 py-2 rounded-xl bg-white text-primary-700 hover:bg-primary-50 text-sm font-semibold shadow-md border-2 border-primary-200"
+            onClick={() => setSubsTab('followers')}
+          >
+            Подписчики: <b className="text-primary-600">{followers.length}</b>
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="px-4 py-2 rounded-xl bg-white text-primary-700 hover:bg-primary-50 text-sm font-semibold shadow-md border-2 border-primary-200"
+            onClick={() => setSubsTab('following')}
+          >
+            Подписки: <b className="text-primary-600">{following.length}</b>
+          </motion.button>
+        </motion.div>
       {/* Модалка подписчиков/подписок */}
       {subsTab && (
         <Modal isOpen={!!subsTab} onClose={() => setSubsTab(null)}>
@@ -433,12 +477,18 @@ const ProfilePage: React.FC = () => {
           </div>
         </Modal>
       )}
-      <div className="px-4 mb-6">
-        {/* Адаптивная карточка пользователя */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-6">
-          <div className="flex items-center gap-4 w-full sm:w-auto">
+        {/* Адаптивная карточка пользователя - Enhanced */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="bg-white rounded-3xl p-6 shadow-lg border border-gray-100 mb-6"
+        >
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
             <div className="relative">
-              <Avatar src={user.avatar_url} name={user.name} size={80} className="cursor-pointer border-2 border-primary-500" />
+              <div className="p-1 bg-gradient-to-br from-primary-400 to-primary-600 rounded-3xl">
+                <Avatar src={user.avatar_url} name={user.name} size={96} className="cursor-pointer rounded-3xl border-4 border-white" />
+              </div>
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
@@ -551,39 +601,61 @@ const ProfilePage: React.FC = () => {
               </div>
             </div>
 
-            {/* Menu */}
+            {/* Menu - Enhanced */}
             {isOwn && (
-              <div className="bg-white rounded-lg shadow-card overflow-hidden mb-6">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                className="bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden mb-6"
+              >
                 {menuItems.map((item, idx) => (
-                  <button
+                  <motion.button
                     key={item.label}
-                    className="flex items-center w-full px-4 py-4 gap-3 text-lg font-medium text-gray-800 hover:bg-gray-50 border-b border-gray-100 last:border-b-0 transition group"
+                    whileHover={{ x: 4 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="flex items-center w-full px-5 py-4 gap-4 text-lg font-semibold text-gray-800 hover:bg-gradient-to-r hover:from-primary-50 hover:to-accent-50 border-b border-gray-100 last:border-b-0 transition group"
                     onClick={item.onClick}
                   >
-                    <span className="text-primary-500"><item.icon size={22} /></span>
+                    <div className="p-2 bg-primary-50 rounded-xl group-hover:bg-primary-100 transition">
+                      <item.icon size={22} className="text-primary-600" />
+                    </div>
                     <span className="flex-1 text-left">{item.label}</span>
                     {item.value !== undefined && (
-                      <span className="text-primary-500 font-bold">{item.value}</span>
+                      <span className="text-primary-600 font-bold bg-primary-50 px-3 py-1 rounded-lg">{item.value}</span>
                     )}
-                    <ChevronRight size={18} className="text-gray-300 group-hover:text-primary-400 transition" />
-                  </button>
+                    <ChevronRight size={18} className="text-gray-300 group-hover:text-primary-500 group-hover:translate-x-1 transition" />
+                  </motion.button>
                 ))}
-              </div>
+              </motion.div>
             )}
 
-            {/* Вкладки - адаптивные */}
-            <div className="flex gap-2 mb-6 overflow-x-auto scrollbar-hide">
-              {visibleTabs.map(tab => (
-                <button
-                  key={tab.id}
-                  className={`flex items-center gap-2 px-3 sm:px-4 py-2.5 rounded-xl font-medium transition-all duration-200 whitespace-nowrap touch-manipulation min-w-max ${activeTab === tab.id ? 'bg-blue-100 text-blue-900 shadow-sm' : 'bg-white text-gray-500 hover:bg-gray-100'}`}
-                  onClick={() => setActiveTab(tab.id as any)}
-                >
-                  <tab.icon size={16} className="sm:w-[18px] sm:h-[18px]" />
-                  <span className="text-sm sm:text-base">{tab.label}</span>
-                </button>
-              ))}
-            </div>
+            {/* Вкладки - Enhanced */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+              className="bg-white rounded-2xl p-1.5 shadow-lg mb-6 overflow-x-auto scrollbar-hide"
+            >
+              <div className="flex gap-2">
+                {visibleTabs.map(tab => (
+                  <motion.button
+                    key={tab.id}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className={`flex items-center gap-2 px-4 py-3 rounded-xl font-semibold transition-all duration-200 whitespace-nowrap touch-manipulation min-w-max ${
+                      activeTab === tab.id
+                        ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-md'
+                        : 'text-gray-600 hover:bg-gray-50'
+                    }`}
+                    onClick={() => setActiveTab(tab.id as any)}
+                  >
+                    <tab.icon size={18} />
+                    <span className="text-sm sm:text-base">{tab.label}</span>
+                  </motion.button>
+                ))}
+              </div>
+            </motion.div>
 
             {/* Контент вкладок */}
             {activeTab === 'services' && (

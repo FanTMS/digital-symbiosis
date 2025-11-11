@@ -256,6 +256,7 @@ const HomePage: React.FC = () => {
                 onClick={() => setShowPromoModal(true)}
               />
               <Modal isOpen={showPromoModal} onClose={() => setShowPromoModal(false)}>
+<<<<<<< Current (Your changes)
                 <div className="p-6 rounded-2xl" style={{ background: promoBanner.color || undefined }}>
                   {promoBanner.image_url && (
                     <img src={promoBanner.image_url} alt={promoBanner.title} className="w-32 h-32 object-cover rounded-xl mx-auto mb-4 shadow-lg" />
@@ -264,6 +265,69 @@ const HomePage: React.FC = () => {
                   <div className="text-base text-gray-700 mb-4 text-center">{promoBanner.text}</div>
                   <Button className="mt-2 mx-auto block" variant="primary" onClick={() => setShowPromoModal(false)}>Закрыть</Button>
                 </div>
+=======
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="relative overflow-hidden rounded-3xl"
+                  style={{ background: promoBanner.color || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}
+                >
+                  {/* Decorative elements */}
+                  <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
+                  <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full blur-2xl" />
+                  
+                  <div className="relative z-10 p-8">
+                    {promoBanner.image_url && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="mb-6 flex justify-center"
+                      >
+                        <div className="relative">
+                          <div className="absolute inset-0 bg-white/20 rounded-3xl blur-xl" />
+                          <img
+                            src={promoBanner.image_url}
+                            alt={promoBanner.title}
+                            className="w-40 h-40 object-cover rounded-3xl mx-auto shadow-2xl relative z-10 border-4 border-white/50"
+                          />
+                        </div>
+                      </motion.div>
+                    )}
+                    <motion.h2
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.1 }}
+                      className="text-3xl font-bold mb-4 text-center text-white drop-shadow-lg"
+                    >
+                      {promoBanner.title}
+                    </motion.h2>
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.2 }}
+                      className="text-lg text-white/90 mb-6 text-center leading-relaxed"
+                    >
+                      {promoBanner.text}
+                    </motion.div>
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.3 }}
+                      className="flex justify-center"
+                    >
+                      <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                        <Button
+                          className="bg-white text-primary-600 hover:bg-white/90 shadow-2xl font-bold px-8 py-3"
+                          variant="primary"
+                          onClick={() => setShowPromoModal(false)}
+                        >
+                          Закрыть
+                        </Button>
+                      </motion.div>
+                    </motion.div>
+                  </div>
+                </motion.div>
+>>>>>>> Incoming (Background Agent changes)
               </Modal>
             </motion.div>
           )}

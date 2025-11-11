@@ -9,6 +9,9 @@ import {
   X,
   Star as StarIcon,
   FileText,
+  Sparkles,
+  ArrowRight,
+  Zap,
 } from "lucide-react";
 import { useServices } from "../hooks/useServices";
 import ServiceCard from "../components/ui/ServiceCard";
@@ -180,155 +183,238 @@ const ServicesPage: React.FC = () => {
   const VISIBLE_COUNT = 8; // сколько карточек видно на экране
 
   return (
-    <div className="pb-16 pt-2">
-      <div className="px-4 mb-6">
-        {/* Заголовок */}
-        <div className="flex justify-between items-center mb-4">
-          <h1 className="text-2xl font-bold">Услуги</h1>
-          <Button variant="icon" size="icon" onClick={() => setShowSortModal(true)} aria-label="Фильтры">
-            <Filter size={20} />
-          </Button>
-        </div>
+    <div className="pb-16 pt-2 min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50">
+      {/* Hero Section */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="relative overflow-hidden"
+      >
+        <div className="absolute inset-0 bg-gradient-to-br from-primary-500/10 via-transparent to-accent-500/10 pointer-events-none" />
+        <div className="absolute top-0 right-0 w-64 h-64 bg-primary-200/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+        
+        <div className="relative px-4 sm:px-6 pt-6 pb-6">
+          {/* Заголовок */}
+          <div className="flex justify-between items-center mb-6">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-primary-50 rounded-xl">
+                <Sparkles size={24} className="text-primary-600" />
+              </div>
+              <h1 className="text-3xl font-bold text-gray-900">Услуги</h1>
+            </div>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Button variant="icon" size="icon" onClick={() => setShowSortModal(true)} aria-label="Фильтры" className="bg-white shadow-lg">
+                <Filter size={20} />
+              </Button>
+            </motion.div>
+          </div>
 
-        {/* Быстрые действия */}
-        <div className="flex gap-2 mb-4">
-          <Button
-            variant="primary"
-            size="sm"
-            leftIcon={<Plus size={16} />}
-            onClick={handleCreateService}
-            className="flex-1"
+          {/* Быстрые действия - Redesigned */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="grid grid-cols-3 gap-3 mb-6"
           >
-            Создать
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            leftIcon={<FileText size={16} />}
-            onClick={() => navigate('/orders')}
-            className="flex-1"
+            <motion.div whileHover={{ y: -2 }} whileTap={{ scale: 0.98 }}>
+              <Button
+                variant="primary"
+                size="sm"
+                leftIcon={<Plus size={18} />}
+                onClick={handleCreateService}
+                className="w-full bg-gradient-to-r from-primary-500 to-primary-600 shadow-lg font-bold"
+              >
+                Создать
+              </Button>
+            </motion.div>
+            <motion.div whileHover={{ y: -2 }} whileTap={{ scale: 0.98 }}>
+              <Button
+                variant="outline"
+                size="sm"
+                leftIcon={<FileText size={18} />}
+                onClick={() => navigate('/orders')}
+                className="w-full bg-white shadow-md border-2 border-primary-200 hover:bg-primary-50"
+              >
+                Заказы
+              </Button>
+            </motion.div>
+            <motion.div whileHover={{ y: -2 }} whileTap={{ scale: 0.98 }}>
+              <Button
+                variant="outline"
+                size="sm"
+                leftIcon={<StarIcon size={18} />}
+                onClick={() => navigate("/favorites")}
+                className="w-full bg-white shadow-md border-2 border-primary-200 hover:bg-primary-50"
+              >
+                Избранное
+              </Button>
+            </motion.div>
+          </motion.div>
+
+          {/* Search bar - Enhanced */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="relative mb-6"
           >
-            Заказы
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            leftIcon={<StarIcon size={16} />}
-            onClick={() => navigate("/favorites")}
-            className="flex-1"
-          >
-            Избранное
-          </Button>
-        </div>
-
-        {/* Search bar */}
-        <div className="relative bg-gray-100 rounded-lg mb-4 flex items-center overflow-hidden">
-          <Search size={18} className="text-gray-500 absolute left-3" />
-
-          <input
-            type="text"
-            placeholder="Поиск услуг и специалистов..."
-            className="bg-transparent w-full py-3 pl-10 pr-4 outline-none"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-
-          {searchTerm && (
-            <button
-              className="absolute right-3 text-gray-500"
-              onClick={() => setSearchTerm("")}
+            <motion.div
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.99 }}
+              className="relative bg-white rounded-2xl p-4 shadow-lg border border-gray-100"
             >
-              ✕
-            </button>
-          )}
-        </div>
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-primary-50 rounded-xl">
+                  <Search size={20} className="text-primary-600" />
+                </div>
+                <input
+                  type="text"
+                  placeholder="Поиск услуг и специалистов..."
+                  className="bg-transparent w-full outline-none text-gray-700 placeholder-gray-400"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+                {searchTerm && (
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    className="p-1 text-gray-400 hover:text-gray-600"
+                    onClick={() => setSearchTerm("")}
+                  >
+                    <X size={18} />
+                  </motion.button>
+                )}
+              </div>
+            </motion.div>
+          </motion.div>
 
-        {/* Categories chips убраны, фильтрация теперь через модальное окно */}
+          {/* Вкладки - Enhanced */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            className="bg-white rounded-2xl p-1.5 shadow-lg mb-4"
+          >
+            <div className="flex gap-2">
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className={`flex-1 py-3 rounded-xl text-center font-semibold transition-all ${
+                  activeTab === 'all'
+                    ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-md'
+                    : 'text-gray-600 hover:bg-gray-50'
+                }`}
+                onClick={() => setActiveTab('all')}
+              >
+                Все услуги
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className={`flex-1 py-3 rounded-xl text-center font-semibold transition-all ${
+                  activeTab === 'my'
+                    ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-md'
+                    : 'text-gray-600 hover:bg-gray-50'
+                }`}
+                onClick={() => setActiveTab('my')}
+              >
+                Мои услуги
+              </motion.button>
+            </div>
+          </motion.div>
 
-        {/* Вкладки */}
-        <div className="flex mb-4 bg-gray-100 rounded-lg p-1">
-          <button
-            className={`flex-1 py-2 rounded-md text-center ${activeTab === 'all' ? 'bg-white text-primary-500 shadow-sm' : 'text-gray-600'}`}
-            onClick={() => setActiveTab('all')}
+          {/* Фильтр роли - Enhanced */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+            className="bg-white rounded-2xl p-1.5 shadow-lg mb-6"
           >
-            Все услуги
-          </button>
-          <button
-            className={`flex-1 py-2 rounded-md text-center ${activeTab === 'my' ? 'bg-white text-primary-500 shadow-sm' : 'text-gray-600'}`}
-            onClick={() => setActiveTab('my')}
-          >
-            Мои услуги
-          </button>
+            <div className="flex gap-2">
+              {(['all', 'provider', 'client'] as const).map((role) => (
+                <motion.button
+                  key={role}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className={`flex-1 py-2.5 rounded-xl text-center text-sm font-medium transition-all ${
+                    roleFilter === role
+                      ? 'bg-gradient-to-r from-accent-500 to-accent-600 text-white shadow-md'
+                      : 'text-gray-600 hover:bg-gray-50'
+                  }`}
+                  onClick={() => setRoleFilter(role)}
+                >
+                  {role === 'all' ? 'Все' : role === 'provider' ? 'Исполнители' : 'Заказчики'}
+                </motion.button>
+              ))}
+            </div>
+          </motion.div>
         </div>
+      </motion.div>
 
-        {/* Фильтр роли */}
-        <div className="flex mb-4 bg-gray-100 rounded-lg p-1">
-          <button
-            className={`flex-1 py-2 rounded-md text-center text-sm font-medium transition ${roleFilter === 'all' ? 'bg-white text-primary-500 shadow-sm' : 'text-gray-600'}`}
-            onClick={() => setRoleFilter('all')}
-          >
-            Все
-          </button>
-          <button
-            className={`flex-1 py-2 rounded-md text-center text-sm font-medium transition ${roleFilter === 'provider' ? 'bg-white text-primary-500 shadow-sm' : 'text-gray-600'}`}
-            onClick={() => setRoleFilter('provider')}
-          >
-            Исполнители
-          </button>
-          <button
-            className={`flex-1 py-2 rounded-md text-center text-sm font-medium transition ${roleFilter === 'client' ? 'bg-white text-primary-500 shadow-sm' : 'text-gray-600'}`}
-            onClick={() => setRoleFilter('client')}
-          >
-            Заказчики
-          </button>
-        </div>
+      <div className="px-4 sm:px-6">
 
         {/* Services list */}
         {isLoading && page === 0 && activeTab === "all" ? (
-          <div className="space-y-3">
+          <div className="grid grid-cols-2 gap-4">
             {[1, 2, 3, 4].map((i) => (
-              <div
+              <motion.div
                 key={i}
-                className="bg-gray-100 animate-pulse h-32 rounded-lg"
-              ></div>
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: i * 0.1 }}
+                className="bg-gray-100 animate-pulse h-64 rounded-2xl"
+              />
             ))}
           </div>
         ) : activeTab === "all" ? (
           filteredServices.length > 0 ? (
             <>
-              <div className="grid grid-cols-2 gap-4">
-                {filteredServices.map((service: any) => (
-                  <ServiceCard key={service.id} service={service} />
+              <motion.div
+                variants={container}
+                initial="hidden"
+                animate="show"
+                className="grid grid-cols-2 gap-4"
+              >
+                {filteredServices.map((service: any, index: number) => (
+                  <motion.div key={service.id} variants={item} custom={index}>
+                    <ServiceCard service={service} />
+                  </motion.div>
                 ))}
-              </div>
+              </motion.div>
               {hasMore && (
-                <div className="flex justify-center mt-4">
-                  <Button
-                    variant="outline"
-                    onClick={() => setPage((p) => p + 1)}
-                    disabled={isFetching}
-                  >
-                    {isFetching ? "Загрузка..." : "Показать ещё"}
-                  </Button>
+                <div className="flex justify-center mt-6">
+                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                    <Button
+                      variant="outline"
+                      onClick={() => setPage((p) => p + 1)}
+                      disabled={isFetching}
+                      className="border-2 border-primary-200 text-primary-600 hover:bg-primary-50 font-semibold"
+                      rightIcon={!isFetching ? <ArrowRight size={18} /> : undefined}
+                    >
+                      {isFetching ? "Загрузка..." : "Показать ещё"}
+                    </Button>
+                  </motion.div>
                 </div>
               )}
             </>
           ) : (
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.3 }}
-              className="flex flex-col items-center justify-center py-8 text-center"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-white rounded-3xl p-8 text-center shadow-lg border border-gray-100"
             >
-              <div className="text-4xl mb-2">🔍</div>
-              <h3 className="text-lg font-medium mb-1">Ничего не найдено</h3>
-              <p className="text-gray-500 mb-4 max-w-xs">
+              <div className="w-20 h-20 bg-primary-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Search size={40} className="text-primary-500" />
+              </div>
+              <h3 className="text-xl font-bold mb-2 text-gray-900">Ничего не найдено</h3>
+              <p className="text-gray-600 mb-6 max-w-sm mx-auto">
                 Попробуйте изменить параметры поиска или создайте новую услугу
               </p>
               <Button
                 variant="primary"
-                leftIcon={<Plus size={16} />}
+                leftIcon={<Plus size={18} />}
                 onClick={handleCreateService}
+                className="mx-auto"
               >
                 Создать услугу
               </Button>
@@ -337,39 +423,52 @@ const ServicesPage: React.FC = () => {
         ) : activeTab === "my" ? (
           filteredServices.length > 0 ? (
             <>
-              <div className="grid grid-cols-2 gap-4">
-                {filteredServices.map((service: any) => (
-                  <ServiceCard key={service.id} service={service} />
+              <motion.div
+                variants={container}
+                initial="hidden"
+                animate="show"
+                className="grid grid-cols-2 gap-4"
+              >
+                {filteredServices.map((service: any, index: number) => (
+                  <motion.div key={service.id} variants={item} custom={index}>
+                    <ServiceCard service={service} />
+                  </motion.div>
                 ))}
-              </div>
+              </motion.div>
               {hasMore && (
-                <div className="flex justify-center mt-4">
-                  <Button
-                    variant="outline"
-                    onClick={() => setPage((p) => p + 1)}
-                    disabled={isFetching}
-                  >
-                    {isFetching ? "Загрузка..." : "Показать ещё"}
-                  </Button>
+                <div className="flex justify-center mt-6">
+                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                    <Button
+                      variant="outline"
+                      onClick={() => setPage((p) => p + 1)}
+                      disabled={isFetching}
+                      className="border-2 border-primary-200 text-primary-600 hover:bg-primary-50 font-semibold"
+                      rightIcon={!isFetching ? <ArrowRight size={18} /> : undefined}
+                    >
+                      {isFetching ? "Загрузка..." : "Показать ещё"}
+                    </Button>
+                  </motion.div>
                 </div>
               )}
             </>
           ) : (
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.3 }}
-              className="flex flex-col items-center justify-center py-8 text-center"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-white rounded-3xl p-8 text-center shadow-lg border border-gray-100"
             >
-              <div className="text-4xl mb-2">🧑‍💼</div>
-              <h3 className="text-lg font-medium mb-1">У вас пока нет своих услуг</h3>
-              <p className="text-gray-500 mb-4 max-w-xs">
+              <div className="w-20 h-20 bg-primary-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Zap size={40} className="text-primary-500" />
+              </div>
+              <h3 className="text-xl font-bold mb-2 text-gray-900">У вас пока нет своих услуг</h3>
+              <p className="text-gray-600 mb-6 max-w-sm mx-auto">
                 Создайте первую услугу, чтобы начать принимать заказы
               </p>
               <Button
                 variant="primary"
-                leftIcon={<Plus size={16} />}
+                leftIcon={<Plus size={18} />}
                 onClick={handleCreateService}
+                className="mx-auto"
               >
                 Создать услугу
               </Button>
@@ -377,36 +476,63 @@ const ServicesPage: React.FC = () => {
           )
         ) : null}
       </div>
-      {/* Модальное окно сортировки */}
+      {/* Модальное окно сортировки - Enhanced */}
       <Modal isOpen={showSortModal} onClose={() => setShowSortModal(false)}>
-        <div className="p-4 w-[90vw] max-w-xs">
-          <h2 className="text-lg font-bold mb-4">Сортировка</h2>
-          <div className="flex flex-col gap-2 mb-4">
-            <Button variant={sortBy === 'date_desc' ? 'primary' : 'outline'} onClick={() => { setSortBy('date_desc'); setShowSortModal(false); }}>Сначала новые</Button>
-            <Button variant={sortBy === 'date_asc' ? 'primary' : 'outline'} onClick={() => { setSortBy('date_asc'); setShowSortModal(false); }}>Сначала старые</Button>
-            <Button variant={sortBy === 'price_asc' ? 'primary' : 'outline'} onClick={() => { setSortBy('price_asc'); setShowSortModal(false); }}>Дешевле</Button>
-            <Button variant={sortBy === 'price_desc' ? 'primary' : 'outline'} onClick={() => { setSortBy('price_desc'); setShowSortModal(false); }}>Дороже</Button>
-            <Button variant={sortBy === 'rating_desc' ? 'primary' : 'outline'} onClick={() => { setSortBy('rating_desc'); setShowSortModal(false); }}>По рейтингу</Button>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="p-6 w-[90vw] max-w-md bg-white rounded-3xl"
+        >
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-primary-50 rounded-xl">
+              <Filter size={24} className="text-primary-600" />
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900">Фильтры и сортировка</h2>
           </div>
-          <div className="mb-2">
-            <label className="block text-sm font-medium mb-1">Категория услуги</label>
-            <select
-              className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary-400"
-              value={selectedCategory}
-              onChange={e => setSelectedCategory(e.target.value as ServiceCategory | 'all')}
-            >
-              <option value="all">Все категории</option>
-              <option value="education">🎓 Образование</option>
-              <option value="it">💻 IT и разработка</option>
-              <option value="design">🎨 Дизайн</option>
-              <option value="languages">🌐 Языки</option>
-              <option value="business">💼 Бизнес</option>
-              <option value="lifestyle">🌿 Лайфстайл</option>
-              <option value="writing">✍️ Копирайтинг</option>
-              <option value="music">🎵 Музыка</option>
-            </select>
+          <div className="space-y-4 mb-6">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-3">Сортировка</label>
+              <div className="space-y-2">
+                {[
+                  { value: 'date_desc', label: 'Сначала новые' },
+                  { value: 'date_asc', label: 'Сначала старые' },
+                  { value: 'price_asc', label: 'Дешевле' },
+                  { value: 'price_desc', label: 'Дороже' },
+                  { value: 'rating_desc', label: 'По рейтингу' },
+                ].map((option) => (
+                  <motion.div key={option.value} whileHover={{ x: 4 }}>
+                    <Button
+                      variant={sortBy === option.value ? 'primary' : 'outline'}
+                      fullWidth
+                      onClick={() => { setSortBy(option.value as any); setShowSortModal(false); }}
+                      className={sortBy === option.value ? 'bg-gradient-to-r from-primary-500 to-primary-600' : 'border-2 border-primary-200 hover:bg-primary-50'}
+                    >
+                      {option.label}
+                    </Button>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-3">Категория услуги</label>
+              <select
+                className="w-full border-2 border-primary-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary-400 focus:border-primary-400 bg-white"
+                value={selectedCategory}
+                onChange={e => setSelectedCategory(e.target.value as ServiceCategory | 'all')}
+              >
+                <option value="all">Все категории</option>
+                <option value="education">🎓 Образование</option>
+                <option value="it">💻 IT и разработка</option>
+                <option value="design">🎨 Дизайн</option>
+                <option value="languages">🌐 Языки</option>
+                <option value="business">💼 Бизнес</option>
+                <option value="lifestyle">🌿 Лайфстайл</option>
+                <option value="writing">✍️ Копирайтинг</option>
+                <option value="music">🎵 Музыка</option>
+              </select>
+            </div>
           </div>
-        </div>
+        </motion.div>
       </Modal>
     </div>
   );

@@ -147,58 +147,71 @@ const ChallengesPage: React.FC = () => {
     };
 
     return (
-        <div className="pb-20 sm:pb-24 pt-2">
-            <div className="px-2 sm:px-4 py-4">
-                {/* Заголовок страницы */}
-                <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="mb-4 sm:mb-6"
-                >
-                    <div className="flex justify-between items-center">
-                        <div>
-                            <h1 className="text-2xl sm:text-3xl font-bold mb-1">Челленджи</h1>
-                            <p className="text-gray-600 text-sm sm:text-base">Участвуйте в конкурсах и выигрывайте призы</p>
+        <div className="pb-20 sm:pb-24 pt-2 min-h-screen bg-gradient-to-br from-orange-50 via-white to-pink-50">
+            {/* Hero Section */}
+            <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="relative overflow-hidden"
+            >
+                <div className="absolute inset-0 bg-gradient-to-br from-warning-500/10 via-transparent to-accent-500/10 pointer-events-none" />
+                <div className="absolute top-0 right-0 w-64 h-64 bg-warning-200/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+                
+                <div className="relative px-4 sm:px-6 pt-6 pb-6">
+                    <div className="flex justify-between items-center mb-6">
+                        <div className="flex items-center gap-3">
+                            <div className="p-3 bg-gradient-to-br from-warning-500 to-warning-600 rounded-2xl shadow-lg">
+                                <Trophy size={28} className="text-white" />
+                            </div>
+                            <div>
+                                <h1 className="text-3xl font-bold text-gray-900 mb-1">Челленджи</h1>
+                                <p className="text-gray-600 text-sm">Участвуйте в конкурсах и выигрывайте призы</p>
+                            </div>
                         </div>
 
                         {isAdmin && (
-                            <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
+                            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                                 <Button
                                     variant="primary"
-                                    className="shadow-card"
+                                    className="bg-gradient-to-r from-primary-500 to-primary-600 shadow-lg font-bold"
                                     onClick={() => setShowCreate(true)}
                                 >
                                     <Plus size={20} className="mr-2" />
-                                    Создать челлендж
+                                    Создать
                                 </Button>
                             </motion.div>
                         )}
                     </div>
-                </motion.div>
+                </div>
+            </motion.div>
 
-                {/* Вкладки */}
+            <div className="px-4 sm:px-6">
+
+                {/* Вкладки - Enhanced */}
                 <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.1 }}
-                    className="mb-4 sm:mb-6"
+                    className="mb-6"
                 >
-                    <div className="bg-white rounded-xl shadow-card p-1.5">
-                        <div className="flex gap-1">
+                    <div className="bg-white rounded-2xl shadow-lg p-1.5">
+                        <div className="flex gap-2">
                             {TABS.map(tabItem => {
                                 const Icon = tabItem.icon;
                                 const isActive = tab === tabItem.id;
                                 const count = getTabCount(tabItem.id);
 
                                 return (
-                                    <button
+                                    <motion.button
                                         key={tabItem.id}
+                                        whileHover={{ scale: 1.02 }}
+                                        whileTap={{ scale: 0.98 }}
                                         className={`
-                                            flex-1 py-3 px-4 rounded-xl font-medium transition-all duration-200
+                                            flex-1 py-3 px-4 rounded-xl font-semibold transition-all duration-200
                                             flex items-center justify-center gap-2
                                             ${isActive
-                                                ? 'bg-primary-500 text-white shadow-md'
-                                                : 'text-gray-600 hover:bg-gray-100'
+                                                ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-md'
+                                                : 'text-gray-600 hover:bg-gray-50'
                                             }
                                         `}
                                         onClick={() => setTab(tabItem.id as any)}
@@ -207,42 +220,44 @@ const ChallengesPage: React.FC = () => {
                                         <span>{tabItem.label}</span>
                                         {count > 0 && (
                                             <span className={`
-                                                ml-1 px-2 py-0.5 rounded-full text-xs font-bold
+                                                ml-1 px-2.5 py-0.5 rounded-full text-xs font-bold
                                                 ${isActive ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-600'}
                                             `}>
                                                 {count}
                                             </span>
                                         )}
-                                    </button>
+                                    </motion.button>
                                 );
                             })}
                         </div>
                     </div>
                 </motion.div>
 
-                {/* Фильтры */}
+                {/* Фильтры - Enhanced */}
                 <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.2 }}
                     className="mb-6"
                 >
-                    <div className="flex items-center gap-3 mb-3">
-                        <Filter size={18} className="text-gray-500" />
-                        <span className="text-sm font-medium text-gray-700">Фильтр по призам:</span>
+                    <div className="flex items-center gap-3 mb-4">
+                        <div className="p-2 bg-primary-50 rounded-xl">
+                            <Filter size={18} className="text-primary-600" />
+                        </div>
+                        <span className="text-sm font-semibold text-gray-700">Фильтр по призам:</span>
                     </div>
                     <div className="flex flex-wrap gap-2">
                         {FILTERS.map(f => (
                             <motion.button
                                 key={f.id}
-                                whileHover={{ scale: 1.05 }}
+                                whileHover={{ scale: 1.05, y: -2 }}
                                 whileTap={{ scale: 0.95 }}
                                 className={`
-                                    flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium
-                                    transition-all duration-200 shadow-card
+                                    flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium
+                                    transition-all duration-200 shadow-md
                                     ${filter === f.id
-                                        ? 'bg-primary-500 text-white shadow-md'
-                                        : 'bg-white text-gray-700 hover:shadow-card'
+                                        ? 'bg-gradient-to-r from-accent-500 to-accent-600 text-white shadow-lg'
+                                        : 'bg-white text-gray-700 hover:shadow-lg border-2 border-gray-100'
                                     }
                                 `}
                                 onClick={() => setFilter(f.id)}
@@ -271,9 +286,11 @@ const ChallengesPage: React.FC = () => {
                     ) : filteredChallenges.length === 0 ? (
                         <motion.div
                             variants={item}
-                            className="text-center py-16 bg-white rounded-2xl shadow-card max-w-2xl mx-auto"
+                            className="text-center py-16 bg-white rounded-3xl shadow-lg border border-gray-100 max-w-2xl mx-auto"
                         >
-                            <Trophy size={80} className="mx-auto text-gray-300 mb-6" />
+                            <div className="w-24 h-24 bg-warning-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <Trophy size={48} className="text-warning-500" />
+                            </div>
                             <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
                                 Нет челленджей
                             </h3>
@@ -287,7 +304,7 @@ const ChallengesPage: React.FC = () => {
                                 <Button
                                     variant="primary"
                                     onClick={() => setShowCreate(true)}
-                                    className=""
+                                    className="bg-gradient-to-r from-primary-500 to-primary-600 shadow-lg font-bold"
                                 >
                                     <Plus size={20} className="mr-2" />
                                     Создать первый челлендж
