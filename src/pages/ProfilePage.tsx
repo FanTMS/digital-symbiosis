@@ -571,7 +571,7 @@ const ProfilePage: React.FC = () => {
               </Button>
             </div>
           )}
-        </div>
+        </motion.div>
 
         {!loading && (
           <>
