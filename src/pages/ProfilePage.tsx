@@ -433,105 +433,131 @@ const ProfilePage: React.FC = () => {
           </div>
         </Modal>
       )}
-      <div className="px-4 mb-6">
-        {/* Адаптивная карточка пользователя */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-6">
-          <div className="flex items-center gap-4 w-full sm:w-auto">
-            <div className="relative">
-              <Avatar src={user.avatar_url} name={user.name} size={80} className="cursor-pointer border-2 border-primary-500" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 flex-wrap">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
-                  <span className="text-xl sm:text-2xl font-bold truncate">
-                    {user.name}
-                  </span>
-                  <span className="text-gray-400 text-sm sm:text-base">
-                    @{user.username}
-                  </span>
+      {/* Hero Section */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="relative overflow-hidden mb-6"
+      >
+        <div className="absolute inset-0 bg-gradient-to-br from-primary-500/10 via-transparent to-accent-500/10 pointer-events-none" />
+        <div className="absolute top-0 right-0 w-64 h-64 bg-primary-200/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+        
+        <div className="relative px-4 sm:px-6 pt-6 pb-6">
+          {/* Адаптивная карточка пользователя - Enhanced */}
+          <div className="bg-gradient-to-br from-primary-500 via-primary-600 to-primary-700 rounded-3xl p-6 shadow-2xl overflow-hidden relative">
+            <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-2xl" />
+            <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full blur-xl" />
+            
+            <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center gap-6">
+              <div className="flex items-center gap-4 w-full sm:w-auto">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-white/20 rounded-full blur-xl" />
+                  <Avatar src={user.avatar_url} name={user.name} size={100} className="cursor-pointer border-4 border-white/30 shadow-2xl relative z-10" />
                 </div>
-                {(user as any).display_badge_id && (
-                  (() => {
-                    const badge = userBadges.find(b => b.id === (user as any).display_badge_id);
-                    return badge ? (
-                      <span title={badge.name} className="ml-1">
-                        {BADGE_ICONS[badge.name] || "🏅"}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap mb-2">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
+                      <span className="text-2xl sm:text-3xl font-bold truncate text-white drop-shadow-lg">
+                        {user.name}
                       </span>
-                    ) : null;
-                  })()
-                )}
-                {isOwn && (
-                  <button
-                    className="ml-2 p-1.5 rounded-full hover:bg-gray-100 touch-manipulation"
-                    onClick={() => setShowEditModal(true)}
-                    title="Редактировать профиль"
+                      <span className="text-white/70 text-sm sm:text-base">
+                        @{user.username}
+                      </span>
+                    </div>
+                    {(user as any).display_badge_id && (
+                      (() => {
+                        const badge = userBadges.find(b => b.id === (user as any).display_badge_id);
+                        return badge ? (
+                          <span title={badge.name} className="ml-1">
+                            {BADGE_ICONS[badge.name] || "🏅"}
+                          </span>
+                        ) : null;
+                      })()
+                    )}
+                    {isOwn && (
+                      <motion.button
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        className="ml-2 p-2 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 touch-manipulation"
+                        onClick={() => setShowEditModal(true)}
+                        title="Редактировать профиль"
+                      >
+                        <Pencil size={18} className="text-white" />
+                      </motion.button>
+                    )}
+                  </div>
+
+                  {/* Рейтинг и статистика - адаптивно */}
+                  <div className="flex flex-wrap gap-3 mt-3">
+                    <div className="flex items-center gap-2 px-3 py-1.5 bg-white/20 backdrop-blur-sm rounded-full">
+                      <Star size={16} className="text-yellow-300 fill-yellow-300" />
+                      <span className="font-bold text-white">
+                        {user.rating?.toFixed(1) ?? "—"}
+                      </span>
+                    </div>
+                    <div className="px-3 py-1.5 bg-white/20 backdrop-blur-sm rounded-full">
+                      <span className="text-white text-sm font-medium">
+                        Уровень: {user.level ?? "-"}
+                      </span>
+                    </div>
+                    <div className="px-3 py-1.5 bg-white/20 backdrop-blur-sm rounded-full">
+                      <span className="text-white text-sm font-medium">
+                        {user.credits ?? 0} кредитов
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Награды */}
+                  {(user as any).challenge_awards?.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-3">
+                      {(user as any).challenge_awards?.map((award: any) => (
+                        <span key={award.id} className="inline-flex items-center px-3 py-1 bg-white/20 backdrop-blur-sm text-white rounded-full text-xs font-medium gap-1">
+                          🏆 {award.title}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Кнопка сообщения - адаптивная */}
+              {!isOwn && (
+                <div className="w-full sm:w-auto">
+                  <Button
+                    className="w-full sm:w-auto bg-white text-primary-600 hover:bg-white/90 shadow-xl font-bold"
+                    leftIcon={<MessageCircle size={18} />}
+                    onClick={() => navigate(`/chat/${user.id}`)}
+                    size="md"
                   >
-                    <Pencil size={18} />
-                  </button>
-                )}
-              </div>
-
-              {/* Рейтинг и статистика - адаптивно */}
-              <div className="flex flex-col gap-1 mt-2">
-                <div className="flex items-center gap-2 text-sm">
-                  <Star size={16} className="text-yellow-400 fill-yellow-400" />
-                  <span className="font-medium">
-                    {user.rating?.toFixed(1) ?? "—"}
-                  </span>
-                  <span className="text-gray-400">•</span>
-                  <span className="text-gray-500">
-                    Уровень: {user.level ?? "-"}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <span className="text-gray-500">
-                    Кредиты: {user.credits ?? 0}
-                  </span>
-                  <span className="text-gray-400">•</span>
-                  <span className="text-gray-500">
-                    Активность: {(user as any).challenge_points ?? 0}
-                  </span>
-                </div>
-              </div>
-
-              {/* Награды */}
-              {(user as any).challenge_awards?.length > 0 && (
-                <div className="flex flex-wrap gap-1 mt-2">
-                  {(user as any).challenge_awards?.map((award: any) => (
-                    <span key={award.id} className="inline-flex items-center px-2 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs gap-1">
-                      🏆 {award.title}
-                    </span>
-                  ))}
+                    <span className="sm:inline">Написать сообщение</span>
+                    <span className="sm:hidden">Сообщение</span>
+                  </Button>
                 </div>
               )}
             </div>
           </div>
-
-          {/* Кнопка сообщения - адаптивная */}
-          {!isOwn && (
-            <div className="w-full sm:w-auto">
-              <Button
-                className="w-full sm:w-auto"
-                leftIcon={<MessageCircle size={18} />}
-                onClick={() => navigate(`/chat/${user.id}`)}
-                size="sm"
-              >
-                <span className="sm:inline">Написать сообщение</span>
-                <span className="sm:hidden">Сообщение</span>
-              </Button>
-            </div>
-          )}
         </div>
+      </motion.div>
+
+      <div className="px-4 mb-6">
 
         {!loading && (
           <>
-            {/* Level progress */}
-            <div className="mb-6">
-              <div className="flex justify-between items-center mb-2">
-                <h2 className="text-sm font-medium text-gray-700">
-                  Прогресс уровня
-                </h2>
-                <span className="text-xs text-gray-500">
+            {/* Level progress - Enhanced */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="mb-6 bg-white rounded-2xl p-5 shadow-lg border border-gray-100"
+            >
+              <div className="flex justify-between items-center mb-3">
+                <div className="flex items-center gap-2">
+                  <Award size={20} className="text-primary-600" />
+                  <h2 className="text-base font-bold text-gray-900">
+                    Прогресс уровня
+                  </h2>
+                </div>
+                <span className="text-xs font-semibold text-gray-600 bg-primary-50 px-3 py-1 rounded-full">
                   {completedTasks}/{TASKS_FOR_NEXT_LEVEL} заданий до "
                   {user!.level === "Новичок"
                     ? "Специалист"
@@ -541,49 +567,71 @@ const ProfilePage: React.FC = () => {
                   "
                 </span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2.5">
+              <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${progressToNextLevel * 100}%` }}
                   transition={{ duration: 1, ease: "easeOut" }}
-                  className="bg-primary-500 h-2.5 rounded-full"
+                  className="bg-gradient-to-r from-primary-500 to-primary-600 h-3 rounded-full shadow-md"
                 ></motion.div>
               </div>
-            </div>
+            </motion.div>
 
-            {/* Menu */}
+            {/* Menu - Enhanced */}
             {isOwn && (
-              <div className="bg-white rounded-lg shadow-card overflow-hidden mb-6">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="bg-white rounded-2xl shadow-lg overflow-hidden mb-6 border border-gray-100"
+              >
                 {menuItems.map((item, idx) => (
-                  <button
+                  <motion.button
                     key={item.label}
-                    className="flex items-center w-full px-4 py-4 gap-3 text-lg font-medium text-gray-800 hover:bg-gray-50 border-b border-gray-100 last:border-b-0 transition group"
+                    whileHover={{ x: 4 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="flex items-center w-full px-5 py-4 gap-4 text-base font-semibold text-gray-800 hover:bg-gradient-to-r hover:from-primary-50 hover:to-blue-50 border-b border-gray-100 last:border-b-0 transition-all group"
                     onClick={item.onClick}
                   >
-                    <span className="text-primary-500"><item.icon size={22} /></span>
+                    <div className="p-2 bg-primary-50 rounded-xl group-hover:bg-primary-100 transition-colors">
+                      <item.icon size={20} className="text-primary-600" />
+                    </div>
                     <span className="flex-1 text-left">{item.label}</span>
                     {item.value !== undefined && (
-                      <span className="text-primary-500 font-bold">{item.value}</span>
+                      <span className="text-primary-600 font-bold bg-primary-50 px-3 py-1 rounded-full">{item.value}</span>
                     )}
-                    <ChevronRight size={18} className="text-gray-300 group-hover:text-primary-400 transition" />
-                  </button>
+                    <ChevronRight size={18} className="text-gray-300 group-hover:text-primary-500 group-hover:translate-x-1 transition-all" />
+                  </motion.button>
                 ))}
-              </div>
+              </motion.div>
             )}
 
-            {/* Вкладки - адаптивные */}
-            <div className="flex gap-2 mb-6 overflow-x-auto scrollbar-hide">
-              {visibleTabs.map(tab => (
-                <button
-                  key={tab.id}
-                  className={`flex items-center gap-2 px-3 sm:px-4 py-2.5 rounded-xl font-medium transition-all duration-200 whitespace-nowrap touch-manipulation min-w-max ${activeTab === tab.id ? 'bg-blue-100 text-blue-900 shadow-sm' : 'bg-white text-gray-500 hover:bg-gray-100'}`}
-                  onClick={() => setActiveTab(tab.id as any)}
-                >
-                  <tab.icon size={16} className="sm:w-[18px] sm:h-[18px]" />
-                  <span className="text-sm sm:text-base">{tab.label}</span>
-                </button>
-              ))}
-            </div>
+            {/* Вкладки - Enhanced */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="bg-white rounded-2xl shadow-lg p-1.5 mb-6 border border-gray-100"
+            >
+              <div className="flex gap-2 overflow-x-auto scrollbar-hide">
+                {visibleTabs.map(tab => (
+                  <motion.button
+                    key={tab.id}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className={`flex items-center gap-2 px-4 py-3 rounded-xl font-semibold transition-all duration-200 whitespace-nowrap touch-manipulation min-w-max ${
+                      activeTab === tab.id
+                        ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg'
+                        : 'text-gray-600 hover:bg-gray-50'
+                    }`}
+                    onClick={() => setActiveTab(tab.id as any)}
+                  >
+                    <tab.icon size={18} className="sm:w-[20px] sm:h-[20px]" />
+                    <span className="text-sm sm:text-base">{tab.label}</span>
+                  </motion.button>
+                ))}
+              </div>
+            </motion.div>
 
             {/* Контент вкладок */}
             {activeTab === 'services' && (
